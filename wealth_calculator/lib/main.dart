@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/gold_price.dart';
+import 'package:wealth_calculator/services/wealthPrice.dart';
 import 'package:wealth_calculator/inventory.dart';
+import 'package:wealth_calculator/widgets/wealthWidget.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,71 +27,81 @@ class GoldPricesScreen extends StatefulWidget {
 }
 
 class _GoldPricesScreenState extends State<GoldPricesScreen> {
-  late Future<List<GoldPrice>> futureGoldPrices;
+  late Future<List<WealthPrice>> futureGoldPrices;
+  late Future<List<WealthPrice>> futureCurrencyPrices;
 
   @override
   void initState() {
     super.initState();
     futureGoldPrices = fetchGoldPrices();
+    futureCurrencyPrices = fetchCurrencyPrices();
   }
 
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Gold Prices'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => InventoryScreen(futureGoldPrices)),
-              );
-            },
-            icon: Icon(Icons.inventory),
-          ),
-        ],
-      ),
-      body: FutureBuilder<List<GoldPrice>>(
-        future: futureGoldPrices,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No data found'));
-          } else {
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: DataTable(
-                headingRowColor: MaterialStateColor.resolveWith(
-                    (states) => Color.fromARGB(255, 97, 186, 250)!),
-                columnSpacing: 15,
-                dataRowColor:
-                    MaterialStateColor.resolveWith((states) => Colors.yellow!),
-                dividerThickness: 2,
-                columns: const <DataColumn>[
-                  DataColumn(label: Text('Türü')),
-                  DataColumn(label: Text('Alış \nFiyatı')),
-                  DataColumn(label: Text('Satış \nFiyatı')),
-                  DataColumn(label: Text('Değişim')),
-                ],
-                rows: snapshot.data!.map((goldPrice) {
-                  return DataRow(
-                    cells: <DataCell>[
-                      DataCell(Text(goldPrice.title)),
-                      DataCell(Text(goldPrice.buyingPrice)),
-                      DataCell(Text(goldPrice.sellingPrice)),
-                      DataCell(Text(goldPrice.change)),
-                    ],
-                  );
-                }).toList(),
-              ),
-            );
-          }
-        },
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Fiyatlar'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => InventoryScreen(futureGoldPrices)),
+                );
+              },
+              icon: Icon(Icons.inventory),
+            ),
+          ],
+        ),
+        body: TabBarView(
+          children: [
+            FutureBuilder<List<WealthPrice>>(
+              future: futureGoldPrices,
+              builder: (context, goldPriceSnapshot) {
+                if (goldPriceSnapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (goldPriceSnapshot.hasError) {
+                  return Center(
+                      child: Text('Error: ${goldPriceSnapshot.error}'));
+                } else if (!goldPriceSnapshot.hasData ||
+                    goldPriceSnapshot.data!.isEmpty) {
+                  return Center(child: Text('No gold price data found'));
+                } else {
+                  return buildPricesTab(goldPriceSnapshot.data!);
+                }
+              },
+            ),
+            FutureBuilder<List<WealthPrice>>(
+              future: futureCurrencyPrices,
+              builder: (context, goldPriceSnapshot) {
+                if (goldPriceSnapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (goldPriceSnapshot.hasError) {
+                  return Center(
+                      child: Text('Error: ${goldPriceSnapshot.error}'));
+                } else if (!goldPriceSnapshot.hasData ||
+                    goldPriceSnapshot.data!.isEmpty) {
+                  return Center(child: Text('No gold price data found'));
+                } else {
+                  return buildPricesTab(goldPriceSnapshot.data!);
+                }
+              },
+            ),
+          ],
+        ),
+        bottomNavigationBar: TabBar(
+          tabs: [
+            Tab(icon: Icon(Icons.agriculture), text: 'Altın'),
+            Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
+          ],
+          labelColor: Colors.blue,
+          unselectedLabelColor: Colors.grey,
+        ),
       ),
     );
   }

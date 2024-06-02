@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/gold_price.dart';
+import 'package:wealth_calculator/services/wealthPrice.dart';
 
 class InventoryScreen extends StatefulWidget {
-  final Future<List<GoldPrice>> futureGoldPrices;
+  final Future<List<WealthPrice>> futureGoldPrices;
 
   InventoryScreen(this.futureGoldPrices);
 
@@ -11,7 +11,7 @@ class InventoryScreen extends StatefulWidget {
 }
 
 class _InventoryScreenState extends State<InventoryScreen> {
-  late Map<GoldPrice, int> selectedItems = {};
+  late Map<WealthPrice, int> selectedItems = {};
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       appBar: AppBar(
         title: Text('Varlıklar'),
       ),
-      body: FutureBuilder<List<GoldPrice>>(
+      body: FutureBuilder<List<WealthPrice>>(
         future: widget.futureGoldPrices,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -63,8 +63,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 
   void _showSelectItemDialog(
-      BuildContext context, Future<List<GoldPrice>> future) {
-    future.then((List<GoldPrice> goldPrices) {
+      BuildContext context, Future<List<WealthPrice>> future) {
+    future.then((List<WealthPrice> goldPrices) {
       showDialog(
         context: context,
         builder: (context) {
@@ -90,7 +90,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     });
   }
 
-  void _showEditDialog(BuildContext context, MapEntry<GoldPrice, int> entry) {
+  void _showEditDialog(BuildContext context, MapEntry<WealthPrice, int> entry) {
     TextEditingController controller = TextEditingController(
       text: entry.value.toString(),
     );
