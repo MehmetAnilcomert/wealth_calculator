@@ -3,8 +3,9 @@ import 'package:wealth_calculator/services/wealthPrice.dart';
 
 class InventoryScreen extends StatefulWidget {
   final Future<List<WealthPrice>> futureGoldPrices;
+  final Future<List<WealthPrice>> futureCurrencyPrices;
 
-  InventoryScreen(this.futureGoldPrices);
+  InventoryScreen(this.futureGoldPrices, this.futureCurrencyPrices);
 
   @override
   _InventoryScreenState createState() => _InventoryScreenState();
@@ -15,39 +16,36 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double totalPrice = _calculateTotalPrice(); // Toplam fiyatı hesapla
+    double totalPrice = _calculateTotalPrice();
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Varlıklar'),
       ),
-      body: FutureBuilder<List<WealthPrice>>(
-        future: widget.futureGoldPrices,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Hata: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Veri bulunamadı'));
-          } else {
-            return ListView(
-              children: selectedItems.entries.map((entry) {
-                return ListTile(
-                  title: Text(entry.key.title),
-                  subtitle: Text('Miktar: ${entry.value}'),
-                  onTap: () {
-                    _showEditDialog(context, entry);
-                  },
-                );
-              }).toList(),
-            );
-          }
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: FutureBuilder<List<WealthPrice>>(
+              future: widget.futureGoldPrices,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Hata: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('Fiyatı bulunamadı'));
+                } else {
+                  return buildPriceList(snapshot.data!, 'Varlık Fiyatları');
+                }
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showSelectItemDialog(context, widget.futureGoldPrices);
+          _showSelectItemDialog(
+              context, widget.futureGoldPrices, widget.futureCurrencyPrices);
         },
         child: Icon(Icons.add),
       ),
@@ -62,23 +60,89 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
+  Widget buildPriceList(List<WealthPrice> prices, String title) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        Expanded(
+          child: ListView(
+            children: selectedItems.entries.map((entry) {
+              return ListTile(
+                title: Text(entry.key.title),
+                subtitle: Text('Miktar: ${entry.value}'),
+                onTap: () {
+                  _showEditDialog(context, entry);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
   void _showSelectItemDialog(
-      BuildContext context, Future<List<WealthPrice>> future) {
-    future.then((List<WealthPrice> goldPrices) {
+      BuildContext context,
+      Future<List<WealthPrice>> futureGoldPrices,
+      Future<List<WealthPrice>> futureCurrencyPrices) {
+    futureGoldPrices.then((List<WealthPrice> goldPrices) {
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Seçiniz'),
+            title: Text('Altın Seç'),
+            content: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  ListBody(
+                    children: <Widget>[
+                      for (var price in goldPrices)
+                        ListTile(
+                          title: Text(price.title),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            _showEditDialog(context, MapEntry(price, 0));
+                          },
+                        ),
+                    ],
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _showCurrencySelectItemDialog(
+                          context, futureCurrencyPrices);
+                    },
+                    child: Text('Döviz Seç'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  void _showCurrencySelectItemDialog(
+      BuildContext context, Future<List<WealthPrice>> futureCurrencyPrices) {
+    futureCurrencyPrices.then((List<WealthPrice> currencyPrices) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Döviz Seç'),
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  for (var goldPrice in goldPrices)
+                  for (var price in currencyPrices)
                     ListTile(
-                      title: Text(goldPrice.title),
+                      title: Text(price.title),
                       onTap: () {
                         Navigator.of(context).pop();
-                        _showEditDialog(context, MapEntry(goldPrice, 0));
+                        _showEditDialog(context, MapEntry(price, 0));
                       },
                     ),
                 ],

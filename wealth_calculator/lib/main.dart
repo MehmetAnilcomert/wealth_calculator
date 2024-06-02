@@ -49,7 +49,8 @@ class _GoldPricesScreenState extends State<GoldPricesScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => InventoryScreen(futureGoldPrices)),
+                      builder: (context) => InventoryScreen(
+                          futureGoldPrices, futureCurrencyPrices)),
                 );
               },
               icon: Icon(Icons.inventory),
