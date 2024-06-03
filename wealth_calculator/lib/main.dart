@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/services/wealthPrice.dart';
 import 'package:wealth_calculator/inventory.dart';
-import 'package:wealth_calculator/widgets/wealthWidget.dart';
+import 'package:wealth_calculator/widgets/wealthCard.dart';
 
 void main() {
   runApp(MyApp());
@@ -60,19 +60,16 @@ class _GoldPricesScreenState extends State<GoldPricesScreen> {
         body: TabBarView(
           children: [
             FutureBuilder<List<WealthPrice>>(
-              future: futureGoldPrices,
-              builder: (context, goldPriceSnapshot) {
-                if (goldPriceSnapshot.connectionState ==
-                    ConnectionState.waiting) {
+              future: fetchGoldPrices(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
-                } else if (goldPriceSnapshot.hasError) {
-                  return Center(
-                      child: Text('Error: ${goldPriceSnapshot.error}'));
-                } else if (!goldPriceSnapshot.hasData ||
-                    goldPriceSnapshot.data!.isEmpty) {
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No gold price data found'));
                 } else {
-                  return buildPricesTab(goldPriceSnapshot.data!);
+                  return buildPricesTab(snapshot.data!);
                 }
               },
             ),
