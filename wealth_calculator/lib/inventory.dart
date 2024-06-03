@@ -85,44 +85,56 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 
   void _showSelectItemDialog(
-      BuildContext context,
-      Future<List<WealthPrice>> futureGoldPrices,
-      Future<List<WealthPrice>> futureCurrencyPrices) {
+    BuildContext context,
+    Future<List<WealthPrice>> futureGoldPrices,
+    Future<List<WealthPrice>> futureCurrencyPrices,
+  ) {
     futureGoldPrices.then((List<WealthPrice> goldPrices) {
       showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Altın Seç'),
-            content: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  ListBody(
-                    children: <Widget>[
-                      for (var price in goldPrices)
-                        ListTile(
-                          title: Text(price.title),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            _showEditDialog(context, MapEntry(price, 0));
-                          },
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Altın Seç'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    PopupMenuButton<String>(
+                      icon: ElevatedButton(
+                        onPressed: null,
+                        child: Text('Diğer Seçenekler'),
+                      ),
+                      onSelected: (String result) {
+                        Navigator.of(context).pop();
+                        if (result == 'Döviz Seç') {
+                          _showCurrencySelectItemDialog(
+                              context, futureCurrencyPrices);
+                        }
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'Döviz Seç',
+                          child: Text('Döviz Seç'),
                         ),
-                    ],
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      _showCurrencySelectItemDialog(
-                          context, futureCurrencyPrices);
-                    },
-                    child: Text('Döviz Seç'),
-                  ),
-                ],
+                      ],
+                    ),
+                    ListBody(
+                      children: <Widget>[
+                        for (var price in goldPrices)
+                          ListTile(
+                            title: Text(price.title),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              _showEditDialog(context, MapEntry(price, 0));
+                            },
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      );
+            );
+          });
     });
   }
 
@@ -130,27 +142,52 @@ class _InventoryScreenState extends State<InventoryScreen> {
       BuildContext context, Future<List<WealthPrice>> futureCurrencyPrices) {
     futureCurrencyPrices.then((List<WealthPrice> currencyPrices) {
       showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Döviz Seç'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  for (var price in currencyPrices)
-                    ListTile(
-                      title: Text(price.title),
-                      onTap: () {
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Döviz Seç'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    PopupMenuButton<String>(
+                      icon: ElevatedButton(
+                        onPressed: null,
+                        child: Text('Diğer Seçenekler'),
+                      ),
+                      onSelected: (String result) {
                         Navigator.of(context).pop();
-                        _showEditDialog(context, MapEntry(price, 0));
+                        if (result == 'Altın Seç') {
+                          _showSelectItemDialog(
+                              context,
+                              widget.futureGoldPrices,
+                              widget.futureCurrencyPrices);
+                        }
                       },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'Altın Seç',
+                          child: Text('Altın Seç'),
+                        ),
+                      ],
                     ),
-                ],
+                    ListBody(
+                      children: <Widget>[
+                        for (var price in currencyPrices)
+                          ListTile(
+                            title: Text(price.title),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              _showEditDialog(context, MapEntry(price, 0));
+                            },
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      );
+            );
+          });
     });
   }
 
