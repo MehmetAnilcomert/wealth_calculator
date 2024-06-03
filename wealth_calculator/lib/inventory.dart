@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:wealth_calculator/services/wealthPrice.dart';
 
 class InventoryScreen extends StatefulWidget {
@@ -20,7 +21,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Varlıklar'),
+        title: Text('Varlık Hesaplayıcı'),
       ),
       body: Column(
         children: [
@@ -35,7 +36,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('Fiyatı bulunamadı'));
                 } else {
-                  return buildPriceList(snapshot.data!, 'Varlık Fiyatları');
+                  return buildPriceList(snapshot.data!);
                 }
               },
             ),
@@ -60,22 +61,29 @@ class _InventoryScreenState extends State<InventoryScreen> {
     );
   }
 
-  Widget buildPriceList(List<WealthPrice> prices, String title) {
+  Widget buildPriceList(List<WealthPrice> prices) {
     return Column(
       children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
         Expanded(
           child: ListView(
             children: selectedItems.entries.map((entry) {
               return ListTile(
                 title: Text(entry.key.title),
                 subtitle: Text('Miktar: ${entry.value}'),
+                tileColor: Colors.yellow[400],
                 onTap: () {
                   _showEditDialog(context, entry);
                 },
+                trailing: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.black),
+                  iconSize: 35,
+                  focusColor: Colors.grey,
+                  onPressed: () {
+                    setState(() {
+                      selectedItems.remove(entry.key);
+                    });
+                  },
+                ),
               );
             }).toList(),
           ),
@@ -226,6 +234,10 @@ class _InventoryScreenState extends State<InventoryScreen> {
         );
       },
     );
+  }
+
+  void removeItem(WealthPrice key) {
+    selectedItems.remove(key);
   }
 
   double _calculateTotalPrice() {

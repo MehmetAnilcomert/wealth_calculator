@@ -97,7 +97,7 @@ class _GoldPricesScreenState extends State<GoldPricesScreen> {
         ),
         bottomNavigationBar: TabBar(
           tabs: [
-            Tab(icon: Icon(Icons.agriculture), text: 'Altın'),
+            Tab(icon: Icon(Icons.gpp_good), text: 'Altın'),
             Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
           ],
           labelColor: Colors.blue,
