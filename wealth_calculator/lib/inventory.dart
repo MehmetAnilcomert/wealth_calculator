@@ -14,7 +14,14 @@ class InventoryScreen extends StatefulWidget {
 }
 
 class _InventoryScreenState extends State<InventoryScreen> {
+  late Future<List<SavedWealths>> futureSavedWealths;
   late Map<SavedWealths, int> selectedItems = {};
+
+  @override
+  void initState() {
+    super.initState();
+    futureSavedWealths = SavedWealthsdao().getAllWealths();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +33,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
         children: [
           Expanded(
             child: FutureBuilder<List<SavedWealths>>(
-              future: SavedWealthsdao().getAllWealths(),
+              future: futureSavedWealths,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -131,6 +138,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     await SavedWealthsdao().deleteWealth(entry.key.id);
                     setState(() {
                       selectedItems.remove(entry.key);
+                      futureSavedWealths = SavedWealthsdao().getAllWealths();
                     });
                   },
                 ),
@@ -181,17 +189,31 @@ class _InventoryScreenState extends State<InventoryScreen> {
                         for (var price in goldPrices)
                           ListTile(
                             title: Text(price.title),
-                            onTap: () {
+                            onTap: () async {
                               Navigator.of(context).pop();
-                              _showEditDialog(
-                                  context,
-                                  MapEntry(
-                                      SavedWealths(
-                                          id: DateTime.now()
-                                              .millisecondsSinceEpoch,
-                                          type: price.title,
-                                          amount: 0),
-                                      0));
+
+                              SavedWealthsdao wealthsDao = SavedWealthsdao();
+                              SavedWealths? existingWealth =
+                                  await wealthsDao.getWealthByType(price.title);
+
+                              if (existingWealth != null) {
+                                // Mevcut varlık güncelleme
+                                _showEditDialog(
+                                    context,
+                                    MapEntry(
+                                        existingWealth, existingWealth.amount));
+                              } else {
+                                // Yeni varlık ekleme
+                                _showEditDialog(
+                                    context,
+                                    MapEntry(
+                                        SavedWealths(
+                                            id: DateTime.now()
+                                                .millisecondsSinceEpoch,
+                                            type: price.title,
+                                            amount: 0),
+                                        0));
+                              }
                             },
                           ),
                       ],
@@ -242,17 +264,31 @@ class _InventoryScreenState extends State<InventoryScreen> {
                         for (var price in currencyPrices)
                           ListTile(
                             title: Text(price.title),
-                            onTap: () {
+                            onTap: () async {
                               Navigator.of(context).pop();
-                              _showEditDialog(
-                                  context,
-                                  MapEntry(
-                                      SavedWealths(
-                                          id: DateTime.now()
-                                              .millisecondsSinceEpoch,
-                                          type: price.title,
-                                          amount: 0),
-                                      0));
+
+                              SavedWealthsdao wealthsDao = SavedWealthsdao();
+                              SavedWealths? existingWealth =
+                                  await wealthsDao.getWealthByType(price.title);
+
+                              if (existingWealth != null) {
+                                // Mevcut varlık güncelleme
+                                _showEditDialog(
+                                    context,
+                                    MapEntry(
+                                        existingWealth, existingWealth.amount));
+                              } else {
+                                // Yeni varlık ekleme
+                                _showEditDialog(
+                                    context,
+                                    MapEntry(
+                                        SavedWealths(
+                                            id: DateTime.now()
+                                                .millisecondsSinceEpoch,
+                                            type: price.title,
+                                            amount: 0),
+                                        0));
+                              }
                             },
                           ),
                       ],
@@ -291,19 +327,32 @@ class _InventoryScreenState extends State<InventoryScreen> {
             TextButton(
               onPressed: () async {
                 int amount = int.tryParse(controller.text) ?? 0;
+                SavedWealthsdao wealthsDao = SavedWealthsdao();
+                SavedWealths? existingWealth =
+                    await wealthsDao.getWealthByType(entry.key.type);
+
+                if (existingWealth != null) {
+                  // Mevcut varlık güncelleme
+                  SavedWealths updatedWealth = SavedWealths(
+                    id: existingWealth.id,
+                    type: existingWealth.type,
+                    amount: amount,
+                  );
+                  await wealthsDao.updateWealth(updatedWealth);
+                } else {
+                  // Yeni varlık ekleme
+                  SavedWealths newWealth = SavedWealths(
+                    id: DateTime.now().millisecondsSinceEpoch,
+                    type: entry.key.type,
+                    amount: amount,
+                  );
+                  await wealthsDao.insertWealth(newWealth);
+                }
+
                 setState(() {
                   selectedItems[entry.key] = amount;
+                  futureSavedWealths = SavedWealthsdao().getAllWealths();
                 });
-
-                // Yeni varlığı veritabanına ekle
-                SavedWealths newWealth = SavedWealths(
-                  id: DateTime.now()
-                      .millisecondsSinceEpoch, // ID olarak benzersiz bir değer kullanın
-                  type: entry.key.type,
-                  amount: amount,
-                );
-
-                await SavedWealthsdao().insertWealth(newWealth);
 
                 Navigator.of(context).pop();
               },
