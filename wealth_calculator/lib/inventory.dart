@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:wealth_calculator/services/Wealths.dart';
+import 'package:wealth_calculator/services/Wealthsdao.dart';
 import 'package:wealth_calculator/services/wealthPrice.dart';
 
 class InventoryScreen extends StatefulWidget {
@@ -13,12 +14,10 @@ class InventoryScreen extends StatefulWidget {
 }
 
 class _InventoryScreenState extends State<InventoryScreen> {
-  late Map<WealthPrice, int> selectedItems = {};
+  late Map<SavedWealths, int> selectedItems = {};
 
   @override
   Widget build(BuildContext context) {
-    double totalPrice = _calculateTotalPrice();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Varlık Hesaplayıcı'),
@@ -26,17 +25,48 @@ class _InventoryScreenState extends State<InventoryScreen> {
       body: Column(
         children: [
           Expanded(
-            child: FutureBuilder<List<WealthPrice>>(
-              future: widget.futureGoldPrices,
+            child: FutureBuilder<List<SavedWealths>>(
+              future: SavedWealthsdao().getAllWealths(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Hata: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('Fiyatı bulunamadı'));
+                  return Center(child: Text('Varlık bulunamadı'));
                 } else {
-                  return buildPriceList(snapshot.data!);
+                  selectedItems = {
+                    for (var wealth in snapshot.data!) wealth: wealth.amount,
+                  };
+                  return FutureBuilder<List<List<WealthPrice>>>(
+                    future: Future.wait(
+                        [widget.futureGoldPrices, widget.futureCurrencyPrices]),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Hata: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('Fiyat bilgisi bulunamadı'));
+                      } else {
+                        double totalPrice = _calculateTotalPrice(
+                            snapshot.data![0], snapshot.data![1]);
+                        return Column(
+                          children: [
+                            Expanded(
+                                child: buildPriceList(
+                                    selectedItems.keys.toList())),
+                            Container(
+                              height: 50,
+                              child: Center(
+                                child: Text('Toplam: ${totalPrice.toInt()}'),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  );
                 }
               },
             ),
@@ -50,27 +80,46 @@ class _InventoryScreenState extends State<InventoryScreen> {
         },
         child: Icon(Icons.add),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          height: 50,
-          child: Center(
-            child: Text('Toplam: ${totalPrice.toInt()}'),
-          ),
-        ),
-      ),
     );
   }
 
-  Widget buildPriceList(List<WealthPrice> prices) {
+  double _calculateTotalPrice(
+      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
+    double totalPrice = 0;
+
+    selectedItems.forEach((key, value) {
+      double price = 0.0;
+      for (var gold in goldPrices) {
+        if (gold.title == key.type) {
+          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
+          break;
+        }
+      }
+      if (price == 0.0) {
+        for (var currency in currencyPrices) {
+          if (currency.title == key.type) {
+            price =
+                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+            break;
+          }
+        }
+      }
+      totalPrice += price * value;
+    });
+
+    return totalPrice;
+  }
+
+  Widget buildPriceList(List<SavedWealths> prices) {
     return Column(
       children: [
         Expanded(
           child: ListView(
             children: selectedItems.entries.map((entry) {
               return ListTile(
-                title: Text(entry.key.title),
+                title: Text(entry.key.type),
                 subtitle: Text('Miktar: ${entry.value}'),
-                tileColor: Colors.yellow[400],
+                tileColor: const Color.fromARGB(255, 35, 143, 41),
                 onTap: () {
                   _showEditDialog(context, entry);
                 },
@@ -78,7 +127,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
                   icon: Icon(Icons.delete, color: Colors.black),
                   iconSize: 35,
                   focusColor: Colors.grey,
-                  onPressed: () {
+                  onPressed: () async {
+                    await SavedWealthsdao().deleteWealth(entry.key.id);
                     setState(() {
                       selectedItems.remove(entry.key);
                     });
@@ -133,7 +183,15 @@ class _InventoryScreenState extends State<InventoryScreen> {
                             title: Text(price.title),
                             onTap: () {
                               Navigator.of(context).pop();
-                              _showEditDialog(context, MapEntry(price, 0));
+                              _showEditDialog(
+                                  context,
+                                  MapEntry(
+                                      SavedWealths(
+                                          id: DateTime.now()
+                                              .millisecondsSinceEpoch,
+                                          type: price.title,
+                                          amount: 0),
+                                      0));
                             },
                           ),
                       ],
@@ -186,7 +244,15 @@ class _InventoryScreenState extends State<InventoryScreen> {
                             title: Text(price.title),
                             onTap: () {
                               Navigator.of(context).pop();
-                              _showEditDialog(context, MapEntry(price, 0));
+                              _showEditDialog(
+                                  context,
+                                  MapEntry(
+                                      SavedWealths(
+                                          id: DateTime.now()
+                                              .millisecondsSinceEpoch,
+                                          type: price.title,
+                                          amount: 0),
+                                      0));
                             },
                           ),
                       ],
@@ -199,7 +265,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
     });
   }
 
-  void _showEditDialog(BuildContext context, MapEntry<WealthPrice, int> entry) {
+  void _showEditDialog(
+      BuildContext context, MapEntry<SavedWealths, int> entry) {
     TextEditingController controller = TextEditingController(
       text: entry.value.toString(),
     );
@@ -222,10 +289,22 @@ class _InventoryScreenState extends State<InventoryScreen> {
               child: Text('İptal'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                int amount = int.tryParse(controller.text) ?? 0;
                 setState(() {
-                  selectedItems[entry.key] = int.tryParse(controller.text) ?? 0;
+                  selectedItems[entry.key] = amount;
                 });
+
+                // Yeni varlığı veritabanına ekle
+                SavedWealths newWealth = SavedWealths(
+                  id: DateTime.now()
+                      .millisecondsSinceEpoch, // ID olarak benzersiz bir değer kullanın
+                  type: entry.key.type,
+                  amount: amount,
+                );
+
+                await SavedWealthsdao().insertWealth(newWealth);
+
                 Navigator.of(context).pop();
               },
               child: Text('Kaydet'),
@@ -234,20 +313,5 @@ class _InventoryScreenState extends State<InventoryScreen> {
         );
       },
     );
-  }
-
-  void removeItem(WealthPrice key) {
-    selectedItems.remove(key);
-  }
-
-  double _calculateTotalPrice() {
-    double totalPrice = 0;
-
-    selectedItems.forEach((key, value) {
-      double price = double.parse(key.buyingPrice.replaceAll(',', '.').trim());
-      totalPrice += price * value;
-    });
-
-    return totalPrice;
   }
 }
