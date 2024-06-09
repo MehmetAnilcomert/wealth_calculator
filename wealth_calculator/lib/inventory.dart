@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/inventory/ItemDialogs.dart';
+import 'package:wealth_calculator/inventory/TotalPrice.dart';
+import 'package:wealth_calculator/inventory/WealthList.dart';
 import 'package:wealth_calculator/services/Wealths.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
 import 'package:wealth_calculator/services/wealthPrice.dart';
@@ -21,6 +24,43 @@ class _InventoryScreenState extends State<InventoryScreen> {
   void initState() {
     super.initState();
     futureSavedWealths = SavedWealthsdao().getAllWealths();
+  }
+
+  void _refreshWealths() {
+    setState(() {
+      futureSavedWealths = SavedWealthsdao().getAllWealths();
+    });
+  }
+
+  void _deleteWealth(int id) async {
+    await SavedWealthsdao().deleteWealth(id);
+    _refreshWealths();
+  }
+
+  void _editWealth(SavedWealths wealth, int amount) async {
+    SavedWealthsdao wealthsDao = SavedWealthsdao();
+    SavedWealths? existingWealth =
+        await wealthsDao.getWealthByType(wealth.type);
+
+    if (existingWealth != null) {
+      // Update existing wealth
+      SavedWealths updatedWealth = SavedWealths(
+        id: existingWealth.id,
+        type: existingWealth.type,
+        amount: amount,
+      );
+      await wealthsDao.updateWealth(updatedWealth);
+    } else {
+      // Insert new wealth
+      SavedWealths newWealth = SavedWealths(
+        id: DateTime.now().millisecondsSinceEpoch,
+        type: wealth.type,
+        amount: amount,
+      );
+      await wealthsDao.insertWealth(newWealth);
+    }
+
+    _refreshWealths();
   }
 
   @override
@@ -61,14 +101,21 @@ class _InventoryScreenState extends State<InventoryScreen> {
                         return Column(
                           children: [
                             Expanded(
-                                child: buildPriceList(
-                                    selectedItems.keys.toList())),
-                            Container(
-                              height: 50,
-                              child: Center(
-                                child: Text('Toplam: ${totalPrice.toInt()}'),
+                              child: WealthList(
+                                selectedItems: selectedItems,
+                                onDelete: _deleteWealth,
+                                onEdit: (entry) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => EditItemDialog(
+                                      entry: entry,
+                                      onSave: _editWealth,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
+                            TotalPrice(totalPrice),
                           ],
                         );
                       }
@@ -82,8 +129,22 @@ class _InventoryScreenState extends State<InventoryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showSelectItemDialog(
-              context, widget.futureGoldPrices, widget.futureCurrencyPrices);
+          showDialog(
+            context: context,
+            builder: (context) => SelectItemDialog(
+              futureGoldPrices: widget.futureGoldPrices,
+              futureCurrencyPrices: widget.futureCurrencyPrices,
+              onItemSelected: (wealth, amount) {
+                showDialog(
+                  context: context,
+                  builder: (context) => EditItemDialog(
+                    entry: MapEntry(wealth, amount),
+                    onSave: _editWealth,
+                  ),
+                );
+              },
+            ),
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -115,252 +176,5 @@ class _InventoryScreenState extends State<InventoryScreen> {
     });
 
     return totalPrice;
-  }
-
-  Widget buildPriceList(List<SavedWealths> prices) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView(
-            children: selectedItems.entries.map((entry) {
-              return ListTile(
-                title: Text(entry.key.type),
-                subtitle: Text('Miktar: ${entry.value}'),
-                tileColor: const Color.fromARGB(255, 35, 143, 41),
-                onTap: () {
-                  _showEditDialog(context, entry);
-                },
-                trailing: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.black),
-                  iconSize: 35,
-                  focusColor: Colors.grey,
-                  onPressed: () async {
-                    await SavedWealthsdao().deleteWealth(entry.key.id);
-                    setState(() {
-                      selectedItems.remove(entry.key);
-                      futureSavedWealths = SavedWealthsdao().getAllWealths();
-                    });
-                  },
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showSelectItemDialog(
-    BuildContext context,
-    Future<List<WealthPrice>> futureGoldPrices,
-    Future<List<WealthPrice>> futureCurrencyPrices,
-  ) {
-    futureGoldPrices.then((List<WealthPrice> goldPrices) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Altın Seç'),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    PopupMenuButton<String>(
-                      icon: ElevatedButton(
-                        onPressed: null,
-                        child: Text('Diğer Seçenekler'),
-                      ),
-                      onSelected: (String result) {
-                        Navigator.of(context).pop();
-                        if (result == 'Döviz Seç') {
-                          _showCurrencySelectItemDialog(
-                              context, futureCurrencyPrices);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                        const PopupMenuItem<String>(
-                          value: 'Döviz Seç',
-                          child: Text('Döviz Seç'),
-                        ),
-                      ],
-                    ),
-                    ListBody(
-                      children: <Widget>[
-                        for (var price in goldPrices)
-                          ListTile(
-                            title: Text(price.title),
-                            onTap: () async {
-                              Navigator.of(context).pop();
-
-                              SavedWealthsdao wealthsDao = SavedWealthsdao();
-                              SavedWealths? existingWealth =
-                                  await wealthsDao.getWealthByType(price.title);
-
-                              if (existingWealth != null) {
-                                // Mevcut varlık güncelleme
-                                _showEditDialog(
-                                    context,
-                                    MapEntry(
-                                        existingWealth, existingWealth.amount));
-                              } else {
-                                // Yeni varlık ekleme
-                                _showEditDialog(
-                                    context,
-                                    MapEntry(
-                                        SavedWealths(
-                                            id: DateTime.now()
-                                                .millisecondsSinceEpoch,
-                                            type: price.title,
-                                            amount: 0),
-                                        0));
-                              }
-                            },
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          });
-    });
-  }
-
-  void _showCurrencySelectItemDialog(
-      BuildContext context, Future<List<WealthPrice>> futureCurrencyPrices) {
-    futureCurrencyPrices.then((List<WealthPrice> currencyPrices) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Döviz Seç'),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    PopupMenuButton<String>(
-                      icon: ElevatedButton(
-                        onPressed: null,
-                        child: Text('Diğer Seçenekler'),
-                      ),
-                      onSelected: (String result) {
-                        Navigator.of(context).pop();
-                        if (result == 'Altın Seç') {
-                          _showSelectItemDialog(
-                              context,
-                              widget.futureGoldPrices,
-                              widget.futureCurrencyPrices);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                        const PopupMenuItem<String>(
-                          value: 'Altın Seç',
-                          child: Text('Altın Seç'),
-                        ),
-                      ],
-                    ),
-                    ListBody(
-                      children: <Widget>[
-                        for (var price in currencyPrices)
-                          ListTile(
-                            title: Text(price.title),
-                            onTap: () async {
-                              Navigator.of(context).pop();
-
-                              SavedWealthsdao wealthsDao = SavedWealthsdao();
-                              SavedWealths? existingWealth =
-                                  await wealthsDao.getWealthByType(price.title);
-
-                              if (existingWealth != null) {
-                                // Mevcut varlık güncelleme
-                                _showEditDialog(
-                                    context,
-                                    MapEntry(
-                                        existingWealth, existingWealth.amount));
-                              } else {
-                                // Yeni varlık ekleme
-                                _showEditDialog(
-                                    context,
-                                    MapEntry(
-                                        SavedWealths(
-                                            id: DateTime.now()
-                                                .millisecondsSinceEpoch,
-                                            type: price.title,
-                                            amount: 0),
-                                        0));
-                              }
-                            },
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          });
-    });
-  }
-
-  void _showEditDialog(
-      BuildContext context, MapEntry<SavedWealths, int> entry) {
-    TextEditingController controller = TextEditingController(
-      text: entry.value.toString(),
-    );
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Miktarı Giriniz'),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: 'Miktar'),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('İptal'),
-            ),
-            TextButton(
-              onPressed: () async {
-                int amount = int.tryParse(controller.text) ?? 0;
-                SavedWealthsdao wealthsDao = SavedWealthsdao();
-                SavedWealths? existingWealth =
-                    await wealthsDao.getWealthByType(entry.key.type);
-
-                if (existingWealth != null) {
-                  // Mevcut varlık güncelleme
-                  SavedWealths updatedWealth = SavedWealths(
-                    id: existingWealth.id,
-                    type: existingWealth.type,
-                    amount: amount,
-                  );
-                  await wealthsDao.updateWealth(updatedWealth);
-                } else {
-                  // Yeni varlık ekleme
-                  SavedWealths newWealth = SavedWealths(
-                    id: DateTime.now().millisecondsSinceEpoch,
-                    type: entry.key.type,
-                    amount: amount,
-                  );
-                  await wealthsDao.insertWealth(newWealth);
-                }
-
-                setState(() {
-                  selectedItems[entry.key] = amount;
-                  futureSavedWealths = SavedWealthsdao().getAllWealths();
-                });
-
-                Navigator.of(context).pop();
-              },
-              child: Text('Kaydet'),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
