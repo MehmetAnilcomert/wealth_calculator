@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/services/wealthPrice.dart';
+import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 class WealthPriceCard extends StatelessWidget {
   final WealthPrice wealthPrice;

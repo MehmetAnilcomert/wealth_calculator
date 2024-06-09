@@ -1,26 +1,11 @@
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
-
-class WealthPrice {
-  final String title;
-  final String buyingPrice;
-  final String sellingPrice;
-  final String change;
-  final String time;
-
-  WealthPrice({
-    required this.title,
-    required this.buyingPrice,
-    required this.sellingPrice,
-    required this.change,
-    required this.time,
-  });
-}
+import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 Future<List<WealthPrice>> fetchGoldPrices() async {
   final url =
-      'https://mbigpara.hurriyet.com.tr/altin/'; // Replace with the actual URL
+      'https://mbigpara.hurriyet.com.tr/altin/'; // Website to scrape data from.
 
   // Fetch the HTML document
   final response = await http.get(Uri.parse(url));

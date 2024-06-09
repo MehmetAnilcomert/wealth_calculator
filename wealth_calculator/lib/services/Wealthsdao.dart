@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
-import 'package:wealth_calculator/services/Wealths.dart';
+import 'package:wealth_calculator/modals/Wealths.dart';
 
 class SavedWealthsdao {
   Future<List<SavedWealths>> getAllWealths() async {
@@ -11,15 +11,6 @@ class SavedWealthsdao {
       return SavedWealths.fromMap(maps[i]);
     });
   }
-
-  /* Future<void> insertWealth(SavedWealths wealth) async {
-    var db = await DbHelper.dbAccess();
-    await db.insert('wealths', {
-      'id': wealth.id,
-      'type': wealth.type,
-      'amount': wealth.amount,
-    });
-  } */
 
   Future<void> insertWealth(SavedWealths wealth) async {
     final db = await DbHelper.dbAccess();

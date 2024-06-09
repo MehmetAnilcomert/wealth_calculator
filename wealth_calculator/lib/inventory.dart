@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:wealth_calculator/inventory/ItemDialogs.dart';
 import 'package:wealth_calculator/inventory/TotalPrice.dart';
 import 'package:wealth_calculator/inventory/WealthList.dart';
-import 'package:wealth_calculator/services/Wealths.dart';
+import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
-import 'package:wealth_calculator/services/wealthPrice.dart';
+import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 class InventoryScreen extends StatefulWidget {
   final Future<List<WealthPrice>> futureGoldPrices;

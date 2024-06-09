@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/services/Wealths.dart';
+import 'package:wealth_calculator/modals/WealthDataModal.dart';
+import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
-import 'package:wealth_calculator/services/wealthPrice.dart';
 
 class SelectItemDialog extends StatelessWidget {
   final Future<List<WealthPrice>> futureGoldPrices;
