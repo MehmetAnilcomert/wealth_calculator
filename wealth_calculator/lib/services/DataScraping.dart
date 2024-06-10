@@ -39,7 +39,7 @@ Future<List<WealthPrice>> fetchGoldPrices() async {
             sellingPrice: price2,
             change: change,
             time: time,
-            type: 0,
+            type: PriceType.gold,
           ));
         }
       }
@@ -88,7 +88,7 @@ Future<List<WealthPrice>> fetchCurrencyPrices() async {
             sellingPrice: sellingPrice,
             change: change,
             time: time,
-            type: 1,
+            type: PriceType.currency,
           ));
         }
       }
