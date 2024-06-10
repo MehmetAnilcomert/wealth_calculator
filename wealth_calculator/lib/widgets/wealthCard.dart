@@ -8,15 +8,17 @@ class WealthPriceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color changeColor =
-        wealthPrice.change.startsWith('-') ? Colors.red : Colors.green;
+    Color changeColor = wealthPrice.change.startsWith('-')
+        ? Colors.red
+        : const Color.fromARGB(255, 67, 155, 70);
     return Container(
       margin: EdgeInsets.all(5),
       width: 180,
       height: 180,
       padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 218, 211, 211),
+        color: Color.fromARGB(
+            255, 139, 202, 233), //Color.fromARGB(255, 218, 211, 211),
         borderRadius: BorderRadius.circular(8.0),
         boxShadow: [
           BoxShadow(
@@ -33,6 +35,7 @@ class WealthPriceCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
           SizedBox(height: 8.0),
@@ -40,6 +43,7 @@ class WealthPriceCard extends StatelessWidget {
             'Alış Fiyatı: ${wealthPrice.buyingPrice}',
             style: TextStyle(
               fontSize: 14.0,
+              color: Colors.black,
             ),
           ),
           SizedBox(height: 4.0),
@@ -47,6 +51,7 @@ class WealthPriceCard extends StatelessWidget {
             'Satış Fiyatı: ${wealthPrice.sellingPrice}',
             style: TextStyle(
               fontSize: 14.0,
+              color: Colors.black,
             ),
           ),
           SizedBox(height: 4.0),
@@ -55,6 +60,7 @@ class WealthPriceCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 14.0,
               color: changeColor,
+              fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: 4.0),
@@ -62,7 +68,7 @@ class WealthPriceCard extends StatelessWidget {
             'Saati: ${wealthPrice.time}',
             style: TextStyle(
               fontSize: 14.0,
-              color: const Color.fromARGB(255, 99, 98, 98),
+              color: Colors.black,
             ),
           ),
         ],

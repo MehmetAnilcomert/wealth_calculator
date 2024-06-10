@@ -18,12 +18,21 @@ class WealthList extends StatelessWidget {
     return ListView(
       children: selectedItems.entries.map((entry) {
         return ListTile(
-          title: Text(entry.key.type),
-          subtitle: Text('Miktar: ${entry.value}'),
-          tileColor: const Color.fromARGB(255, 35, 143, 41),
+          title: Text(
+            entry.key.type,
+            style: TextStyle(color: Colors.white),
+          ),
+          subtitle: Text(
+            'Miktar: ${entry.value}',
+            style: TextStyle(color: Colors.white),
+          ),
+          tileColor: Colors.blueGrey,
           onTap: () => onEdit(entry),
           trailing: IconButton(
-            icon: Icon(Icons.delete, color: Colors.black),
+            icon: Icon(
+              Icons.delete,
+              color: Colors.black87,
+            ),
             iconSize: 35,
             onPressed: () => onDelete(entry.key.id),
           ),

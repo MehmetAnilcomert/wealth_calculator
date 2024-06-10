@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/inventory/EditItem.dart';
 import 'package:wealth_calculator/inventory/ItemDialogs.dart';
 import 'package:wealth_calculator/inventory/TotalPrice.dart';
 import 'package:wealth_calculator/inventory/WealthList.dart';
@@ -106,12 +105,10 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                 selectedItems: selectedItems,
                                 onDelete: _deleteWealth,
                                 onEdit: (entry) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => EditItemDialog(
-                                      entry: entry,
-                                      onSave: _editWealth,
-                                    ),
+                                  ItemDialogs.showEditItemDialog(
+                                    context,
+                                    entry,
+                                    _editWealth,
                                   );
                                 },
                               ),
@@ -128,26 +125,29 @@ class _InventoryScreenState extends State<InventoryScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => SelectItemDialog(
-              futureGoldPrices: widget.futureGoldPrices,
-              futureCurrencyPrices: widget.futureCurrencyPrices,
-              onItemSelected: (wealth, amount) {
-                showDialog(
-                  context: context,
-                  builder: (context) => EditItemDialog(
-                    entry: MapEntry(wealth, amount),
-                    onSave: _editWealth,
-                  ),
+      floatingActionButton: Container(
+        padding: EdgeInsets.only(right: 0.0, bottom: 40.0),
+        child: FloatingActionButton(
+          backgroundColor: Colors.blueGrey,
+          onPressed: () {
+            ItemDialogs.showSelectItemDialog(
+              context,
+              widget.futureGoldPrices,
+              widget.futureCurrencyPrices,
+              (wealth, amount) {
+                ItemDialogs.showEditItemDialog(
+                  context,
+                  MapEntry(wealth, amount),
+                  _editWealth,
                 );
               },
-            ),
-          );
-        },
-        child: Icon(Icons.add),
+            );
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
