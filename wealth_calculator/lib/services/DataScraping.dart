@@ -39,6 +39,7 @@ Future<List<WealthPrice>> fetchGoldPrices() async {
             sellingPrice: price2,
             change: change,
             time: time,
+            type: 0,
           ));
         }
       }
@@ -54,7 +55,7 @@ Future<List<WealthPrice>> fetchGoldPrices() async {
 
 Future<List<WealthPrice>> fetchCurrencyPrices() async {
   final url =
-      'https://mbigpara.hurriyet.com.tr/doviz/'; // Replace with the actual URL
+      'https://mbigpara.hurriyet.com.tr/doviz/'; // Website to scrape data from.
 
   // Fetch the HTML document
   final response = await http.get(Uri.parse(url));
@@ -68,7 +69,7 @@ Future<List<WealthPrice>> fetchCurrencyPrices() async {
 
     if (table != null) {
       List<Element> rows = table.querySelectorAll('.tBody');
-      List<WealthPrice> goldPrices = [];
+      List<WealthPrice> currencyPrices = [];
 
       for (var row in rows) {
         var columns = row.children;
@@ -81,17 +82,18 @@ Future<List<WealthPrice>> fetchCurrencyPrices() async {
           String change = columns[3].text.trim();
           String time = columns[4].text.trim();
 
-          goldPrices.add(WealthPrice(
+          currencyPrices.add(WealthPrice(
             title: title,
             buyingPrice: buyingPrice,
             sellingPrice: sellingPrice,
             change: change,
             time: time,
+            type: 1,
           ));
         }
       }
 
-      return goldPrices;
+      return currencyPrices;
     }
   } else {
     print('Failed to load the webpage.');

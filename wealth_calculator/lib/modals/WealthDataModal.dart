@@ -4,14 +4,15 @@ class WealthPrice {
   final String sellingPrice;
   final String change;
   final String time;
+  final int? type;
 
-  WealthPrice({
-    required this.title,
-    required this.buyingPrice,
-    required this.sellingPrice,
-    required this.change,
-    required this.time,
-  });
+  WealthPrice(
+      {required this.title,
+      required this.buyingPrice,
+      required this.sellingPrice,
+      required this.change,
+      required this.time,
+      this.type});
 
   // Convert WealthPrice object to a map
   Map<String, dynamic> toMap() {
@@ -21,6 +22,7 @@ class WealthPrice {
       'sellingPrice': sellingPrice,
       'change': change,
       'time': time,
+      'type': type,
     };
   }
 
@@ -32,6 +34,7 @@ class WealthPrice {
       sellingPrice: map['sellingPrice'],
       change: map['change'],
       time: map['time'],
+      type: map['type'],
     );
   }
 }

@@ -16,66 +16,39 @@ class SelectItemDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<WealthPrice>>(
-      future: futureGoldPrices,
+    return FutureBuilder<List<List<WealthPrice>>>(
+      future: Future.wait([futureGoldPrices, futureCurrencyPrices]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Hata: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('Altın fiyatları bulunamadı'));
+          return Center(child: Text('Fiyat bilgileri bulunamadı'));
         } else {
+          List<WealthPrice> goldPrices = snapshot.data![0];
+          List<WealthPrice> currencyPrices = snapshot.data![1];
+
           return AlertDialog(
             title: Text('Altın Seç'),
             content: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  PopupMenuButton<String>(
-                    icon: ElevatedButton(
-                      onPressed: null,
-                      child: Text('Diğer Seçenekler'),
-                    ),
-                    onSelected: (String result) {
-                      Navigator.of(context).pop();
-                      if (result == 'Döviz Seç') {
-                        _showCurrencySelectItemDialog(
-                            context, futureCurrencyPrices);
-                      }
+                  ElevatedButton(
+                    onPressed: () {
+                      _showCurrencyList(context, currencyPrices,
+                          goldPrices); // Bu kısımda sıkıntı var incele ve düzelt Ekranda kalıyor kalmazsa döviz seçilip eklenemiyor
                     },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                      const PopupMenuItem<String>(
-                        value: 'Döviz Seç',
-                        child: Text('Döviz Seç'),
-                      ),
-                    ],
+                    child: Text('Döviz Seç'),
                   ),
                   ListBody(
                     children: <Widget>[
-                      for (var price in snapshot.data!)
+                      for (var price in goldPrices)
                         ListTile(
                           title: Text(price.title),
                           onTap: () async {
                             Navigator.of(context).pop();
-
-                            SavedWealthsdao wealthsDao = SavedWealthsdao();
-                            SavedWealths? existingWealth =
-                                await wealthsDao.getWealthByType(price.title);
-
-                            if (existingWealth != null) {
-                              // Mevcut varlık güncelleme
-                              onItemSelected(
-                                  existingWealth, existingWealth.amount);
-                            } else {
-                              // Yeni varlık ekleme
-                              onItemSelected(
-                                  SavedWealths(
-                                      id: DateTime.now().millisecondsSinceEpoch,
-                                      type: price.title,
-                                      amount: 0),
-                                  0);
-                            }
+                            _handleItemSelection(price.title, onItemSelected);
                           },
                         ),
                     ],
@@ -89,128 +62,84 @@ class SelectItemDialog extends StatelessWidget {
     );
   }
 
-  void _showCurrencySelectItemDialog(
-      BuildContext context, Future<List<WealthPrice>> futureCurrencyPrices) {
-    futureCurrencyPrices.then((List<WealthPrice> currencyPrices) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Döviz Seç'),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    PopupMenuButton<String>(
-                      icon: ElevatedButton(
-                        onPressed: null,
-                        child: Text('Diğer Seçenekler'),
-                      ),
-                      onSelected: (String result) {
-                        Navigator.of(context).pop();
-                        if (result == 'Altın Seç') {
-                          _showSelectItemDialog(
-                              context, futureGoldPrices, futureCurrencyPrices);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                        const PopupMenuItem<String>(
-                          value: 'Altın Seç',
-                          child: Text('Altın Seç'),
-                        ),
-                      ],
-                    ),
-                    ListBody(
-                      children: <Widget>[
-                        for (var price in currencyPrices)
-                          ListTile(
-                            title: Text(price.title),
-                            onTap: () async {
-                              Navigator.of(context).pop();
-
-                              SavedWealthsdao wealthsDao = SavedWealthsdao();
-                              SavedWealths? existingWealth =
-                                  await wealthsDao.getWealthByType(price.title);
-
-                              if (existingWealth != null) {
-                                // Mevcut varlık güncelleme
-                                onItemSelected(
-                                    existingWealth, existingWealth.amount);
-                              } else {
-                                // Yeni varlık ekleme
-                                onItemSelected(
-                                    SavedWealths(
-                                        id: DateTime.now()
-                                            .millisecondsSinceEpoch,
-                                        type: price.title,
-                                        amount: 0),
-                                    0);
-                              }
-                            },
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          });
-    });
-  }
-
-  void _showSelectItemDialog(
-    BuildContext context,
-    Future<List<WealthPrice>> futureGoldPrices,
-    Future<List<WealthPrice>> futureCurrencyPrices,
-  ) {
+  void _showCurrencyList(BuildContext context, List<WealthPrice> currencyPrices,
+      List<WealthPrice> goldPrices) {
     showDialog(
       context: context,
       builder: (context) {
-        return SelectItemDialog(
-          futureGoldPrices: futureGoldPrices,
-          futureCurrencyPrices: futureCurrencyPrices,
-          onItemSelected: onItemSelected,
+        return AlertDialog(
+          title: Text('Döviz Seç'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _showPriceList(context, goldPrices, currencyPrices);
+                  },
+                  child: Text('Altın Seç'),
+                ),
+                ListBody(
+                  children: <Widget>[
+                    for (var price in currencyPrices)
+                      ListTile(
+                        title: Text(price.title),
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          _handleItemSelection(price.title, onItemSelected);
+                        },
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
-}
 
-class EditItemDialog extends StatelessWidget {
-  final MapEntry<SavedWealths, int> entry;
-  final Function onSave;
-
-  EditItemDialog({required this.entry, required this.onSave});
-
-  @override
-  Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController(
-      text: entry.value.toString(),
+  void _showPriceList(BuildContext context, List<WealthPrice> prices,
+      List<WealthPrice> otherPrices) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Altın Seç'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                ListBody(
+                  children: <Widget>[
+                    for (var price in prices)
+                      ListTile(
+                        title: Text(price.title),
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          _handleItemSelection(price.title, onItemSelected);
+                        },
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
+  }
 
-    return AlertDialog(
-      title: Text('Miktarı Giriniz'),
-      content: TextField(
-        controller: controller,
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(labelText: 'Miktar'),
-      ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('İptal'),
-        ),
-        TextButton(
-          onPressed: () {
-            int amount = int.tryParse(controller.text) ?? 0;
-            onSave(entry.key, amount);
-            Navigator.of(context).pop();
-          },
-          child: Text('Kaydet'),
-        ),
-      ],
-    );
+  void _handleItemSelection(String type, Function onItemSelected) async {
+    SavedWealthsdao wealthsDao = SavedWealthsdao();
+    SavedWealths? existingWealth = await wealthsDao.getWealthByType(type);
+
+    if (existingWealth != null) {
+      onItemSelected(existingWealth, existingWealth.amount);
+    } else {
+      onItemSelected(
+          SavedWealths(
+              id: DateTime.now().millisecondsSinceEpoch, type: type, amount: 0),
+          0);
+    }
   }
 }

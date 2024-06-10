@@ -1,6 +1,5 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
-import 'package:wealth_calculator/services/DataScraping.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 
 class GoldDataDao {
@@ -8,7 +7,7 @@ class GoldDataDao {
   Future<void> insertWealthPrice(WealthPrice wealthPrice) async {
     final db = await DbHelper.dbAccess();
     await db.insert(
-      'wealthdata',
+      'wealthPrice',
       wealthPrice.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -18,7 +17,7 @@ class GoldDataDao {
   Future<void> updateWealthPrice(WealthPrice wealthPrice) async {
     final db = await DbHelper.dbAccess();
     await db.update(
-      'wealthdata',
+      'wealthPrice',
       wealthPrice.toMap(),
       where: 'title = ?',
       whereArgs: [wealthPrice.title],
@@ -29,7 +28,7 @@ class GoldDataDao {
   Future<void> deleteWealthPrice(String title) async {
     final db = await DbHelper.dbAccess();
     await db.delete(
-      'wealthdata',
+      'wealthPrice',
       where: 'title = ?',
       whereArgs: [title],
     );
@@ -39,7 +38,7 @@ class GoldDataDao {
   Future<WealthPrice?> getWealthByType(String type) async {
     final db = await DbHelper.dbAccess();
     final List<Map<String, dynamic>> maps = await db.query(
-      'wealthdata',
+      'wealthPrice',
       where: 'title = ?',
       whereArgs: [type],
     );
@@ -54,7 +53,7 @@ class GoldDataDao {
   // Fetch all WealthPrices from the database
   Future<List<WealthPrice>> fetchAllWealthPrices() async {
     final db = await DbHelper.dbAccess();
-    final List<Map<String, dynamic>> maps = await db.query('wealthdata');
+    final List<Map<String, dynamic>> maps = await db.query('wealthPrice');
 
     return List.generate(maps.length, (i) {
       return WealthPrice.fromMap(maps[i]);

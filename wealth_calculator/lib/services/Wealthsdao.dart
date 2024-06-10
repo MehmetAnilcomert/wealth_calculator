@@ -5,7 +5,8 @@ import 'package:wealth_calculator/modals/Wealths.dart';
 class SavedWealthsdao {
   Future<List<SavedWealths>> getAllWealths() async {
     final db = await DbHelper.dbAccess();
-    final List<Map<String, dynamic>> maps = await db.query('wealths');
+    List<Map<String, dynamic>> maps =
+        await db.rawQuery("SELECT * FROM wealths");
 
     return List.generate(maps.length, (i) {
       return SavedWealths.fromMap(maps[i]);

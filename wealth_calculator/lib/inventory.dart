@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/inventory/EditItem.dart';
 import 'package:wealth_calculator/inventory/ItemDialogs.dart';
 import 'package:wealth_calculator/inventory/TotalPrice.dart';
 import 'package:wealth_calculator/inventory/WealthList.dart';
