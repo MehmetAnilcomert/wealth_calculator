@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:wealth_calculator/inventory.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/services/DataScraping.dart';

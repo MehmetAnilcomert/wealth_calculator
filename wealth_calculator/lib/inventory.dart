@@ -18,25 +18,31 @@ class InventoryScreen extends StatefulWidget {
 
 class _InventoryScreenState extends State<InventoryScreen> {
   late Future<List<SavedWealths>> futureSavedWealths;
+  List<SavedWealths> savedWealths = [];
   late Map<SavedWealths, int> selectedItems = {};
   double totalPrice = 0; // Global totalPrice değişkeni
 
   @override
   void initState() {
     super.initState();
-    futureSavedWealths = SavedWealthsdao().getAllWealths();
+    _loadWealths();
     _calculateTotalPrice();
+  }
+
+  Future<void> _loadWealths() async {
+    savedWealths = await SavedWealthsdao().getAllWealths();
+    setState(() {});
   }
 
   void _refreshWealths() {
     setState(() {
-      futureSavedWealths = SavedWealthsdao().getAllWealths();
       _calculateTotalPrice();
     });
   }
 
   void _deleteWealth(int id) async {
     await SavedWealthsdao().deleteWealth(id);
+    savedWealths.removeWhere((wealth) => wealth.id == id);
     _refreshWealths();
   }
 
@@ -52,6 +58,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
         amount: amount,
       );
       await wealthsDao.updateWealth(updatedWealth);
+      int index = savedWealths.indexWhere((w) => w.id == updatedWealth.id);
+      savedWealths[index] = updatedWealth;
     } else {
       SavedWealths newWealth = SavedWealths(
         id: DateTime.now().millisecondsSinceEpoch,
@@ -59,6 +67,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
         amount: amount,
       );
       await wealthsDao.insertWealth(newWealth);
+      savedWealths.add(newWealth);
     }
 
     _refreshWealths();
@@ -71,7 +80,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
     List<WealthPrice> currencyPrices = prices[1];
 
     double total = 0;
-    List<SavedWealths> savedWealths = await futureSavedWealths;
 
     for (var wealth in savedWealths) {
       double price = 0.0;
@@ -150,21 +158,16 @@ class _InventoryScreenState extends State<InventoryScreen> {
               ],
             )),
             Expanded(
-              child: FutureBuilder<List<SavedWealths>>(
-                future: futureSavedWealths,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Hata: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('Varlık bulunamadı'));
-                  } else {
-                    selectedItems = {
-                      for (var wealth in snapshot.data!) wealth: wealth.amount,
-                    };
-                    return WealthList(
-                      selectedItems: selectedItems,
+              child: savedWealths.isEmpty
+                  ? Center(
+                      child: Text(
+                      'Varlık Bulunamadı',
+                      style: TextStyle(fontSize: 25),
+                    ))
+                  : WealthList(
+                      selectedItems: {
+                        for (var wealth in savedWealths) wealth: wealth.amount,
+                      },
                       onDelete: _deleteWealth,
                       onEdit: (entry) {
                         ItemDialogs.showEditItemDialog(
@@ -173,10 +176,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                           _editWealth,
                         );
                       },
-                    );
-                  }
-                },
-              ),
+                    ),
             ),
           ],
         ));
