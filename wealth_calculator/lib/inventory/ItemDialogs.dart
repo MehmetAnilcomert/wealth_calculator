@@ -8,8 +8,10 @@ class ItemDialogs {
     BuildContext context,
     Future<List<WealthPrice>> futureGoldPrices,
     Future<List<WealthPrice>> futureCurrencyPrices,
-    Function(SavedWealths, int) onItemSelected,
-  ) {
+    Function(SavedWealths, int) onItemSelected, {
+    List<String> disabledItems = const [],
+    List<String> hiddenItems = const [],
+  }) {
     showDialog(
       context: context,
       builder: (context) {
@@ -17,6 +19,8 @@ class ItemDialogs {
           futureGoldPrices: futureGoldPrices,
           futureCurrencyPrices: futureCurrencyPrices,
           onItemSelected: onItemSelected,
+          disabledItems: disabledItems,
+          hiddenItems: hiddenItems,
         );
       },
     );
@@ -67,11 +71,15 @@ class SelectItemDialog extends StatefulWidget {
   final Future<List<WealthPrice>> futureGoldPrices;
   final Future<List<WealthPrice>> futureCurrencyPrices;
   final Function(SavedWealths, int) onItemSelected;
+  final List<String> disabledItems;
+  final List<String> hiddenItems;
 
   SelectItemDialog({
     required this.futureGoldPrices,
     required this.futureCurrencyPrices,
     required this.onItemSelected,
+    this.disabledItems = const [],
+    this.hiddenItems = const [],
   });
 
   @override
@@ -88,12 +96,16 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
     super.initState();
     widget.futureGoldPrices.then((prices) {
       setState(() {
-        goldPrices = prices;
+        goldPrices = prices
+            .where((price) => !widget.hiddenItems.contains(price.title))
+            .toList();
       });
     });
     widget.futureCurrencyPrices.then((prices) {
       setState(() {
-        currencyPrices = prices;
+        currencyPrices = prices
+            .where((price) => !widget.hiddenItems.contains(price.title))
+            .toList();
       });
     });
   }
@@ -133,27 +145,33 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                     : currencyPrices)
                   ListTile(
                     title: Text(price.title),
-                    onTap: () async {
-                      Navigator.of(context).pop();
+                    enabled: !widget.disabledItems.contains(price.title),
+                    textColor: widget.disabledItems.contains(price.title)
+                        ? Colors.grey
+                        : null,
+                    onTap: widget.disabledItems.contains(price.title)
+                        ? null
+                        : () async {
+                            Navigator.of(context).pop();
 
-                      SavedWealthsdao wealthsDao = SavedWealthsdao();
-                      SavedWealths? existingWealth =
-                          await wealthsDao.getWealthByType(price.title);
+                            SavedWealthsdao wealthsDao = SavedWealthsdao();
+                            SavedWealths? existingWealth =
+                                await wealthsDao.getWealthByType(price.title);
 
-                      if (existingWealth != null) {
-                        widget.onItemSelected(
-                            existingWealth, existingWealth.amount);
-                      } else {
-                        widget.onItemSelected(
-                          SavedWealths(
-                            id: DateTime.now().millisecondsSinceEpoch,
-                            type: price.title,
-                            amount: 0,
-                          ),
-                          0,
-                        );
-                      }
-                    },
+                            if (existingWealth != null) {
+                              widget.onItemSelected(
+                                  existingWealth, existingWealth.amount);
+                            } else {
+                              widget.onItemSelected(
+                                SavedWealths(
+                                  id: DateTime.now().millisecondsSinceEpoch,
+                                  type: price.title,
+                                  amount: 0,
+                                ),
+                                0,
+                              );
+                            }
+                          },
                   ),
               ],
             ),

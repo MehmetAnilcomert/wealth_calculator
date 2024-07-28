@@ -158,6 +158,13 @@ class _InventoryScreenState extends State<InventoryScreen> {
                   _editWealth,
                 );
               },
+              hiddenItems: [
+                //Buradaki çeşitlerin hesaplaması dolar değeri ile olduğu için soruna yol açıyor. Tl`ye çevirmek gerekli.
+                'Altın (ONS/\$)',
+                'Altın (\$/kg)',
+                'Altın (Euro/kg)',
+                'Külçe Altın (\$)'
+              ],
             );
           },
           child: Icon(
