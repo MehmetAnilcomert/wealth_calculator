@@ -101,78 +101,84 @@ class _InventoryScreenState extends State<InventoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Varlık Hesaplayıcı',
-          style: TextStyle(color: Colors.white),
+        appBar: AppBar(
+          title: Text(
+            'Varlık Hesaplayıcı',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.blueGrey,
         ),
-        backgroundColor: Colors.blueGrey,
-      ),
-      body: Column(
-        children: [
-          TotalPrice(totalPrice),
-          Expanded(
-            child: FutureBuilder<List<SavedWealths>>(
-              future: futureSavedWealths,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Hata: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('Varlık bulunamadı'));
-                } else {
-                  selectedItems = {
-                    for (var wealth in snapshot.data!) wealth: wealth.amount,
-                  };
-                  return WealthList(
-                    selectedItems: selectedItems,
-                    onDelete: _deleteWealth,
-                    onEdit: (entry) {
-                      ItemDialogs.showEditItemDialog(
+        body: Column(
+          children: [
+            Container(
+                child: Stack(
+              children: [
+                Positioned(
+                  child: TotalPrice(totalPrice),
+                ),
+                Positioned(
+                  right: 14,
+                  top: 0, // FloatingActionButton'un konumu
+                  child: FloatingActionButton(
+                    backgroundColor: const Color.fromARGB(255, 56, 160, 246),
+                    onPressed: () {
+                      ItemDialogs.showSelectItemDialog(
                         context,
-                        entry,
-                        _editWealth,
+                        widget.futureGoldPrices,
+                        widget.futureCurrencyPrices,
+                        (wealth, amount) {
+                          ItemDialogs.showEditItemDialog(
+                            context,
+                            MapEntry(wealth, amount),
+                            _editWealth,
+                          );
+                        },
+                        hiddenItems: [
+                          'Altın (ONS/\$)',
+                          'Altın (\$/kg)',
+                          'Altın (Euro/kg)',
+                          'Külçe Altın (\$)'
+                        ],
                       );
                     },
-                  );
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: Container(
-        padding: EdgeInsets.only(right: 0.0, bottom: 40.0),
-        child: FloatingActionButton(
-          backgroundColor: Colors.blueGrey,
-          onPressed: () {
-            ItemDialogs.showSelectItemDialog(
-              context,
-              widget.futureGoldPrices,
-              widget.futureCurrencyPrices,
-              (wealth, amount) {
-                ItemDialogs.showEditItemDialog(
-                  context,
-                  MapEntry(wealth, amount),
-                  _editWealth,
-                );
-              },
-              hiddenItems: [
-                //Buradaki çeşitlerin hesaplaması dolar değeri ile olduğu için soruna yol açıyor. Tl`ye çevirmek gerekli.
-                'Altın (ONS/\$)',
-                'Altın (\$/kg)',
-                'Altın (Euro/kg)',
-                'Külçe Altın (\$)'
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ],
-            );
-          },
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
+            )),
+            Expanded(
+              child: FutureBuilder<List<SavedWealths>>(
+                future: futureSavedWealths,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Hata: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('Varlık bulunamadı'));
+                  } else {
+                    selectedItems = {
+                      for (var wealth in snapshot.data!) wealth: wealth.amount,
+                    };
+                    return WealthList(
+                      selectedItems: selectedItems,
+                      onDelete: _deleteWealth,
+                      onEdit: (entry) {
+                        ItemDialogs.showEditItemDialog(
+                          context,
+                          entry,
+                          _editWealth,
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }
