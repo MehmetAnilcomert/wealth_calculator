@@ -26,11 +26,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
   void initState() {
     super.initState();
     _loadWealths();
-    _calculateTotalPrice();
+    //_calculateTotalPrice();
   }
 
   Future<void> _loadWealths() async {
     savedWealths = await SavedWealthsdao().getAllWealths();
+    _calculateTotalPrice();
     setState(() {});
   }
 
