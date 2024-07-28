@@ -19,16 +19,19 @@ class InventoryScreen extends StatefulWidget {
 class _InventoryScreenState extends State<InventoryScreen> {
   late Future<List<SavedWealths>> futureSavedWealths;
   late Map<SavedWealths, int> selectedItems = {};
+  double totalPrice = 0; // Global totalPrice değişkeni
 
   @override
   void initState() {
     super.initState();
     futureSavedWealths = SavedWealthsdao().getAllWealths();
+    _calculateTotalPrice();
   }
 
   void _refreshWealths() {
     setState(() {
       futureSavedWealths = SavedWealthsdao().getAllWealths();
+      _calculateTotalPrice();
     });
   }
 
@@ -43,7 +46,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
         await wealthsDao.getWealthByType(wealth.type);
 
     if (existingWealth != null) {
-      // Update existing wealth
       SavedWealths updatedWealth = SavedWealths(
         id: existingWealth.id,
         type: existingWealth.type,
@@ -51,7 +53,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
       );
       await wealthsDao.updateWealth(updatedWealth);
     } else {
-      // Insert new wealth
       SavedWealths newWealth = SavedWealths(
         id: DateTime.now().millisecondsSinceEpoch,
         type: wealth.type,
@@ -63,14 +64,53 @@ class _InventoryScreenState extends State<InventoryScreen> {
     _refreshWealths();
   }
 
+  Future<void> _calculateTotalPrice() async {
+    List<List<WealthPrice>> prices = await Future.wait(
+        [widget.futureGoldPrices, widget.futureCurrencyPrices]);
+    List<WealthPrice> goldPrices = prices[0];
+    List<WealthPrice> currencyPrices = prices[1];
+
+    double total = 0;
+    List<SavedWealths> savedWealths = await futureSavedWealths;
+
+    for (var wealth in savedWealths) {
+      double price = 0.0;
+      for (var gold in goldPrices) {
+        if (gold.title == wealth.type) {
+          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
+          break;
+        }
+      }
+      if (price == 0.0) {
+        for (var currency in currencyPrices) {
+          if (currency.title == wealth.type) {
+            price =
+                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+            break;
+          }
+        }
+      }
+      total += price * wealth.amount;
+    }
+
+    setState(() {
+      totalPrice = total;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Varlık Hesaplayıcı'),
+        title: Text(
+          'Varlık Hesaplayıcı',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blueGrey,
       ),
       body: Column(
         children: [
+          TotalPrice(totalPrice),
           Expanded(
             child: FutureBuilder<List<SavedWealths>>(
               future: futureSavedWealths,
@@ -85,38 +125,15 @@ class _InventoryScreenState extends State<InventoryScreen> {
                   selectedItems = {
                     for (var wealth in snapshot.data!) wealth: wealth.amount,
                   };
-                  return FutureBuilder<List<List<WealthPrice>>>(
-                    future: Future.wait(
-                        [widget.futureGoldPrices, widget.futureCurrencyPrices]),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Hata: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(child: Text('Fiyat bilgisi bulunamadı'));
-                      } else {
-                        double totalPrice = _calculateTotalPrice(
-                            snapshot.data![0], snapshot.data![1]);
-                        return Column(
-                          children: [
-                            Expanded(
-                              child: WealthList(
-                                selectedItems: selectedItems,
-                                onDelete: _deleteWealth,
-                                onEdit: (entry) {
-                                  ItemDialogs.showEditItemDialog(
-                                    context,
-                                    entry,
-                                    _editWealth,
-                                  );
-                                },
-                              ),
-                            ),
-                            TotalPrice(totalPrice),
-                          ],
-                        );
-                      }
+                  return WealthList(
+                    selectedItems: selectedItems,
+                    onDelete: _deleteWealth,
+                    onEdit: (entry) {
+                      ItemDialogs.showEditItemDialog(
+                        context,
+                        entry,
+                        _editWealth,
+                      );
                     },
                   );
                 }
@@ -150,32 +167,5 @@ class _InventoryScreenState extends State<InventoryScreen> {
         ),
       ),
     );
-  }
-
-  double _calculateTotalPrice(
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
-    double totalPrice = 0;
-
-    selectedItems.forEach((key, value) {
-      double price = 0.0;
-      for (var gold in goldPrices) {
-        if (gold.title == key.type) {
-          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
-          break;
-        }
-      }
-      if (price == 0.0) {
-        for (var currency in currencyPrices) {
-          if (currency.title == key.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
-            break;
-          }
-        }
-      }
-      totalPrice += price * value;
-    });
-
-    return totalPrice;
   }
 }

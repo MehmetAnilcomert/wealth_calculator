@@ -62,7 +62,8 @@ class CircularMoneyStatePainter extends CustomPainter {
       final paint = Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 20
-        ..color = colors[i];
+        ..color = colors[i]
+        ..strokeCap = StrokeCap.round; // Uçları yuvarlak yapar
 
       canvas.drawArc(rect, startAngle, sweepAngle, false, paint);
       startAngle += sweepAngle;

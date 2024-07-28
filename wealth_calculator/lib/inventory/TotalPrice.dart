@@ -9,13 +9,13 @@ class TotalPrice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.black),
-      height: 250,
+      decoration: BoxDecoration(color: Colors.blueGrey),
+      height: 235,
       child: Center(
           child: CircularMoneyState(
         totalAmount: totalPrice.toDouble(),
-        segments: [15000, 10000, 7000, 3147.25],
-        colors: [Colors.orange, Colors.orange, Colors.blue, Colors.blue],
+        segments: [5000, 10000],
+        colors: [Colors.blue, const Color.fromARGB(255, 226, 137, 5)],
       )),
     );
   }
