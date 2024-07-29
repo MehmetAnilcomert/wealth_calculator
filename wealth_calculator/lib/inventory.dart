@@ -26,13 +26,27 @@ class _InventoryScreenState extends State<InventoryScreen> {
   void initState() {
     super.initState();
     _loadWealths();
-    //_calculateTotalPrice();
+    _calculateTotalPrice();
   }
 
   Future<void> _loadWealths() async {
-    savedWealths = await SavedWealthsdao().getAllWealths();
-    _calculateTotalPrice();
-    setState(() {});
+    try {
+      savedWealths = await SavedWealthsdao().getAllWealths();
+      if (savedWealths.isEmpty) {
+        setState(() {
+          savedWealths = [];
+          totalPrice = 0; // Varlık bulunamadığında toplam fiyatı sıfırlıyoruz
+        });
+      } else {
+        setState(() {});
+        await _calculateTotalPrice(); // Veriler yüklendiğinde toplam fiyatı hesapla
+      }
+    } catch (e) {
+      setState(() {
+        savedWealths = [];
+        totalPrice = 0; // Hata durumunda toplam fiyatı sıfırlıyoruz
+      });
+    }
   }
 
   void _refreshWealths() {

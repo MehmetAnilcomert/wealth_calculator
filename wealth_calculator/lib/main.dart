@@ -45,23 +45,41 @@ class _GoldPricesScreenState extends State<GoldPricesScreen> {
         appBar: AppBar(
           title: Text('Fiyatlar'),
           actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => InventoryScreen(
-                          futureGoldPrices, futureCurrencyPrices)),
-                );
+            FutureBuilder(
+              future: Future.wait([futureGoldPrices, futureCurrencyPrices]),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.error),
+                    tooltip: 'Hata: ${snapshot.error}',
+                  );
+                } else {
+                  return IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InventoryScreen(
+                            futureGoldPrices,
+                            futureCurrencyPrices,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.inventory),
+                  );
+                }
               },
-              icon: Icon(Icons.inventory),
             ),
           ],
         ),
         body: TabBarView(
           children: [
             FutureBuilder<List<WealthPrice>>(
-              future: fetchGoldPrices(),
+              future: futureGoldPrices,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -76,18 +94,15 @@ class _GoldPricesScreenState extends State<GoldPricesScreen> {
             ),
             FutureBuilder<List<WealthPrice>>(
               future: futureCurrencyPrices,
-              builder: (context, goldPriceSnapshot) {
-                if (goldPriceSnapshot.connectionState ==
-                    ConnectionState.waiting) {
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
-                } else if (goldPriceSnapshot.hasError) {
-                  return Center(
-                      child: Text('Error: ${goldPriceSnapshot.error}'));
-                } else if (!goldPriceSnapshot.hasData ||
-                    goldPriceSnapshot.data!.isEmpty) {
-                  return Center(child: Text('No gold price data found'));
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No currency price data found'));
                 } else {
-                  return buildPricesTab(goldPriceSnapshot.data!);
+                  return buildPricesTab(snapshot.data!);
                 }
               },
             ),
