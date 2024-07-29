@@ -3,8 +3,14 @@ import 'package:wealth_calculator/widgets/circular.dart';
 
 class TotalPrice extends StatelessWidget {
   final double totalPrice;
+  final List<double> segments;
+  final List<Color> colors;
 
-  TotalPrice(this.totalPrice);
+  TotalPrice({
+    required this.totalPrice,
+    required this.segments,
+    required this.colors,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +18,12 @@ class TotalPrice extends StatelessWidget {
       decoration: BoxDecoration(color: Colors.blueGrey),
       height: 235,
       child: Center(
-          child: CircularMoneyState(
-        totalAmount: totalPrice.toDouble(),
-        segments: [5000, 10000],
-        colors: [Colors.blue, const Color.fromARGB(255, 226, 137, 5)],
-      )),
+        child: CircularMoneyState(
+          totalAmount: totalPrice,
+          segments: segments,
+          colors: colors,
+        ),
+      ),
     );
   }
 }

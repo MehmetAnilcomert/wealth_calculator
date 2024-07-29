@@ -22,6 +22,14 @@ class _InventoryScreenState extends State<InventoryScreen> {
   late Map<SavedWealths, int> selectedItems = {};
   double totalPrice = 0; // Global totalPrice değişkeni
 
+  final Map<String, Color> colorMap = {
+    'Altın (TL/GR)': Colors.yellow,
+    'ABD Doları': Colors.green,
+    'Euro': Colors.blue,
+    'İngiliz Sterlini': Colors.purple,
+    'TL': Colors.red,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -121,6 +129,46 @@ class _InventoryScreenState extends State<InventoryScreen> {
     });
   }
 
+  List<double> calculateSegments(
+      Map<SavedWealths, int> selectedItems,
+      List<WealthPrice> goldPrices,
+      List<WealthPrice> currencyPrices,
+      Map<String, Color> colorMap) {
+    List<double> segments = [];
+    List<Color> colors = [];
+    double total = 0;
+
+    for (var entry in selectedItems.entries) {
+      double price = 0.0;
+      for (var gold in goldPrices) {
+        if (gold.title == entry.key.type) {
+          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
+          break;
+        }
+      }
+      if (price == 0.0) {
+        for (var currency in currencyPrices) {
+          if (currency.title == entry.key.type) {
+            price =
+                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+            break;
+          }
+        }
+      }
+      double value = price * entry.value;
+      total += value;
+      segments.add(value);
+      colors.add(colorMap[entry.key.type] ?? Colors.grey);
+    }
+
+    // Normalize the segments
+    if (total > 0) {
+      segments = segments.map((segment) => (segment / total) * 360).toList();
+    }
+
+    return segments;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,7 +185,42 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 child: Stack(
               children: [
                 Positioned(
-                  child: TotalPrice(totalPrice),
+                  child: FutureBuilder<List<List<WealthPrice>>>(
+                    future: Future.wait(
+                      [widget.futureGoldPrices, widget.futureCurrencyPrices],
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Hata: ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        List<WealthPrice> goldPrices = snapshot.data![0];
+                        List<WealthPrice> currencyPrices = snapshot.data![1];
+                        List<double> segments = calculateSegments(
+                          {
+                            for (var wealth in savedWealths)
+                              wealth: wealth.amount
+                          },
+                          goldPrices,
+                          currencyPrices,
+                          colorMap,
+                        );
+                        List<Color> colors = [
+                          for (var wealth in savedWealths)
+                            colorMap[wealth.type] ?? Colors.grey
+                        ];
+
+                        return TotalPrice(
+                          totalPrice: totalPrice,
+                          segments: segments,
+                          colors: colors,
+                        );
+                      } else {
+                        return Text('Veri bulunamadı');
+                      }
+                    },
+                  ),
                 ),
                 Positioned(
                   right: 14,
