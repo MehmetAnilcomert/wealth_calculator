@@ -21,6 +21,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
   List<SavedWealths> savedWealths = [];
   late Map<SavedWealths, int> selectedItems = {};
   double totalPrice = 0; // Global totalPrice değişkeni
+  List<double> segments = []; // Global segments değişkeni
+  List<Color> colors = []; // Global colors değişkeni
 
   final Map<String, Color> colorMap = {
     'Altın (TL/GR)': Colors.yellow,
@@ -34,21 +36,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
   void initState() {
     super.initState();
     _loadWealths();
-    _calculateTotalPrice();
   }
 
   Future<void> _loadWealths() async {
     try {
       savedWealths = await SavedWealthsdao().getAllWealths();
-      if (savedWealths.isEmpty) {
-        setState(() {
-          savedWealths = [];
-          totalPrice = 0; // Varlık bulunamadığında toplam fiyatı sıfırlıyoruz
-        });
-      } else {
-        setState(() {});
-        await _calculateTotalPrice(); // Veriler yüklendiğinde toplam fiyatı hesapla
-      }
+      await _calculateTotalPrice(); // Veriler yüklendiğinde toplam fiyatı hesapla
     } catch (e) {
       setState(() {
         savedWealths = [];
@@ -57,16 +50,24 @@ class _InventoryScreenState extends State<InventoryScreen> {
     }
   }
 
-  void _refreshWealths() {
-    setState(() {
-      _calculateTotalPrice();
-    });
+  Future<void> _refreshWealths() async {
+    try {
+      savedWealths = await SavedWealthsdao().getAllWealths();
+      await _calculateTotalPrice(); // Varlıklar güncellendikten sonra toplam fiyatı hesapla
+    } catch (e) {
+      setState(() {
+        savedWealths = [];
+        totalPrice = 0; // Hata durumunda toplam fiyatı sıfırlıyoruz
+      });
+    }
   }
 
   void _deleteWealth(int id) async {
     await SavedWealthsdao().deleteWealth(id);
-    savedWealths.removeWhere((wealth) => wealth.id == id);
-    _refreshWealths();
+    setState(() {
+      savedWealths.removeWhere((wealth) => wealth.id == id);
+      _calculateTotalPrice(); // Varlık silindikten sonra toplam fiyatı ve segmentleri hesapla
+    });
   }
 
   void _editWealth(SavedWealths wealth, int amount) async {
@@ -81,8 +82,13 @@ class _InventoryScreenState extends State<InventoryScreen> {
         amount: amount,
       );
       await wealthsDao.updateWealth(updatedWealth);
-      int index = savedWealths.indexWhere((w) => w.id == updatedWealth.id);
-      savedWealths[index] = updatedWealth;
+      setState(() {
+        int index = savedWealths.indexWhere((w) => w.id == updatedWealth.id);
+        if (index != -1) {
+          savedWealths[index] = updatedWealth;
+        }
+        _calculateTotalPrice(); // Varlık güncellendikten sonra toplam fiyatı ve segmentleri hesapla
+      });
     } else {
       SavedWealths newWealth = SavedWealths(
         id: DateTime.now().millisecondsSinceEpoch,
@@ -90,10 +96,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
         amount: amount,
       );
       await wealthsDao.insertWealth(newWealth);
-      savedWealths.add(newWealth);
+      setState(() {
+        savedWealths.add(newWealth);
+        _calculateTotalPrice(); // Yeni varlık eklendikten sonra toplam fiyatı ve segmentleri hesapla
+      });
     }
-
-    _refreshWealths();
   }
 
   Future<void> _calculateTotalPrice() async {
@@ -126,6 +133,21 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
     setState(() {
       totalPrice = total;
+    });
+
+    // Segment hesaplama ve güncelleme
+    List<double> newSegments = calculateSegments(
+      {for (var wealth in savedWealths) wealth: wealth.amount},
+      goldPrices,
+      currencyPrices,
+      colorMap,
+    );
+
+    setState(() {
+      segments = newSegments;
+      colors = [
+        for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey
+      ];
     });
   }
 
@@ -166,6 +188,21 @@ class _InventoryScreenState extends State<InventoryScreen> {
       segments = segments.map((segment) => (segment / total) * 360).toList();
     }
 
+    // Grouping gray segments at the end
+    List<double> graySegments = [];
+    List<double> nonGraySegments = [];
+    for (int i = 0; i < segments.length; i++) {
+      if (colors[i] == Colors.grey) {
+        graySegments.add(segments[i]);
+      } else {
+        nonGraySegments.add(segments[i]);
+      }
+    }
+
+    segments = nonGraySegments + graySegments;
+    colors = colors.where((color) => color != Colors.grey).toList()
+      ..addAll(List.filled(graySegments.length, Colors.grey));
+
     return segments;
   }
 
@@ -197,19 +234,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       } else if (snapshot.hasData) {
                         List<WealthPrice> goldPrices = snapshot.data![0];
                         List<WealthPrice> currencyPrices = snapshot.data![1];
-                        List<double> segments = calculateSegments(
-                          {
-                            for (var wealth in savedWealths)
-                              wealth: wealth.amount
-                          },
-                          goldPrices,
-                          currencyPrices,
-                          colorMap,
-                        );
-                        List<Color> colors = [
-                          for (var wealth in savedWealths)
-                            colorMap[wealth.type] ?? Colors.grey
-                        ];
 
                         return TotalPrice(
                           totalPrice: totalPrice,
