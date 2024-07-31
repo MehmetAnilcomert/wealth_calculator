@@ -184,9 +184,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Varlık Hesaplama Makinesi',
-            style: TextStyle(color: Colors.white),
+          title: Padding(
+            padding: const EdgeInsets.only(left: 25.0),
+            child: const Text(
+              'Varlık Hesap Makinesi',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
           backgroundColor: Colors.blueGrey,
         ),
