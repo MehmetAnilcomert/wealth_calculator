@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryBloc.dart';
+import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/views/PriceViews.dart';
@@ -16,7 +18,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => GoldPricesBloc()..add(LoadGoldPrices()),
           child: PricesScreen(),
-        )
+        ),
+        BlocProvider(
+          create: (context) => InventoryBloc()..add(LoadInventoryData()),
+        ),
       ],
       child: MaterialApp(
         title: 'Emtia Fiyatları',

@@ -6,8 +6,8 @@ import 'package:wealth_calculator/services/Wealthsdao.dart';
 class ItemDialogs {
   static void showSelectItemDialog(
     BuildContext context,
-    Future<List<WealthPrice>> futureGoldPrices,
-    Future<List<WealthPrice>> futureCurrencyPrices,
+    List<WealthPrice> futureGoldPrices,
+    List<WealthPrice> futureCurrencyPrices,
     Function(SavedWealths, int) onItemSelected, {
     List<String> disabledItems = const [],
     List<String> hiddenItems = const [],
@@ -68,8 +68,8 @@ class ItemDialogs {
 }
 
 class SelectItemDialog extends StatefulWidget {
-  final Future<List<WealthPrice>> futureGoldPrices;
-  final Future<List<WealthPrice>> futureCurrencyPrices;
+  final List<WealthPrice> futureGoldPrices;
+  final List<WealthPrice> futureCurrencyPrices;
   final Function(SavedWealths, int) onItemSelected;
   final List<String> disabledItems;
   final List<String> hiddenItems;
@@ -94,20 +94,15 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
   @override
   void initState() {
     super.initState();
-    widget.futureGoldPrices.then((prices) {
-      setState(() {
-        goldPrices = prices
-            .where((price) => !widget.hiddenItems.contains(price.title))
-            .toList();
-      });
-    });
-    widget.futureCurrencyPrices.then((prices) {
-      setState(() {
-        currencyPrices = prices
-            .where((price) => !widget.hiddenItems.contains(price.title))
-            .toList();
-      });
-    });
+
+    // Eğer widget.futureGoldPrices ve widget.futureCurrencyPrices List türündeyse:
+    goldPrices = widget.futureGoldPrices
+        .where((price) => !widget.hiddenItems.contains(price.title))
+        .toList();
+
+    currencyPrices = widget.futureCurrencyPrices
+        .where((price) => !widget.hiddenItems.contains(price.title))
+        .toList();
   }
 
   @override

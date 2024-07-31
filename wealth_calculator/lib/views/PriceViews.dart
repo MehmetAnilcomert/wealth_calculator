@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesState.dart';
-import 'package:wealth_calculator/inventory.dart';
+import 'package:wealth_calculator/views/inventory.dart';
 import 'package:wealth_calculator/widgets/wealthCard.dart';
 
 class PricesScreen extends StatefulWidget {
@@ -29,10 +29,7 @@ class _PricesScreenState extends State<PricesScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => InventoryScreen(
-                            Future.value(state.goldPrices),
-                            Future.value(state.currencyPrices),
-                          ),
+                          builder: (context) => InventoryScreen(),
                         ),
                       );
                     },
