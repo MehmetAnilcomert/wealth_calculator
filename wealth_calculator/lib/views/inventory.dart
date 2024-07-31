@@ -5,7 +5,6 @@ import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/inventory/ItemDialogs.dart';
 import 'package:wealth_calculator/inventory/TotalPrice.dart';
-import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 class InventoryScreen extends StatelessWidget {
   @override
@@ -41,7 +40,7 @@ class InventoryScreen extends StatelessWidget {
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(
-                    expandedHeight: 200.0, // Adjust height as needed
+                    expandedHeight: 200.0,
                     collapsedHeight: 250,
                     automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(

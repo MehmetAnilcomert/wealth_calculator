@@ -6,9 +6,12 @@ import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/services/DataScraping.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
+  List<WealthPrice> _cachedGoldPrices = [];
+  List<WealthPrice> _cachedCurrencyPrices = [];
+  List<SavedWealths> _savedWealths = [];
+
   InventoryBloc() : super(InventoryInitial()) {
     on<LoadInventoryData>(_onLoadInventoryData);
     on<AddOrUpdateWealth>(_onEditWealth);
@@ -18,34 +21,83 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   Future<void> _onLoadInventoryData(
       LoadInventoryData event, Emitter<InventoryState> emit) async {
     emit(InventoryLoading());
+
     try {
-      final results = await Future.wait([
-        SavedWealthsdao().getAllWealths(),
-        fetchGoldPrices(),
-        fetchCurrencyPrices(),
-      ]);
+      final wealthsDao = SavedWealthsdao();
+      _savedWealths = await wealthsDao.getAllWealths();
 
-      final savedWealths = results[0] as List<SavedWealths>;
-      final goldPrices = results[1] as List<WealthPrice>;
-      final currencyPrices = results[2] as List<WealthPrice>;
+      if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
+        _cachedGoldPrices = await fetchGoldPrices();
+        _cachedCurrencyPrices = await fetchCurrencyPrices();
+      }
 
-      final totalPrice =
-          _calculateTotalPrice(savedWealths, goldPrices, currencyPrices);
-      final segments =
-          _calculateSegments(savedWealths, goldPrices, currencyPrices);
-      final colors = _calculateColors(savedWealths, goldPrices, currencyPrices);
-
-      emit(InventoryLoaded(
-        savedWealths: savedWealths,
-        goldPrices: goldPrices,
-        currencyPrices: currencyPrices,
-        totalPrice: totalPrice,
-        segments: segments,
-        colors: colors,
-      ));
+      emit(_createLoadedState());
     } catch (e) {
-      emit(InventoryError('Failed to load inventory data.'));
+      emit(InventoryError(e.toString()));
     }
+  }
+
+  Future<void> _onEditWealth(
+      AddOrUpdateWealth event, Emitter<InventoryState> emit) async {
+    try {
+      final wealthsDao = SavedWealthsdao();
+      final existingWealth =
+          await wealthsDao.getWealthByType(event.wealth.type);
+
+      if (existingWealth != null) {
+        final updatedWealth = SavedWealths(
+          id: existingWealth.id,
+          type: event.wealth.type,
+          amount: event.amount,
+        );
+        await wealthsDao.updateWealth(updatedWealth);
+      } else {
+        final newWealth = SavedWealths(
+          id: DateTime.now().millisecondsSinceEpoch,
+          type: event.wealth.type,
+          amount: event.amount,
+        );
+        await wealthsDao.insertWealth(newWealth);
+      }
+
+      // Update the cached _savedWealths list
+      _savedWealths = await wealthsDao.getAllWealths();
+
+      // Emit new state with updated data
+      emit(_createLoadedState());
+    } catch (e) {
+      emit(InventoryError('Failed to edit wealth.'));
+    }
+  }
+
+  Future<void> _onDeleteWealth(
+      DeleteWealth event, Emitter<InventoryState> emit) async {
+    try {
+      final wealthsDao = SavedWealthsdao();
+      await wealthsDao.deleteWealth(event.id);
+
+      // Update the cached _savedWealths list
+      _savedWealths = await wealthsDao.getAllWealths();
+
+      // Emit new state with updated data
+      emit(_createLoadedState());
+    } catch (e) {
+      emit(InventoryError('Failed to delete wealth.'));
+    }
+  }
+
+  InventoryLoaded _createLoadedState() {
+    return InventoryLoaded(
+      totalPrice: _calculateTotalPrice(
+          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+      segments: _calculateSegments(
+          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+      colors: _calculateColors(
+          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+      goldPrices: _cachedGoldPrices,
+      currencyPrices: _cachedCurrencyPrices,
+      savedWealths: _savedWealths,
+    );
   }
 
   double _calculateTotalPrice(List<SavedWealths> savedWealths,
@@ -121,47 +173,5 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     return [
       for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey
     ];
-  }
-
-  Future<void> _onEditWealth(
-      AddOrUpdateWealth event, Emitter<InventoryState> emit) async {
-    try {
-      final wealthsDao = SavedWealthsdao();
-      final existingWealth =
-          await wealthsDao.getWealthByType(event.wealth.type);
-
-      if (existingWealth != null) {
-        // Update existing wealth
-        final updatedWealth = SavedWealths(
-          id: existingWealth.id,
-          type: event.wealth.type,
-          amount: event.amount,
-        );
-        await wealthsDao.updateWealth(updatedWealth);
-        add(LoadInventoryData()); // Reload inventory data
-      } else {
-        // Insert new wealth
-        final newWealth = SavedWealths(
-          id: DateTime.now().millisecondsSinceEpoch,
-          type: event.wealth.type,
-          amount: event.amount,
-        );
-        await wealthsDao.insertWealth(newWealth);
-        add(LoadInventoryData()); // Reload inventory data
-      }
-    } catch (e) {
-      emit(InventoryError('Failed to edit wealth.'));
-    }
-  }
-
-  Future<void> _onDeleteWealth(
-      DeleteWealth event, Emitter<InventoryState> emit) async {
-    try {
-      final wealthsDao = SavedWealthsdao();
-      await wealthsDao.deleteWealth(event.id);
-      add(LoadInventoryData()); // Reload inventory data
-    } catch (e) {
-      emit(InventoryError('Failed to delete wealth.'));
-    }
   }
 }
