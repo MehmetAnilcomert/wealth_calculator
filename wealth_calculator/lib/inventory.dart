@@ -27,6 +27,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
   List<Color> colors = [];
   final Map<String, Color> colorMap = {
     'Altın (TL/GR)': Colors.yellow,
+    'Cumhuriyet Altını': Colors.yellow,
+    'Yarım Altın': Colors.yellow,
+    'Çeyrek Altın': Colors.yellow,
     'ABD Doları': Colors.green,
     'Euro': Colors.blue,
     'İngiliz Sterlini': Colors.purple,
