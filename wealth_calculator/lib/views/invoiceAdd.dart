@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/modals/InvoiceModal.dart';
 
 class AddInvoiceScreen extends StatefulWidget {
-  final Map<String, dynamic>? invoice;
+  final InvoiceModal? invoice;
 
   AddInvoiceScreen({this.invoice});
 
@@ -11,24 +12,13 @@ class AddInvoiceScreen extends StatefulWidget {
 
 class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
   final _formKey = GlobalKey<FormState>();
-  DateTime _invoiceDate = DateTime.now();
-  double _amount = 0.0;
-  String _category = 'Elektrik';
-  String _description = '';
-  bool _isPaid = false;
-  String _priority = 'Orta Önemde';
+  late InvoiceModal _invoice;
 
   @override
   void initState() {
     super.initState();
     if (widget.invoice != null) {
-      _amount = widget.invoice!['amount'];
-      _category = widget.invoice!['category'];
-      _description = widget.invoice!['description'] ?? '';
-      _isPaid = widget.invoice!['is_paid'];
-      _priority = widget.invoice!['priority'];
-      _invoiceDate = widget.invoice!['invoice_date'] ??
-          DateTime.now(); // Eğer fatura tarihi varsa
+      _invoice = widget.invoice!;
     }
   }
 
@@ -36,16 +26,30 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title:
-              Text(widget.invoice == null ? 'Fatura Ekle' : 'Fatura Düzenle')),
+        title: Text(widget.invoice == null ? 'Fatura Ekle' : 'Fatura Düzenle'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: <Widget>[
               TextFormField(
-                initialValue: _amount.toString(),
+                initialValue: _invoice.name,
+                decoration: InputDecoration(labelText: 'Fatura Adı'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Lütfen fatura adını girin';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _invoice.name = value;
+                },
+              ),
+              TextFormField(
+                initialValue:
+                    _invoice.amount != null ? _invoice.amount.toString() : '',
                 decoration: InputDecoration(labelText: 'Tutar'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
@@ -55,79 +59,77 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  _amount = double.parse(value!);
+                  _invoice.amount = int.tryParse(value!);
                 },
               ),
               TextFormField(
-                initialValue: _description,
+                initialValue: _invoice.explanation,
                 decoration: InputDecoration(labelText: 'Açıklama'),
                 onSaved: (value) {
-                  _description = value!;
+                  _invoice.explanation = value;
                 },
               ),
               ListTile(
                 title: Text(
-                    "Fatura Tarihi: ${_invoiceDate.toLocal()}".split(' ')[0]),
+                    "Başlangıç Tarihi: ${_invoice.startDate?.toLocal().toString().split(' ')[0] ?? 'Tarih Seçin'}"),
                 trailing: Icon(Icons.keyboard_arrow_down),
                 onTap: () async {
                   final DateTime? picked = await showDatePicker(
                     context: context,
-                    initialDate: _invoiceDate,
+                    initialDate: _invoice.startDate ?? DateTime.now(),
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2025),
                   );
-                  if (picked != null && picked != _invoiceDate) {
+                  if (picked != null) {
                     setState(() {
-                      _invoiceDate = picked;
+                      _invoice.startDate = picked;
                     });
                   }
                 },
               ),
-              DropdownButtonFormField<String>(
-                value: _category,
-                decoration: InputDecoration(labelText: 'Kategori'),
-                items:
-                    <String>['Elektrik', 'Su', 'Internet'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
+              ListTile(
+                title: Text(
+                    "Son Ödeme Tarihi: ${_invoice.dueDate?.toLocal().toString().split(' ')[0] ?? 'Tarih Seçin'}"),
+                trailing: Icon(Icons.keyboard_arrow_down),
+                onTap: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: _invoice.dueDate ?? DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2025),
                   );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _category = newValue!;
-                  });
-                },
-                onSaved: (value) {
-                  _category = value!;
+                  if (picked != null) {
+                    setState(() {
+                      _invoice.dueDate = picked;
+                    });
+                  }
                 },
               ),
-              DropdownButtonFormField<String>(
-                value: _priority,
+              DropdownButtonFormField<ImportanceLevel>(
+                value: _invoice.priority,
                 decoration: InputDecoration(labelText: 'Önem Sırası'),
-                items: <String>['Yüksek Önemde', 'Orta Önemde', 'Düşük Önemde']
-                    .map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
+                items: ImportanceLevel.values.map((ImportanceLevel level) {
+                  return DropdownMenuItem<ImportanceLevel>(
+                    value: level,
+                    child: Text(_importanceLevelToString(level)),
                   );
                 }).toList(),
                 onChanged: (newValue) {
                   setState(() {
-                    _priority = newValue!;
+                    _invoice.priority = newValue;
                   });
                 },
                 onSaved: (value) {
-                  _priority = value!;
+                  _invoice.priority = value;
                 },
               ),
               Row(
                 children: <Widget>[
                   Checkbox(
-                    value: _isPaid,
+                    value: _invoice.isPaid ?? false,
                     onChanged: (bool? value) {
                       setState(() {
-                        _isPaid = value!;
+                        _invoice.isPaid = value;
                       });
                     },
                   ),
@@ -138,7 +140,7 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    // Verileri kaydetmek veya güncellemek için bir yöntem çağır
+                    // Burada _invoice nesnesini kaydetmek veya güncellemek için bir yöntem çağır
                   }
                 },
                 child: Text('Kaydet'),
@@ -148,5 +150,18 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
         ),
       ),
     );
+  }
+
+  String _importanceLevelToString(ImportanceLevel level) {
+    switch (level) {
+      case ImportanceLevel.highPriority:
+        return 'Yüksek Önemde';
+      case ImportanceLevel.mediumPriority:
+        return 'Orta Önemde';
+      case ImportanceLevel.lowPriority:
+        return 'Düşük Önemde';
+      default:
+        return '';
+    }
   }
 }
