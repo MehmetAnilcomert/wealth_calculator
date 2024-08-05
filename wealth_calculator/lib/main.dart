@@ -5,6 +5,7 @@ import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/views/PriceViews.dart';
+import 'package:wealth_calculator/views/SplashScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: PricesScreen(),
+        home: SplashScreen(),
       ),
     );
   }

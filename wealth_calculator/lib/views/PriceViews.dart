@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/views/inventory.dart';
-import 'package:wealth_calculator/views/invoiceAdd.dart';
 import 'package:wealth_calculator/views/invoiceList.dart';
-import 'package:wealth_calculator/views/profile.dart';
 import 'package:wealth_calculator/widgets/wealthCard.dart';
 
 class PricesScreen extends StatefulWidget {
@@ -31,12 +29,12 @@ class _PricesScreenState extends State<PricesScreen> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          Navigator.push(
+                          /* Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => InvoiceListScreen(),
                             ),
-                          );
+                          ); */
                         },
                         icon: Icon(Icons.cases_outlined),
                       ),
