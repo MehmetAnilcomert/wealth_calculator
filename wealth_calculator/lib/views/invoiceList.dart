@@ -43,7 +43,7 @@ class _FaturaListesiState extends State<FaturaListesi> {
   Color _getOnemSeviyesiRenk(OnemSeviyesi onemSeviyesi) {
     switch (onemSeviyesi) {
       case OnemSeviyesi.yuksek:
-        return Color(0xFF9A270D);
+        return Color.fromARGB(255, 165, 38, 9);
       case OnemSeviyesi.orta:
         return Color(0xFFFF7E00);
       case OnemSeviyesi.dusuk:
@@ -56,9 +56,8 @@ class _FaturaListesiState extends State<FaturaListesi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Fatura Listesi'),
-      ),
+      appBar:
+          AppBar(title: Text('Faturalar'), backgroundColor: Colors.blueGrey),
       body: ListView.builder(
         itemCount: faturalar.length,
         itemBuilder: (context, index) {
@@ -93,8 +92,15 @@ class _FaturaListesiState extends State<FaturaListesi> {
                 });
               },
               child: Container(
-                color:
-                    _getOnemSeviyesiRenk(fatura.onemSeviyesi).withOpacity(0.2),
+                decoration: BoxDecoration(
+                  color: fatura.odendiMi
+                      ? Colors.green
+                      : _getOnemSeviyesiRenk(fatura.onemSeviyesi),
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 0.6,
+                  ),
+                ),
                 padding: EdgeInsets.all(8.0),
                 child: Row(
                   children: [
@@ -104,25 +110,47 @@ class _FaturaListesiState extends State<FaturaListesi> {
                         children: [
                           Text(
                             fatura.aciklama,
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 22),
                           ),
-                          Text(
-                            '${fatura.tutar} TL',
-                            style: TextStyle(fontSize: 16.0),
+                          Row(
+                            children: [
+                              Text(
+                                'Tutar:',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0),
+                              ),
+                              Text(
+                                "  ${fatura.tutar} TL",
+                                style: TextStyle(fontSize: 19.0),
+                              ),
+                            ],
                           ),
-                          Text(
-                            DateFormat('dd.MM.yyyy').format(fatura.tarih),
-                            style: TextStyle(color: Colors.grey),
+                          Row(
+                            children: [
+                              Text(
+                                "Son Ödeme Tarihi:",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "  ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
+                                style: TextStyle(fontSize: 17.0),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                     Icon(
-                      fatura.odendiMi ? Icons.check : Icons.close,
-                      color: fatura.odendiMi ? Colors.green : Colors.red,
+                      fatura.odendiMi ? Icons.check : Icons.warning_rounded,
+                      color: fatura.odendiMi ? Colors.black : Colors.red,
+                      size: 33,
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete, color: Colors.black),
+                      icon: Icon(Icons.delete, color: Colors.black, size: 30),
                       onPressed: () {
                         showDialog(
                           context: context,
@@ -159,6 +187,7 @@ class _FaturaListesiState extends State<FaturaListesi> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blueGrey,
         onPressed: () {
           Navigator.push(
             context,
