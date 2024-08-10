@@ -4,10 +4,15 @@ import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesEvent.dart';
+import 'package:wealth_calculator/services/DatabaseHelper.dart';
 import 'package:wealth_calculator/views/PriceViews.dart';
 import 'package:wealth_calculator/views/SplashScreen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Veritabanını başlat
+  final databaseHelper = DbHelper.instance;
   runApp(MyApp());
 }
 

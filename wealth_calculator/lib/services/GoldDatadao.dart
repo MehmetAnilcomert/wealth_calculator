@@ -5,7 +5,7 @@ import 'package:wealth_calculator/services/DatabaseHelper.dart';
 class GoldDataDao {
 // Insert a WealthPrice into the database
   Future<void> insertWealthPrice(WealthPrice wealthPrice) async {
-    final db = await DbHelper.dbAccess();
+    final db = await DbHelper.instance.inventoryDatabase;
     await db.insert(
       'wealthPrice',
       wealthPrice.toMap(),
@@ -15,7 +15,7 @@ class GoldDataDao {
 
   // Update a WealthPrice in the database
   Future<void> updateWealthPrice(WealthPrice wealthPrice) async {
-    final db = await DbHelper.dbAccess();
+    final db = await DbHelper.instance.inventoryDatabase;
     await db.update(
       'wealthPrice',
       wealthPrice.toMap(),
@@ -26,7 +26,7 @@ class GoldDataDao {
 
   // Delete a WealthPrice from the database
   Future<void> deleteWealthPrice(String title) async {
-    final db = await DbHelper.dbAccess();
+    final db = await DbHelper.instance.inventoryDatabase;
     await db.delete(
       'wealthPrice',
       where: 'title = ?',
@@ -36,7 +36,7 @@ class GoldDataDao {
 
   // Fetch a WealthPrice by type from the database
   Future<WealthPrice?> getWealthByType(String type) async {
-    final db = await DbHelper.dbAccess();
+    final db = await DbHelper.instance.inventoryDatabase;
     final List<Map<String, dynamic>> maps = await db.query(
       'wealthPrice',
       where: 'title = ?',
@@ -52,7 +52,7 @@ class GoldDataDao {
 
   // Fetch all WealthPrices from the database
   Future<List<WealthPrice>> fetchAllWealthPrices() async {
-    final db = await DbHelper.dbAccess();
+    final db = await DbHelper.instance.inventoryDatabase;
     final List<Map<String, dynamic>> maps = await db.query('wealthPrice');
 
     return List.generate(maps.length, (i) {

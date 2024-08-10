@@ -29,12 +29,12 @@ class _PricesScreenState extends State<PricesScreen> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          /* Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => InvoiceListScreen(),
+                              builder: (context) => FaturaListesi(),
                             ),
-                          ); */
+                          );
                         },
                         icon: Icon(Icons.cases_outlined),
                       ),

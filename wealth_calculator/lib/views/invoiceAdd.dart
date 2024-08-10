@@ -1,24 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 
-class AddInvoiceScreen extends StatefulWidget {
-  final InvoiceModal? invoice;
+class FaturaEklemeGuncellemeEkrani extends StatefulWidget {
+  final Fatura? fatura;
 
-  AddInvoiceScreen({this.invoice});
+  FaturaEklemeGuncellemeEkrani({this.fatura});
 
   @override
-  _AddInvoiceScreenState createState() => _AddInvoiceScreenState();
+  _FaturaEklemeGuncellemeEkraniState createState() =>
+      _FaturaEklemeGuncellemeEkraniState();
 }
 
-class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
+class _FaturaEklemeGuncellemeEkraniState
+    extends State<FaturaEklemeGuncellemeEkrani> {
   final _formKey = GlobalKey<FormState>();
-  late InvoiceModal _invoice;
+  final _tarihController = TextEditingController();
+  final _tutarController = TextEditingController();
+  final _aciklamaController = TextEditingController();
+  OnemSeviyesi _secilenOnemSeviyesi = OnemSeviyesi.orta;
+  bool _odendiMi = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.invoice != null) {
-      _invoice = widget.invoice!;
+    if (widget.fatura != null) {
+      _tarihController.text =
+          DateFormat('dd.MM.yyyy').format(widget.fatura!.tarih);
+      _tutarController.text = widget.fatura!.tutar.toString();
+      _aciklamaController.text = widget.fatura!.aciklama;
+      _secilenOnemSeviyesi = widget.fatura!.onemSeviyesi;
+      _odendiMi = widget.fatura!.odendiMi;
+    }
+  }
+
+  Future<void> _faturaEkleGuncelle() async {
+    final Database db = await openDatabase('my_database.db');
+    if (_formKey.currentState!.validate()) {
+      final dateFormat = DateFormat('dd.MM.yyyy');
+      final selectedDate = dateFormat.parse(_tarihController.text);
+      final fatura = Fatura(
+        id: widget.fatura?.id,
+        tarih: selectedDate,
+        tutar: double.parse(_tutarController.text),
+        aciklama: _aciklamaController.text,
+        onemSeviyesi: _secilenOnemSeviyesi,
+        odendiMi: _odendiMi,
+      );
+
+      try {
+        if (widget.fatura == null) {
+          await db.insert('fatura', fatura.toMap());
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Fatura başarıyla eklendi.')),
+          );
+        } else {
+          await db.update(
+            'fatura',
+            fatura.toMap(),
+            where: 'id = ?',
+            whereArgs: [fatura.id],
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Fatura başarıyla güncellendi.')),
+          );
+        }
+        Navigator.pop(context, true);
+      } catch (e) {
+        print('Hata oluştu: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('İşlem başarısız: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: widget.fatura?.tarih ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        _tarihController.text = DateFormat('dd.MM.yyyy').format(picked);
+      });
     }
   }
 
@@ -26,142 +94,69 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.invoice == null ? 'Fatura Ekle' : 'Fatura Düzenle'),
+        title: Text(widget.fatura == null ? 'Fatura Ekle' : 'Fatura Güncelle'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                initialValue: _invoice.name,
-                decoration: InputDecoration(labelText: 'Fatura Adı'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Lütfen fatura adını girin';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _invoice.name = value;
-                },
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: EdgeInsets.all(16.0),
+          children: [
+            TextField(
+              controller: _tarihController,
+              readOnly: true,
+              onTap: () => _selectDate(context),
+              decoration: InputDecoration(
+                labelText: 'Fatura Tarihi',
               ),
-              TextFormField(
-                initialValue:
-                    _invoice.amount != null ? _invoice.amount.toString() : '',
-                decoration: InputDecoration(labelText: 'Tutar'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Lütfen tutarı girin';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _invoice.amount = int.tryParse(value!);
-                },
-              ),
-              TextFormField(
-                initialValue: _invoice.explanation,
-                decoration: InputDecoration(labelText: 'Açıklama'),
-                onSaved: (value) {
-                  _invoice.explanation = value;
-                },
-              ),
-              ListTile(
-                title: Text(
-                    "Başlangıç Tarihi: ${_invoice.startDate?.toLocal().toString().split(' ')[0] ?? 'Tarih Seçin'}"),
-                trailing: Icon(Icons.keyboard_arrow_down),
-                onTap: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: _invoice.startDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2025),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      _invoice.startDate = picked;
-                    });
-                  }
-                },
-              ),
-              ListTile(
-                title: Text(
-                    "Son Ödeme Tarihi: ${_invoice.dueDate?.toLocal().toString().split(' ')[0] ?? 'Tarih Seçin'}"),
-                trailing: Icon(Icons.keyboard_arrow_down),
-                onTap: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: _invoice.dueDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2025),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      _invoice.dueDate = picked;
-                    });
-                  }
-                },
-              ),
-              DropdownButtonFormField<ImportanceLevel>(
-                value: _invoice.priority,
-                decoration: InputDecoration(labelText: 'Önem Sırası'),
-                items: ImportanceLevel.values.map((ImportanceLevel level) {
-                  return DropdownMenuItem<ImportanceLevel>(
-                    value: level,
-                    child: Text(_importanceLevelToString(level)),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _invoice.priority = newValue;
-                  });
-                },
-                onSaved: (value) {
-                  _invoice.priority = value;
-                },
-              ),
-              Row(
-                children: <Widget>[
-                  Checkbox(
-                    value: _invoice.isPaid ?? false,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _invoice.isPaid = value;
-                      });
-                    },
-                  ),
-                  Text('Ödendi'),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    // Burada _invoice nesnesini kaydetmek veya güncellemek için bir yöntem çağır
-                  }
-                },
-                child: Text('Kaydet'),
-              ),
-            ],
-          ),
+            ),
+            TextFormField(
+              controller: _tutarController,
+              decoration: InputDecoration(labelText: 'Tutar'),
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Lütfen tutarı giriniz';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _aciklamaController,
+              decoration: InputDecoration(labelText: 'Açıklama'),
+            ),
+            DropdownButtonFormField<OnemSeviyesi>(
+              value: _secilenOnemSeviyesi,
+              onChanged: (OnemSeviyesi? newValue) {
+                setState(() {
+                  _secilenOnemSeviyesi = newValue!;
+                });
+              },
+              items: OnemSeviyesi.values.map((OnemSeviyesi onemSeviyesi) {
+                return DropdownMenuItem<OnemSeviyesi>(
+                  value: onemSeviyesi,
+                  child: Text(onemSeviyesi.toString().split('.').last),
+                );
+              }).toList(),
+              decoration: InputDecoration(labelText: 'Önem Seviyesi'),
+            ),
+            SwitchListTile(
+              title: Text('Ödendi Mi?'),
+              value: _odendiMi,
+              onChanged: (bool value) {
+                setState(() {
+                  _odendiMi = value;
+                });
+              },
+            ),
+            ElevatedButton(
+              onPressed: _faturaEkleGuncelle,
+              child: Text(widget.fatura == null
+                  ? 'Faturayı Kaydet'
+                  : 'Faturayı Güncelle'),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  String _importanceLevelToString(ImportanceLevel level) {
-    switch (level) {
-      case ImportanceLevel.highPriority:
-        return 'Yüksek Önemde';
-      case ImportanceLevel.mediumPriority:
-        return 'Orta Önemde';
-      case ImportanceLevel.lowPriority:
-        return 'Düşük Önemde';
-      default:
-        return '';
-    }
   }
 }
