@@ -53,9 +53,9 @@ class _FaturaEklemeGuncellemeEkraniState
       try {
         if (widget.fatura == null) {
           await db.insert('fatura', fatura.toMap());
-          ScaffoldMessenger.of(context).showSnackBar(
+          /* ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Fatura başarıyla eklendi.')),
-          );
+          ); */
         } else {
           await db.update(
             'fatura',
@@ -63,9 +63,9 @@ class _FaturaEklemeGuncellemeEkraniState
             where: 'id = ?',
             whereArgs: [fatura.id],
           );
-          ScaffoldMessenger.of(context).showSnackBar(
+          /* ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Fatura başarıyla güncellendi.')),
-          );
+          ); */
         }
         Navigator.pop(context, true);
       } catch (e) {

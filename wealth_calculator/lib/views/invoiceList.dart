@@ -91,152 +91,157 @@ class _FaturaListesiState extends State<FaturaListesi> {
     final colors =
         segments.map((segment) => _getOnemSeviyesiRenk(segment.key)).toList();
 
-    return Column(
-      children: [
-        TotalPrice(
-          totalPrice: segments.fold(0, (sum, entry) => sum + entry.value),
-          segments: segments.map((entry) => entry.value).toList(),
-          colors: colors,
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: faturalar.length,
-            itemBuilder: (context, index) {
-              final fatura = faturalar[index];
-              return Dismissible(
-                key: Key(fatura.id.toString()),
-                background: Container(
-                  color: Colors.red,
-                  alignment: Alignment.centerRight,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Icon(Icons.delete, color: Colors.white),
-                ),
-                direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  _deleteFatura(fatura.id!);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${fatura.aciklama} silindi')),
-                  );
-                },
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            FaturaEklemeGuncellemeEkrani(fatura: fatura),
-                      ),
-                    ).then((value) {
-                      if (value == true) {
-                        _getFaturaListesi();
-                      }
-                    });
+    return Padding(
+      padding: const EdgeInsets.only(right: .0),
+      child: Column(
+        children: [
+          TotalPrice(
+            totalPrice: segments.fold(0, (sum, entry) => sum + entry.value),
+            segments: segments.map((entry) => entry.value).toList(),
+            colors: colors,
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: faturalar.length,
+              itemBuilder: (context, index) {
+                final fatura = faturalar[index];
+                return Dismissible(
+                  key: Key(fatura.id.toString()),
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Icon(Icons.delete, color: Colors.white),
+                  ),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    _deleteFatura(fatura.id!);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${fatura.aciklama} silindi')),
+                    );
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blueGrey,
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 0.6,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              FaturaEklemeGuncellemeEkrani(fatura: fatura),
+                        ),
+                      ).then((value) {
+                        if (value == true) {
+                          _getFaturaListesi(); // Güncelleme işlemi sonrası faturalar listesini yeniden alır
+                        }
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 0.6,
+                        ),
                       ),
-                    ),
-                    padding: EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                fatura.aciklama,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 22),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Tutar:',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0),
-                                  ),
-                                  Text(
-                                    "  ${fatura.tutar} TL",
-                                    style: TextStyle(
-                                      fontSize: 19.0,
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  fatura.aciklama,
+                                  style: TextStyle(
                                       color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22),
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Tutar:',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20.0),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Son Ödeme Tarihi:",
-                                    style: TextStyle(
+                                    Text(
+                                      "  ${fatura.tutar} TL",
+                                      style: TextStyle(
+                                        fontSize: 19.0,
                                         color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "  ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
-                                    style: TextStyle(
-                                      fontSize: 17.0,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Icon(
-                          fatura.odendiMi ? Icons.check : Icons.warning_rounded,
-                          color: fatura.odendiMi ? Colors.green : Colors.red,
-                          size: 33,
-                        ),
-                        IconButton(
-                          icon:
-                              Icon(Icons.delete, color: Colors.white, size: 30),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Faturayı Sil'),
-                                  content: Text(
-                                      'Bu faturayı silmek istediğinizden emin misiniz?'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text('İptal'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: Text('Sil'),
-                                      onPressed: () {
-                                        _deleteFatura(fatura.id!);
-                                        Navigator.of(context).pop();
-                                      },
+                                      ),
                                     ),
                                   ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Son Ödeme Tarihi:",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "  ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
+                                      style: TextStyle(
+                                        fontSize: 17.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            fatura.odendiMi
+                                ? Icons.check
+                                : Icons.warning_rounded,
+                            color: fatura.odendiMi ? Colors.green : Colors.red,
+                            size: 33,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete,
+                                color: Colors.white, size: 30),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Faturayı Sil'),
+                                    content: Text(
+                                        'Bu faturayı silmek istediğinizden emin misiniz?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('İptal'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text('Sil'),
+                                        onPressed: () {
+                                          _deleteFatura(fatura.id!);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
