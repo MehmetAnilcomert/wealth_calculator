@@ -116,9 +116,9 @@ class _FaturaListesiState extends State<FaturaListesi> {
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
                     _deleteFatura(fatura.id!);
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    /* ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('${fatura.aciklama} silindi')),
-                    );
+                    ); */
                   },
                   child: GestureDetector(
                     onTap: () {
