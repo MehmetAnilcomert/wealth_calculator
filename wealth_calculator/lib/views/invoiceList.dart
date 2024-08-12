@@ -150,19 +150,25 @@ class _FaturaListesiState extends State<FaturaListesi> {
                               Text(
                                 fatura.aciklama,
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 22),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22),
                               ),
                               Row(
                                 children: [
                                   Text(
                                     'Tutar:',
                                     style: TextStyle(
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20.0),
                                   ),
                                   Text(
                                     "  ${fatura.tutar} TL",
-                                    style: TextStyle(fontSize: 19.0),
+                                    style: TextStyle(
+                                      fontSize: 19.0,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -171,12 +177,15 @@ class _FaturaListesiState extends State<FaturaListesi> {
                                   Text(
                                     "Son Ödeme Tarihi:",
                                     style: TextStyle(
-                                        color: Colors.black,
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
                                     "  ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
-                                    style: TextStyle(fontSize: 17.0),
+                                    style: TextStyle(
+                                      fontSize: 17.0,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -190,7 +199,7 @@ class _FaturaListesiState extends State<FaturaListesi> {
                         ),
                         IconButton(
                           icon:
-                              Icon(Icons.delete, color: Colors.black, size: 30),
+                              Icon(Icons.delete, color: Colors.white, size: 30),
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -266,7 +275,10 @@ class _FaturaListesiState extends State<FaturaListesi> {
               }
             });
           },
-          child: Icon(Icons.add),
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
         ),
       ),
     );

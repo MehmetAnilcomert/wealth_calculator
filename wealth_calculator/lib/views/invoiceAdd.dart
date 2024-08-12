@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 
@@ -96,73 +97,84 @@ class _FaturaEklemeGuncellemeEkraniState
       appBar: AppBar(
         title: Text(widget.fatura == null ? 'Fatura Ekle' : 'Fatura Güncelle'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _tarihController,
-                readOnly: true,
-                onTap: () => _selectDate(context),
-                decoration: InputDecoration(
-                  labelText: 'Son Ödeme Tarihi',
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Lottie.asset("images/bill.json"),
+            Padding(
+              padding: const EdgeInsets.all(13.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextField(
+                      controller: _tarihController,
+                      readOnly: true,
+                      onTap: () => _selectDate(context),
+                      decoration: InputDecoration(
+                        labelText: 'Son Ödeme Tarihi',
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _tutarController,
+                      decoration: InputDecoration(labelText: 'Tutar'),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Lütfen tutarı giriniz';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _aciklamaController,
+                      decoration: InputDecoration(labelText: 'Açıklama'),
+                    ),
+                    DropdownButtonFormField<OnemSeviyesi>(
+                      value: _secilenOnemSeviyesi,
+                      onChanged: (OnemSeviyesi? newValue) {
+                        setState(() {
+                          _secilenOnemSeviyesi = newValue!;
+                        });
+                      },
+                      items:
+                          OnemSeviyesi.values.map((OnemSeviyesi onemSeviyesi) {
+                        return DropdownMenuItem<OnemSeviyesi>(
+                          value: onemSeviyesi,
+                          child: Text(onemSeviyesi
+                              .toString()
+                              .split('.')
+                              .last
+                              .toUpperCase()),
+                        );
+                      }).toList(),
+                      decoration: InputDecoration(labelText: 'Önem Seviyesi'),
+                    ),
+                    SwitchListTile(
+                      title: Text('Ödendi Mi?'),
+                      value: _odendiMi,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _odendiMi = value;
+                        });
+                      },
+                    ),
+                    ElevatedButton(
+                      onPressed: _faturaEkleGuncelle,
+                      child: Text(widget.fatura == null
+                          ? 'Faturayı Kaydet'
+                          : 'Faturayı Güncelle'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey, // Arka plan rengi
+                        foregroundColor: Colors.white, // Buton metni rengi
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              TextFormField(
-                controller: _tutarController,
-                decoration: InputDecoration(labelText: 'Tutar'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Lütfen tutarı giriniz';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _aciklamaController,
-                decoration: InputDecoration(labelText: 'Açıklama'),
-              ),
-              DropdownButtonFormField<OnemSeviyesi>(
-                value: _secilenOnemSeviyesi,
-                onChanged: (OnemSeviyesi? newValue) {
-                  setState(() {
-                    _secilenOnemSeviyesi = newValue!;
-                  });
-                },
-                items: OnemSeviyesi.values.map((OnemSeviyesi onemSeviyesi) {
-                  return DropdownMenuItem<OnemSeviyesi>(
-                    value: onemSeviyesi,
-                    child: Text(
-                        onemSeviyesi.toString().split('.').last.toUpperCase()),
-                  );
-                }).toList(),
-                decoration: InputDecoration(labelText: 'Önem Seviyesi'),
-              ),
-              SwitchListTile(
-                title: Text('Ödendi Mi?'),
-                value: _odendiMi,
-                onChanged: (bool value) {
-                  setState(() {
-                    _odendiMi = value;
-                  });
-                },
-              ),
-              ElevatedButton(
-                onPressed: _faturaEkleGuncelle,
-                child: Text(widget.fatura == null
-                    ? 'Faturayı Kaydet'
-                    : 'Faturayı Güncelle'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey, // Arka plan rengi
-                  foregroundColor: Colors.white, // Buton metni rengi
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

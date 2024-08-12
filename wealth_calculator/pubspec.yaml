@@ -78,6 +78,8 @@ flutter:
     - images/lira.png
     - images/logo.json
     - images/isim.json
+    - images/invoice.json
+    - images/bill.json
     - images/logo.png
     - database/inventory.db
 
