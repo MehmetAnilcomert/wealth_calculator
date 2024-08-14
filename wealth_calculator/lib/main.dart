@@ -4,6 +4,7 @@ import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesEvent.dart';
+import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_bloc.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 import 'package:wealth_calculator/views/PriceViews.dart';
 import 'package:wealth_calculator/views/SplashScreen.dart';
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => InventoryBloc()..add(LoadInventoryData()),
+        ),
+        BlocProvider(
+          create: (context) => FaturaBloc(),
         ),
       ],
       child: MaterialApp(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_bloc.dart';
+import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_event.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 
 class FaturaEklemeGuncellemeEkrani extends StatefulWidget {
@@ -36,8 +38,7 @@ class _FaturaEklemeGuncellemeEkraniState
     }
   }
 
-  Future<void> _faturaEkleGuncelle() async {
-    final Database db = await openDatabase('my_database.db');
+  Future<void> _faturaEkleGuncelle(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       final dateFormat = DateFormat('dd.MM.yyyy');
       final selectedDate = dateFormat.parse(_tarihController.text);
@@ -50,30 +51,12 @@ class _FaturaEklemeGuncellemeEkraniState
         odendiMi: _odendiMi,
       );
 
-      try {
-        if (widget.fatura == null) {
-          await db.insert('fatura', fatura.toMap());
-          /* ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fatura başarıyla eklendi.')),
-          ); */
-        } else {
-          await db.update(
-            'fatura',
-            fatura.toMap(),
-            where: 'id = ?',
-            whereArgs: [fatura.id],
-          );
-          /* ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fatura başarıyla güncellendi.')),
-          ); */
-        }
-        Navigator.pop(context, true);
-      } catch (e) {
-        print('Hata oluştu: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('İşlem başarısız: $e')),
-        );
+      if (widget.fatura == null) {
+        BlocProvider.of<FaturaBloc>(context).add(AddFatura(fatura));
+      } else {
+        BlocProvider.of<FaturaBloc>(context).add(UpdateFatura(fatura));
       }
+      Navigator.pop(context, true);
     }
   }
 
@@ -161,13 +144,13 @@ class _FaturaEklemeGuncellemeEkraniState
                       },
                     ),
                     ElevatedButton(
-                      onPressed: _faturaEkleGuncelle,
+                      onPressed: () => _faturaEkleGuncelle(context),
                       child: Text(widget.fatura == null
                           ? 'Faturayı Kaydet'
                           : 'Faturayı Güncelle'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueGrey, // Arka plan rengi
-                        foregroundColor: Colors.white, // Buton metni rengi
+                        backgroundColor: Colors.blueGrey,
+                        foregroundColor: Colors.white,
                       ),
                     ),
                   ],
