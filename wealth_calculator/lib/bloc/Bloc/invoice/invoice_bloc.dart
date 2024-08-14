@@ -20,18 +20,26 @@ class FaturaBloc extends Bloc<FaturaEvent, FaturaState> {
     try {
       final db = await _dbHelper.faturaDatabase;
       final List<Map<String, dynamic>> maps = await db.query('fatura');
-      print('Loaded invoices: ${maps.length}'); // Debug print
       final List<Fatura> faturalar =
           maps.map((map) => Fatura.fromMap(map)).toList();
 
-      final odememisFaturalar = faturalar.where((f) => !f.odendiMi).toList();
-      final odenmisFaturalar = faturalar.where((f) => f.odendiMi).toList();
+      // Faturaları ayırma ve sıralama işlemi
+      final List<Fatura> odememisFaturalar = faturalar
+          .where((f) => !f.odendiMi)
+          .toList()
+        ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
 
+      final List<Fatura> odenmisFaturalar = faturalar
+          .where((f) => f.odendiMi)
+          .toList()
+        ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
+
+      // Sıralanmış faturaları yüklüyoruz
       emit(FaturaLoaded(
-          odememisFaturalar: odememisFaturalar,
-          odenmisFaturalar: odenmisFaturalar));
+        odememisFaturalar: odememisFaturalar,
+        odenmisFaturalar: odenmisFaturalar,
+      ));
     } catch (e) {
-      print('Error loading invoices: $e'); // Debug print
       emit(FaturaError('Faturalar yüklenirken bir hata oluştu: $e'));
     }
   }
