@@ -5,10 +5,10 @@ import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
 
-class InventorySliverList extends StatelessWidget {
+class InventoryListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
 
-  InventorySliverList({required this.savedWealths});
+  InventoryListWidget({required this.savedWealths});
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +78,35 @@ class InventorySliverList extends StatelessWidget {
                         ),
                       ],
                     ),
+                  ),
+                  IconButton(
+                    iconSize: 40,
+                    icon: Icon(Icons.add, color: Colors.white),
+                    onPressed: () {
+                      context.read<InventoryBloc>().add(
+                            AddOrUpdateWealth(
+                              wealth,
+                              wealth.amount + 1,
+                            ),
+                          );
+                    },
+                  ),
+                  IconButton(
+                    iconSize: 40,
+                    icon: Icon(Icons.remove, color: Colors.white),
+                    onPressed: () {
+                      if (wealth.amount > 0) {
+                        context.read<InventoryBloc>().add(
+                              AddOrUpdateWealth(
+                                wealth,
+                                wealth.amount - 1,
+                              ),
+                            );
+                      } else if (wealth.amount == 0) {
+                        BlocProvider.of<InventoryBloc>(context)
+                            .add(DeleteWealth(wealth.id));
+                      }
+                    },
                   ),
                 ],
               ),

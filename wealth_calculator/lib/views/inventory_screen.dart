@@ -77,7 +77,7 @@ class InventoryScreen extends StatelessWidget {
                   ),
                   SliverFillRemaining(
                     child:
-                        InventorySliverList(savedWealths: state.savedWealths),
+                        InventoryListWidget(savedWealths: state.savedWealths),
                   ),
                 ],
               );
