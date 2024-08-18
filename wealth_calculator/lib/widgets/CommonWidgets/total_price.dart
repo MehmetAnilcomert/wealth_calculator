@@ -16,7 +16,8 @@ class TotalPrice extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: Colors.blueGrey),
-      height: 235,
+      width: MediaQuery.of(context).size.height * 0.25,
+      height: MediaQuery.of(context).size.height * 0.25, //235,
       child: Center(
         child: CircularMoneyState(
           totalAmount: totalPrice,

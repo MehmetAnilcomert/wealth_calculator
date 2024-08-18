@@ -42,8 +42,8 @@ class InventoryScreen extends StatelessWidget {
               return CustomScrollView(
                 slivers: [
                   CustomSliverAppBar(
-                    expandedHeight: 200.0,
-                    collapsedHeight: 250,
+                    expandedHeight: MediaQuery.of(context).size.height * 0.35,
+                    collapsedHeight: MediaQuery.of(context).size.height * 0.35,
                     flexibleSpaceBackground: TotalPrice(
                       totalPrice: state.totalPrice,
                       segments: state.segments,

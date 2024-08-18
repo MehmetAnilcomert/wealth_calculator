@@ -20,12 +20,13 @@ class CircularMoneyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
-      height: 200,
+      width: MediaQuery.of(context).size.height * 0.27,
+      height: MediaQuery.of(context).size.height * 0.3,
       child: Stack(
         children: [
           CustomPaint(
-            size: Size(200, 200),
+            size: Size(MediaQuery.of(context).size.height * 0.3,
+                MediaQuery.of(context).size.height * 0.3),
             painter: CircularMoneyStatePainter(
               segments: segments,
               colors: colors,
