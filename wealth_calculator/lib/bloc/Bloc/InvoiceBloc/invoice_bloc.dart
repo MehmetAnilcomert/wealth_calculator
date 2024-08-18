@@ -1,65 +1,66 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_event.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_state.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_event.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_state.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 
-class InvoiceBloc extends Bloc<FaturaEvent, FaturaState> {
+class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   final DbHelper _dbHelper = DbHelper.instance;
 
-  InvoiceBloc() : super(FaturaInitial()) {
-    on<LoadFaturalar>(_onLoadFaturalar);
-    on<AddFatura>(_onAddFatura);
-    on<UpdateFatura>(_onUpdateFatura);
-    on<DeleteFatura>(_onDeleteFatura);
+  InvoiceBloc() : super(InvoiceInitial()) {
+    on<LoadInvoices>(_onLoadFaturalar);
+    on<AddInvoice>(_onAddFatura);
+    on<UpdateInvoice>(_onUpdateFatura);
+    on<DeleteInvoice>(_onDeleteFatura);
   }
 
   Future<void> _onLoadFaturalar(
-      LoadFaturalar event, Emitter<FaturaState> emit) async {
-    emit(FaturaLoading());
+      LoadInvoices event, Emitter<InvoiceState> emit) async {
+    emit(InvoiceLoading());
     try {
       final db = await _dbHelper.faturaDatabase;
       final List<Map<String, dynamic>> maps = await db.query('fatura');
-      final List<Fatura> faturalar =
-          maps.map((map) => Fatura.fromMap(map)).toList();
+      final List<Invoice> faturalar =
+          maps.map((map) => Invoice.fromMap(map)).toList();
 
       // Faturaları ayırma ve sıralama işlemi
-      final List<Fatura> odememisFaturalar = faturalar
+      final List<Invoice> odememisFaturalar = faturalar
           .where((f) => !f.odendiMi)
           .toList()
         ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
 
-      final List<Fatura> odenmisFaturalar = faturalar
+      final List<Invoice> odenmisFaturalar = faturalar
           .where((f) => f.odendiMi)
           .toList()
         ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
 
       // Sıralanmış faturaları yüklüyoruz
-      emit(FaturaLoaded(
-        odememisFaturalar: odememisFaturalar,
-        odenmisFaturalar: odenmisFaturalar,
+      emit(InvoiceLoaded(
+        nonPaidInvoices: odememisFaturalar,
+        paidInvoices: odenmisFaturalar,
       ));
     } catch (e) {
-      emit(FaturaError('Faturalar yüklenirken bir hata oluştu: $e'));
+      emit(InvoiceError('Faturalar yüklenirken bir hata oluştu: $e'));
     }
   }
 
-  Future<void> _onAddFatura(AddFatura event, Emitter<FaturaState> emit) async {
+  Future<void> _onAddFatura(
+      AddInvoice event, Emitter<InvoiceState> emit) async {
     try {
       final db = await _dbHelper.faturaDatabase;
       await db.insert('fatura', event.fatura.toMap());
       print('Invoice added successfully'); // Debug print
-      add(LoadFaturalar());
+      add(LoadInvoices());
     } catch (e) {
       print('Error adding invoice: $e'); // Debug print
-      emit(FaturaError('Fatura eklenirken bir hata oluştu: $e'));
+      emit(InvoiceError('Fatura eklenirken bir hata oluştu: $e'));
     }
   }
 
   Future<void> _onUpdateFatura(
-      UpdateFatura event, Emitter<FaturaState> emit) async {
+      UpdateInvoice event, Emitter<InvoiceState> emit) async {
     final currentState = state;
-    if (currentState is FaturaLoaded) {
+    if (currentState is InvoiceLoaded) {
       try {
         final db = await _dbHelper.faturaDatabase;
         await db.update(
@@ -70,10 +71,10 @@ class InvoiceBloc extends Bloc<FaturaEvent, FaturaState> {
         );
 
         // Güncellenen faturayı bulun
-        List<Fatura> updatedOdememisFaturalar =
-            List.from(currentState.odememisFaturalar);
-        List<Fatura> updatedOdenmisFaturalar =
-            List.from(currentState.odenmisFaturalar);
+        List<Invoice> updatedOdememisFaturalar =
+            List.from(currentState.nonPaidInvoices);
+        List<Invoice> updatedOdenmisFaturalar =
+            List.from(currentState.paidInvoices);
 
         if (event.fatura.odendiMi) {
           // Fatura ödenmiş olarak güncellendiyse, ödenmemiş listeden çıkar ve ödenmiş listeye ekle
@@ -86,20 +87,20 @@ class InvoiceBloc extends Bloc<FaturaEvent, FaturaState> {
         }
 
         // Yeni durumu emit et
-        emit(FaturaLoaded(
-          odememisFaturalar: updatedOdememisFaturalar,
-          odenmisFaturalar: updatedOdenmisFaturalar,
+        emit(InvoiceLoaded(
+          nonPaidInvoices: updatedOdememisFaturalar,
+          paidInvoices: updatedOdenmisFaturalar,
         ));
       } catch (e) {
-        emit(FaturaError('Fatura güncellenirken bir hata oluştu: $e'));
+        emit(InvoiceError('Fatura güncellenirken bir hata oluştu: $e'));
       }
     }
   }
 
   Future<void> _onDeleteFatura(
-      DeleteFatura event, Emitter<FaturaState> emit) async {
+      DeleteInvoice event, Emitter<InvoiceState> emit) async {
     final currentState = state;
-    if (currentState is FaturaLoaded) {
+    if (currentState is InvoiceLoaded) {
       try {
         final db = await _dbHelper.faturaDatabase;
         await db.delete(
@@ -107,9 +108,9 @@ class InvoiceBloc extends Bloc<FaturaEvent, FaturaState> {
           where: 'id = ?',
           whereArgs: [event.id],
         );
-        add(LoadFaturalar());
+        add(LoadInvoices());
       } catch (e) {
-        emit(FaturaError('Fatura silinirken bir hata oluştu: $e'));
+        emit(InvoiceError('Fatura silinirken bir hata oluştu: $e'));
       }
     }
   }

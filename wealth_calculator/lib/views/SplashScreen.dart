@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryBloc.dart';
+import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/Bloc/PricesBloc/pricesBloc.dart';
@@ -31,7 +33,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startLoadingData() {
-    // PricesScreen için gerekli verilerin yüklenmesini başlatın
     context.read<GoldPricesBloc>().add(LoadGoldPrices());
   }
 
@@ -45,6 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _goHome() {
+    context.read<InventoryBloc>().add(LoadInventoryData());
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
       return PricesScreen();
     }));

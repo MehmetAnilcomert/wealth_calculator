@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_event.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_bloc.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 
-class FaturaEklemeGuncellemeEkrani extends StatefulWidget {
-  final Fatura? fatura;
+class InvoiceAddUpdateScreen extends StatefulWidget {
+  final Invoice? fatura;
 
-  FaturaEklemeGuncellemeEkrani({this.fatura});
+  InvoiceAddUpdateScreen({this.fatura});
 
   @override
-  _FaturaEklemeGuncellemeEkraniState createState() =>
-      _FaturaEklemeGuncellemeEkraniState();
+  _InvoiceAddUpdateScreenState createState() => _InvoiceAddUpdateScreenState();
 }
 
-class _FaturaEklemeGuncellemeEkraniState
-    extends State<FaturaEklemeGuncellemeEkrani> {
+class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
   final _formKey = GlobalKey<FormState>();
   final _tarihController = TextEditingController();
   final _tutarController = TextEditingController();
@@ -42,7 +40,7 @@ class _FaturaEklemeGuncellemeEkraniState
     if (_formKey.currentState!.validate()) {
       final dateFormat = DateFormat('dd.MM.yyyy');
       final selectedDate = dateFormat.parse(_tarihController.text);
-      final fatura = Fatura(
+      final fatura = Invoice(
         id: widget.fatura?.id,
         tarih: selectedDate,
         tutar: double.parse(_tutarController.text),
@@ -52,9 +50,9 @@ class _FaturaEklemeGuncellemeEkraniState
       );
 
       if (widget.fatura == null) {
-        BlocProvider.of<InvoiceBloc>(context).add(AddFatura(fatura));
+        BlocProvider.of<InvoiceBloc>(context).add(AddInvoice(fatura));
       } else {
-        BlocProvider.of<InvoiceBloc>(context).add(UpdateFatura(fatura));
+        BlocProvider.of<InvoiceBloc>(context).add(UpdateInvoice(fatura));
       }
       Navigator.pop(context, true);
     }

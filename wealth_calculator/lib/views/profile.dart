@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/views/inventory.dart';
+import 'package:wealth_calculator/views/inventory_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

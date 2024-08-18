@@ -3,7 +3,7 @@ import 'package:wealth_calculator/modals/InvoiceModal.dart';
 
 abstract class InvoiceService {
   static List<MapEntry<OnemSeviyesi, double>> calculateSegments(
-      List<Fatura> invoices) {
+      List<Invoice> invoices) {
     final Map<OnemSeviyesi, double> groupedSegments = {};
 
     for (var invoice in invoices) {

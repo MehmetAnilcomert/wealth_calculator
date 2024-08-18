@@ -1,40 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_event.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_state.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_bloc.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_event.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_state.dart';
 import 'package:wealth_calculator/services/InvoiceService.dart';
-import 'package:wealth_calculator/widgets/CommonWidgets/TotalPrice.dart';
-import 'package:wealth_calculator/modals/InvoiceModal.dart';
+import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/views/invoiceAdd.dart';
 import 'package:wealth_calculator/widgets/InvoiceWidgets/invoice_list.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
 
-class FaturaListesi extends StatelessWidget {
+class InvoiceListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => InvoiceBloc()..add(LoadFaturalar()),
-      child: BlocConsumer<InvoiceBloc, FaturaState>(
+      create: (context) => InvoiceBloc()..add(LoadInvoices()),
+      child: BlocConsumer<InvoiceBloc, InvoiceState>(
         listener: (context, state) {
-          if (state is FaturaError) {
+          if (state is InvoiceError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
             );
           }
         },
         builder: (context, state) {
-          if (state is FaturaLoaded) {
+          if (state is InvoiceLoaded) {
             // Faturalar için segment ve renkleri hesapla
             // Calculate needed segments and colors for invoices total amounts
             final segments =
-                InvoiceService.calculateSegments(state.odememisFaturalar);
+                InvoiceService.calculateSegments(state.nonPaidInvoices);
             final colors = segments
                 .map(
                     (segment) => InvoiceService.getImportanceColor(segment.key))
                 .toList();
             final paidSegments =
-                InvoiceService.calculateSegments(state.odenmisFaturalar);
+                InvoiceService.calculateSegments(state.paidInvoices);
             final paidColors = paidSegments
                 .map(
                     (segment) => InvoiceService.getImportanceColor(segment.key))
@@ -74,19 +73,19 @@ class FaturaListesi extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) => BlocProvider.value(
                                   value: BlocProvider.of<InvoiceBloc>(context),
-                                  child: FaturaEklemeGuncellemeEkrani(),
+                                  child: InvoiceAddUpdateScreen(),
                                 ),
                               ),
                             ).then((_) {
                               BlocProvider.of<InvoiceBloc>(context)
-                                  .add(LoadFaturalar());
+                                  .add(LoadInvoices());
                             });
                           },
                           bloc: context.read<InvoiceBloc>(),
                         ),
                         SliverFillRemaining(
                           child: InvoiceListWidget(
-                              faturalar: state.odememisFaturalar),
+                              invoices: state.nonPaidInvoices),
                         ),
                       ],
                     ),
@@ -109,19 +108,19 @@ class FaturaListesi extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) => BlocProvider.value(
                                   value: BlocProvider.of<InvoiceBloc>(context),
-                                  child: FaturaEklemeGuncellemeEkrani(),
+                                  child: InvoiceAddUpdateScreen(),
                                 ),
                               ),
                             ).then((_) {
                               BlocProvider.of<InvoiceBloc>(context)
-                                  .add(LoadFaturalar());
+                                  .add(LoadInvoices());
                             });
                           },
                           bloc: context.read<InvoiceBloc>(),
                         ),
                         SliverFillRemaining(
-                          child: InvoiceListWidget(
-                              faturalar: state.odenmisFaturalar),
+                          child:
+                              InvoiceListWidget(invoices: state.paidInvoices),
                         ),
                       ],
                     ),

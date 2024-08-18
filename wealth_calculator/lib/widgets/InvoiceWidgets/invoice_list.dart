@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_event.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_bloc.dart';
+import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 import 'package:wealth_calculator/views/invoiceAdd.dart';
 
 class InvoiceListWidget extends StatelessWidget {
-  final List<Fatura> faturalar;
+  final List<Invoice> invoices;
 
-  InvoiceListWidget({required this.faturalar});
+  InvoiceListWidget({required this.invoices});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: faturalar.length,
+      itemCount: invoices.length,
       itemBuilder: (context, index) {
-        final fatura = faturalar[index];
+        final fatura = invoices[index];
         return Dismissible(
           key: Key(fatura.id.toString()),
           background: Container(
@@ -27,7 +27,8 @@ class InvoiceListWidget extends StatelessWidget {
           ),
           direction: DismissDirection.endToStart,
           onDismissed: (direction) {
-            BlocProvider.of<InvoiceBloc>(context).add(DeleteFatura(fatura.id!));
+            BlocProvider.of<InvoiceBloc>(context)
+                .add(DeleteInvoice(fatura.id!));
           },
           child: GestureDetector(
             onTap: () {
@@ -36,12 +37,12 @@ class InvoiceListWidget extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => BlocProvider.value(
                     value: BlocProvider.of<InvoiceBloc>(context),
-                    child: FaturaEklemeGuncellemeEkrani(fatura: fatura),
+                    child: InvoiceAddUpdateScreen(fatura: fatura),
                   ),
                 ),
               ).then((value) {
                 if (value == true) {
-                  BlocProvider.of<InvoiceBloc>(context).add(LoadFaturalar());
+                  BlocProvider.of<InvoiceBloc>(context).add(LoadInvoices());
                 }
               });
             },

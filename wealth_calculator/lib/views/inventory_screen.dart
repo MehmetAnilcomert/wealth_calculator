@@ -4,8 +4,9 @@ import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
-import 'package:wealth_calculator/widgets/CommonWidgets/TotalPrice.dart';
+import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
+import 'package:wealth_calculator/widgets/InventoryWidgets/list_widget.dart';
 
 class InventoryScreen extends StatelessWidget {
   @override
@@ -74,48 +75,9 @@ class InventoryScreen extends StatelessWidget {
                     },
                     bloc: context.read<InventoryBloc>(),
                   ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final wealth = state.savedWealths[index];
-                        return ListTile(
-                          title: Text('${wealth.type}'),
-                          titleTextStyle: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 21),
-                          subtitle: Text('Miktar: ${wealth.amount}'),
-                          subtitleTextStyle: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                          tileColor: Colors.blueGrey,
-                          trailing: IconButton(
-                            icon: Icon(
-                              Icons.delete,
-                              color: Color.fromARGB(255, 235, 235, 235),
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<InventoryBloc>()
-                                  .add(DeleteWealth(wealth.id));
-                            },
-                          ),
-                          onTap: () {
-                            ItemDialogs.showEditItemDialog(
-                              context,
-                              MapEntry(wealth, wealth.amount),
-                              (wealth, amount) {
-                                context
-                                    .read<InventoryBloc>()
-                                    .add(AddOrUpdateWealth(wealth, amount));
-                              },
-                            );
-                          },
-                        );
-                      },
-                      childCount: state.savedWealths.length,
-                    ),
+                  SliverFillRemaining(
+                    child:
+                        InventorySliverList(savedWealths: state.savedWealths),
                   ),
                 ],
               );

@@ -1,6 +1,6 @@
 enum OnemSeviyesi { yuksek, orta, dusuk }
 
-class Fatura {
+class Invoice {
   int? id;
   DateTime tarih;
   double tutar;
@@ -8,7 +8,7 @@ class Fatura {
   OnemSeviyesi onemSeviyesi;
   bool odendiMi;
 
-  Fatura({
+  Invoice({
     this.id,
     required this.tarih,
     required this.tutar,
@@ -28,8 +28,8 @@ class Fatura {
     };
   }
 
-  factory Fatura.fromMap(Map<String, dynamic> map) {
-    return Fatura(
+  factory Invoice.fromMap(Map<String, dynamic> map) {
+    return Invoice(
       id: map['id'],
       tarih: DateTime.parse(map['tarih']),
       tutar: map['tutar'],
