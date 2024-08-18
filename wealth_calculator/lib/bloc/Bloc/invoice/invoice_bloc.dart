@@ -4,10 +4,10 @@ import 'package:wealth_calculator/bloc/Bloc/invoice/invoice_state.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 
-class FaturaBloc extends Bloc<FaturaEvent, FaturaState> {
+class InvoiceBloc extends Bloc<FaturaEvent, FaturaState> {
   final DbHelper _dbHelper = DbHelper.instance;
 
-  FaturaBloc() : super(FaturaInitial()) {
+  InvoiceBloc() : super(FaturaInitial()) {
     on<LoadFaturalar>(_onLoadFaturalar);
     on<AddFatura>(_onAddFatura);
     on<UpdateFatura>(_onUpdateFatura);

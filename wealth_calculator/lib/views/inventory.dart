@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryState.dart';
-import 'package:wealth_calculator/inventory/ItemDialogs.dart';
-import 'package:wealth_calculator/inventory/TotalPrice.dart';
+import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
+import 'package:wealth_calculator/widgets/CommonWidgets/TotalPrice.dart';
+import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
 
 class InventoryScreen extends StatelessWidget {
   @override
@@ -39,53 +40,39 @@ class InventoryScreen extends StatelessWidget {
             } else if (state is InventoryLoaded) {
               return CustomScrollView(
                 slivers: [
-                  SliverAppBar(
+                  CustomSliverAppBar(
                     expandedHeight: 200.0,
                     collapsedHeight: 250,
-                    automaticallyImplyLeading: false,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: TotalPrice(
-                        totalPrice: state.totalPrice,
-                        segments: state.segments,
-                        colors: state.colors,
-                      ),
+                    flexibleSpaceBackground: TotalPrice(
+                      totalPrice: state.totalPrice,
+                      segments: state.segments,
+                      colors: state.colors,
                     ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10.0, top: 2),
-                        child: FloatingActionButton(
-                          backgroundColor: Color.fromARGB(255, 59, 150, 223),
-                          onPressed: () {
-                            ItemDialogs.showSelectItemDialog(
-                              context,
-                              state.goldPrices,
-                              state.currencyPrices,
-                              (wealth, amount) {
-                                ItemDialogs.showEditItemDialog(
-                                  context,
-                                  MapEntry(wealth, amount),
-                                  (wealth, amount) {
-                                    context
-                                        .read<InventoryBloc>()
-                                        .add(AddOrUpdateWealth(wealth, amount));
-                                  },
-                                );
-                              },
-                              hiddenItems: [
-                                'Altın (ONS/\$)',
-                                'Altın (\$/kg)',
-                                'Altın (Euro/kg)',
-                                'Külçe Altın (\$)'
-                              ],
-                            );
-                          },
-                          child: Icon(
-                            Icons.add,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
+                    onAddPressed: () {
+                      ItemDialogs.showSelectItemDialog(
+                        context,
+                        state.goldPrices,
+                        state.currencyPrices,
+                        (wealth, amount) {
+                          ItemDialogs.showEditItemDialog(
+                            context,
+                            MapEntry(wealth, amount),
+                            (wealth, amount) {
+                              context
+                                  .read<InventoryBloc>()
+                                  .add(AddOrUpdateWealth(wealth, amount));
+                            },
+                          );
+                        },
+                        hiddenItems: [
+                          'Altın (ONS/\$)',
+                          'Altın (\$/kg)',
+                          'Altın (Euro/kg)',
+                          'Külçe Altın (\$)'
+                        ],
+                      );
+                    },
+                    bloc: context.read<InventoryBloc>(),
                   ),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(

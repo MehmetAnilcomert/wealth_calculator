@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/widgets/circular.dart';
+import 'package:wealth_calculator/widgets/CommonWidgets/circular.dart';
 
 class TotalPrice extends StatelessWidget {
   final double totalPrice;

@@ -12,7 +12,6 @@ import 'package:wealth_calculator/views/SplashScreen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Veritabanını başlat
   final databaseHelper = DbHelper.instance;
   runApp(MyApp());
 }
@@ -30,7 +29,7 @@ class MyApp extends StatelessWidget {
           create: (context) => InventoryBloc()..add(LoadInventoryData()),
         ),
         BlocProvider(
-          create: (context) => FaturaBloc(),
+          create: (context) => InvoiceBloc(),
         ),
       ],
       child: MaterialApp(

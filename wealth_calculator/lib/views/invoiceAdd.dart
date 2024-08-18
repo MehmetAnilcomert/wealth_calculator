@@ -52,9 +52,9 @@ class _FaturaEklemeGuncellemeEkraniState
       );
 
       if (widget.fatura == null) {
-        BlocProvider.of<FaturaBloc>(context).add(AddFatura(fatura));
+        BlocProvider.of<InvoiceBloc>(context).add(AddFatura(fatura));
       } else {
-        BlocProvider.of<FaturaBloc>(context).add(UpdateFatura(fatura));
+        BlocProvider.of<InvoiceBloc>(context).add(UpdateFatura(fatura));
       }
       Navigator.pop(context, true);
     }
