@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:wealth_calculator/widgets/CommonWidgets/circular_painter.dart';
+
 class CircularMoneyState extends StatelessWidget {
   final double totalAmount;
   final List<double> segments;
   final List<Color> colors;
+  final double gapPercentage;
 
   const CircularMoneyState({
     Key? key,
     required this.totalAmount,
     required this.segments,
     required this.colors,
+    this.gapPercentage = 0.03,
   }) : super(key: key);
 
   @override
@@ -25,6 +29,7 @@ class CircularMoneyState extends StatelessWidget {
             painter: CircularMoneyStatePainter(
               segments: segments,
               colors: colors,
+              gapPercentage: gapPercentage,
             ),
           ),
           Center(
@@ -41,35 +46,4 @@ class CircularMoneyState extends StatelessWidget {
       ),
     );
   }
-}
-
-class CircularMoneyStatePainter extends CustomPainter {
-  final List<double> segments;
-  final List<Color> colors;
-
-  CircularMoneyStatePainter({required this.segments, required this.colors});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = min(size.width, size.height) / 2;
-    final rect = Rect.fromCircle(center: center, radius: radius);
-
-    double startAngle = -pi / 2;
-    for (int i = 0; i < segments.length; i++) {
-      final sweepAngle =
-          2 * pi * (segments[i] / segments.reduce((a, b) => a + b));
-      final paint = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 20
-        ..color = colors[i]
-        ..strokeCap = StrokeCap.round; // Uçları yuvarlak yapar
-
-      canvas.drawArc(rect, startAngle, sweepAngle, false, paint);
-      startAngle += sweepAngle;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
