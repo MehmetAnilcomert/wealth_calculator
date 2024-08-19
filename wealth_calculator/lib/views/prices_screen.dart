@@ -15,26 +15,34 @@ class PricesScreen extends StatefulWidget {
 }
 
 class _PricesScreenState extends State<PricesScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        setState(() {
-          // When tab changes, update the AppBar title
-        });
-      }
-    });
+    _tabController.addListener(_handleTabChange);
+  }
+
+  void _handleTabChange() {
+    if (_tabController.indexIsChanging) {
+      setState(() {
+        // Trigger a rebuild to update the AppBar title
+      });
+    }
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
+  }
+
+  String _getAppBarTitle(int index) {
+    final titles = ['Altın Fiyatları', 'Döviz Fiyatları', 'Varlık Hesaplayıcı'];
+    return titles[index.clamp(0, 2)];
   }
 
   @override
@@ -42,112 +50,99 @@ class _PricesScreenState extends State<PricesScreen>
     return BlocListener<GoldPricesBloc, GoldPricesState>(
       listener: (context, state) {
         if (state is GoldPricesLoaded) {
-          // GoldPrices yüklendiğinde InventoryData'yı yükleyin
           context.read<InventoryBloc>().add(LoadInventoryData());
         }
       },
-      child: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            leading: Image.asset("images/logo2.png"),
-            backgroundColor: Colors.blueGrey,
-            title: Text(_getAppBarTitle(_tabController.index)),
-            actions: [
-              BlocBuilder<GoldPricesBloc, GoldPricesState>(
-                builder: (context, state) {
-                  if (state is GoldPricesLoading) {
-                    return CircularProgressIndicator();
-                  } else if (state is GoldPricesLoaded) {
-                    return Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => InvoiceListScreen(),
-                              ),
-                            );
-                          },
-                          icon: Icon(
-                            Icons.cases_outlined,
-                            color: Colors.black,
-                          ),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Image.asset("images/logo2.png"),
+          backgroundColor: Colors.blueGrey,
+          centerTitle: true,
+          title: Text(
+              style: TextStyle(
+                  color: Color.fromARGB(255, 0, 0, 0),
+                  fontWeight: FontWeight.bold),
+              _getAppBarTitle(_tabController.index)),
+          actions: [
+            BlocBuilder<GoldPricesBloc, GoldPricesState>(
+              builder: (context, state) {
+                if (state is GoldPricesLoading) {
+                  return CircularProgressIndicator();
+                } else if (state is GoldPricesLoaded) {
+                  return Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InvoiceListScreen(),
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.cases_outlined,
+                          color: Colors.black,
                         ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => InventoryScreen(),
-                              ),
-                            );
-                          },
-                          icon: Icon(Icons.account_balance_wallet,
-                              color: Colors.black),
-                        ),
-                      ],
-                    );
-                  } else if (state is GoldPricesError) {
-                    return IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.error),
-                      tooltip: 'Hata: ${state.message}',
-                    );
-                  } else {
-                    return SizedBox.shrink();
-                  }
-                },
-              ),
-            ],
-          ),
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              buildPricesTab(BlocProvider.of<GoldPricesBloc>(context).state
-                      is GoldPricesLoaded
-                  ? (BlocProvider.of<GoldPricesBloc>(context).state
-                          as GoldPricesLoaded)
-                      .goldPrices
-                  : []),
-              buildPricesTab(BlocProvider.of<GoldPricesBloc>(context).state
-                      is GoldPricesLoaded
-                  ? (BlocProvider.of<GoldPricesBloc>(context).state
-                          as GoldPricesLoaded)
-                      .currencyPrices
-                  : []),
-              CalculatorScreen(),
-            ],
-          ),
-          bottomNavigationBar: Container(
-            color: Colors.blueGrey,
-            child: TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(icon: Icon(Icons.gpp_good), text: 'Altın'),
-                Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
-                Tab(icon: Icon(Icons.calculate), text: 'Hesapla'),
-              ],
-              labelColor: Colors.white,
-              unselectedLabelColor: Color.fromARGB(255, 142, 140, 140),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InventoryScreen(),
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.account_balance_wallet,
+                            color: Colors.black),
+                      ),
+                    ],
+                  );
+                } else if (state is GoldPricesError) {
+                  return IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.error),
+                    tooltip: 'Hata: ${state.message}',
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
             ),
+          ],
+        ),
+        body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
+          controller: _tabController,
+          children: [
+            buildPricesTab(
+                context.read<GoldPricesBloc>().state is GoldPricesLoaded
+                    ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
+                        .goldPrices
+                    : []),
+            buildPricesTab(
+                context.read<GoldPricesBloc>().state is GoldPricesLoaded
+                    ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
+                        .currencyPrices
+                    : []),
+            CalculatorScreen(),
+          ],
+        ),
+        bottomNavigationBar: Container(
+          color: Colors.blueGrey,
+          child: TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(icon: Icon(Icons.gpp_good), text: 'Altın'),
+              Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
+              Tab(icon: Icon(Icons.calculate), text: 'Hesapla'),
+            ],
+            labelColor: Colors.white,
+            unselectedLabelColor: Color.fromARGB(255, 142, 140, 140),
           ),
         ),
       ),
     );
-  }
-
-  String _getAppBarTitle(int index) {
-    switch (index) {
-      case 0:
-        return 'Altın Fiyatları';
-      case 1:
-        return 'Döviz Fiyatları';
-      case 2:
-        return 'Hesapla';
-      default:
-        return 'Fiyatlar';
-    }
   }
 }
