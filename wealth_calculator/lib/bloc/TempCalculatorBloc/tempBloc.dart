@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryEvent.dart';
-import 'package:wealth_calculator/bloc/Bloc/InventoryBloc/InventoryState.dart';
+import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempEvent.dart';
+import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempState.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/services/DataScraping.dart';
-import 'package:wealth_calculator/services/Wealthsdao.dart';
 
-class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
+class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
+  // Geçici listeler
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];
 
-  InventoryBloc() : super(InventoryInitial()) {
+  TempInventoryBloc() : super(InventoryInitial()) {
     on<LoadInventoryData>(_onLoadInventoryData);
     on<AddOrUpdateWealth>(_onEditWealth);
     on<DeleteWealth>(_onDeleteWealth);
   }
 
   Future<void> _onLoadInventoryData(
-      LoadInventoryData event, Emitter<InventoryState> emit) async {
+      LoadInventoryData event, Emitter<TempInventoryState> emit) async {
     emit(InventoryLoading());
 
     try {
-      final wealthsDao = SavedWealthsdao();
-      _savedWealths = await wealthsDao.getAllWealths();
+      // Geçici listelere test verilerini atıyoruz
+      _savedWealths = []; // Geçici listeyi temizle
 
       if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
         _cachedGoldPrices = await fetchGoldPrices();
@@ -38,30 +38,26 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onEditWealth(
-      AddOrUpdateWealth event, Emitter<InventoryState> emit) async {
+      AddOrUpdateWealth event, Emitter<TempInventoryState> emit) async {
     try {
-      final wealthsDao = SavedWealthsdao();
-      final existingWealth =
-          await wealthsDao.getWealthByType(event.wealth.type);
+      final existingWealthIndex = _savedWealths
+          .indexWhere((wealth) => wealth.type == event.wealth.type);
 
-      if (existingWealth != null) {
-        final updatedWealth = SavedWealths(
-          id: existingWealth.id,
-          type: event.wealth.type,
-          amount: event.amount,
-        );
-        await wealthsDao.updateWealth(updatedWealth);
+      if (existingWealthIndex != -1) {
+        // Mevcut varlık güncelleniyor
+        _savedWealths[existingWealthIndex] = SavedWealths(
+            id: _savedWealths[existingWealthIndex].id,
+            type: event.wealth.type,
+            amount: event.amount);
       } else {
+        // Yeni varlık ekleniyor
         final newWealth = SavedWealths(
           id: DateTime.now().millisecondsSinceEpoch,
           type: event.wealth.type,
           amount: event.amount,
         );
-        await wealthsDao.insertWealth(newWealth);
+        _savedWealths.add(newWealth);
       }
-
-      // Update the cached _savedWealths list
-      _savedWealths = await wealthsDao.getAllWealths();
 
       // Emit new state with updated data
       emit(_createLoadedState());
@@ -71,15 +67,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   Future<void> _onDeleteWealth(
-      DeleteWealth event, Emitter<InventoryState> emit) async {
+      DeleteWealth event, Emitter<TempInventoryState> emit) async {
     try {
-      final wealthsDao = SavedWealthsdao();
-      await wealthsDao.deleteWealth(event.id);
-
-      // Update the cached _savedWealths list
-      _savedWealths = await wealthsDao.getAllWealths();
-
-      // Emit new state with updated data
+      _savedWealths.removeWhere((wealth) => wealth.id == event.id);
       emit(_createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to delete wealth.'));

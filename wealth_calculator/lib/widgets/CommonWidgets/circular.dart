@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
-
 import 'package:wealth_calculator/widgets/CommonWidgets/circular_painter.dart';
 
 class CircularMoneyState extends StatelessWidget {

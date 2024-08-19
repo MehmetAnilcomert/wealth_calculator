@@ -1,7 +1,7 @@
 // prices_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesEvent.dart';
-import 'package:wealth_calculator/bloc/Bloc/PricesBloc/PricesState.dart';
+import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
+import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/services/DataScraping.dart';
 
 class GoldPricesBloc extends Bloc<GoldPricesEvent, GoldPricesState> {

@@ -1,30 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
-import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
-import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
-import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
-import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
+import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempBloc.dart';
+import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempEvent.dart';
+import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempState.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
-import 'package:wealth_calculator/widgets/InventoryWidgets/list_widget.dart';
+import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
+import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
+import 'package:wealth_calculator/widgets/calculator_list.dart';
 
-class InventoryScreen extends StatelessWidget {
+class CalculatorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => InventoryBloc()..add(LoadInventoryData()),
+      create: (context) => TempInventoryBloc()..add(LoadInventoryData()),
       child: Scaffold(
-        appBar: AppBar(
-          title: Padding(
-            padding: const EdgeInsets.only(left: 25.0),
-            child: const Text(
-              'Varlık Hesap Makinesi',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          backgroundColor: Colors.blueGrey,
-        ),
-        body: BlocConsumer<InventoryBloc, InventoryState>(
+        body: BlocConsumer<TempInventoryBloc, TempInventoryState>(
           listener: (context, state) {
             if (state is InventoryError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -57,10 +47,10 @@ class InventoryScreen extends StatelessWidget {
                         (wealth, amount) {
                           ItemDialogs.showEditItemDialog(
                             context,
-                            MapEntry(wealth, amount),
+                            MapEntry(wealth, 0),
                             (wealth, amount) {
                               context
-                                  .read<InventoryBloc>()
+                                  .read<TempInventoryBloc>()
                                   .add(AddOrUpdateWealth(wealth, amount));
                             },
                           );
@@ -73,11 +63,11 @@ class InventoryScreen extends StatelessWidget {
                         ],
                       );
                     },
-                    bloc: context.read<InventoryBloc>(),
+                    bloc: context.read<TempInventoryBloc>(),
                   ),
                   SliverFillRemaining(
-                    child:
-                        InventoryListWidget(savedWealths: state.savedWealths),
+                    child: TempInventoryListWidget(
+                        savedWealths: state.savedWealths),
                   ),
                 ],
               );

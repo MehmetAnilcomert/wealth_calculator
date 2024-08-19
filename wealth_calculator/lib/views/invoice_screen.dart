@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_event.dart';
-import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_state.dart';
+import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
+import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
+import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_state.dart';
 import 'package:wealth_calculator/services/InvoiceService.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
-import 'package:wealth_calculator/views/invoiceAdd.dart';
+import 'package:wealth_calculator/views/invoice_adding.dart';
 import 'package:wealth_calculator/widgets/InvoiceWidgets/invoice_list.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
 

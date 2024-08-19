@@ -81,6 +81,7 @@ flutter:
     - images/invoice.json
     - images/bill.json
     - images/logo.png
+    - images/logo2.png
     - database/inventory.db
 
   # An image asset can refer to one or more resolution-specific "variants", see

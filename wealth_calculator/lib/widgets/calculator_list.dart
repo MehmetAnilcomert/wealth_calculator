@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
-import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
+import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempBloc.dart';
+import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempEvent.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
 
-class InventoryListWidget extends StatelessWidget {
+class TempInventoryListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
 
-  InventoryListWidget({required this.savedWealths});
+  TempInventoryListWidget({required this.savedWealths});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class InventoryListWidget extends StatelessWidget {
           ),
           direction: DismissDirection.endToStart,
           onDismissed: (direction) {
-            BlocProvider.of<InventoryBloc>(context)
+            BlocProvider.of<TempInventoryBloc>(context)
                 .add(DeleteWealth(wealth.id));
           },
           child: GestureDetector(
@@ -36,7 +36,7 @@ class InventoryListWidget extends StatelessWidget {
                 MapEntry(wealth, wealth.amount),
                 (wealth, amount) {
                   context
-                      .read<InventoryBloc>()
+                      .read<TempInventoryBloc>()
                       .add(AddOrUpdateWealth(wealth, amount));
                 },
               );
@@ -83,7 +83,7 @@ class InventoryListWidget extends StatelessWidget {
                     iconSize: 40,
                     icon: Icon(Icons.add, color: Colors.white),
                     onPressed: () {
-                      context.read<InventoryBloc>().add(
+                      context.read<TempInventoryBloc>().add(
                             AddOrUpdateWealth(
                               wealth,
                               wealth.amount + 1,
@@ -96,14 +96,14 @@ class InventoryListWidget extends StatelessWidget {
                     icon: Icon(Icons.remove, color: Colors.white),
                     onPressed: () {
                       if (wealth.amount > 0) {
-                        context.read<InventoryBloc>().add(
+                        context.read<TempInventoryBloc>().add(
                               AddOrUpdateWealth(
                                 wealth,
                                 wealth.amount - 1,
                               ),
                             );
                       } else if (wealth.amount == 0) {
-                        BlocProvider.of<InventoryBloc>(context)
+                        BlocProvider.of<TempInventoryBloc>(context)
                             .add(DeleteWealth(wealth.id));
                       }
                     },

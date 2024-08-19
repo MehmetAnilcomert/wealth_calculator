@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_bloc.dart';
-import 'package:wealth_calculator/bloc/Bloc/InvoiceBloc/invoice_event.dart';
+import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
+import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
-import 'package:wealth_calculator/views/invoiceAdd.dart';
+import 'package:wealth_calculator/views/invoice_adding.dart';
 
 class InvoiceListWidget extends StatelessWidget {
   final List<Invoice> invoices;
