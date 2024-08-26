@@ -75,7 +75,9 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 177, 210, 226),
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 177, 210, 226),
         title: Text(widget.fatura == null ? 'Fatura Ekle' : 'Fatura Güncelle'),
       ),
       body: SingleChildScrollView(

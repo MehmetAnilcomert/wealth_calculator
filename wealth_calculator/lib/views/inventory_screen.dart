@@ -14,13 +14,12 @@ class InventoryScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => InventoryBloc()..add(LoadInventoryData()),
       child: Scaffold(
+        backgroundColor: Colors.blueGrey,
         appBar: AppBar(
-          title: Padding(
-            padding: const EdgeInsets.only(left: 25.0),
-            child: const Text(
-              'Varlık Hesap Makinesi',
-              style: TextStyle(color: Colors.white),
-            ),
+          centerTitle: true,
+          title: const Text(
+            'Varlıklar',
+            style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.blueGrey,
         ),

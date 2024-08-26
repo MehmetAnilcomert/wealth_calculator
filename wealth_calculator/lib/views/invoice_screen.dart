@@ -42,6 +42,7 @@ class InvoiceListScreen extends StatelessWidget {
             return DefaultTabController(
               length: 2,
               child: Scaffold(
+                backgroundColor: Colors.blueGrey,
                 appBar: AppBar(
                   title: Text('Faturalar'),
                   backgroundColor: Colors.blueGrey,
