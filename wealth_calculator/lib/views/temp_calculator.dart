@@ -67,7 +67,9 @@ class CalculatorScreen extends StatelessWidget {
                   ),
                   SliverFillRemaining(
                     child: TempInventoryListWidget(
-                        savedWealths: state.savedWealths),
+                      savedWealths: state.savedWealths,
+                      colors: state.colors,
+                    ),
                   ),
                 ],
               );

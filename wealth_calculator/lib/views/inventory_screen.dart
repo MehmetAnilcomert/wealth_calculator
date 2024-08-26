@@ -76,8 +76,8 @@ class InventoryScreen extends StatelessWidget {
                     bloc: context.read<InventoryBloc>(),
                   ),
                   SliverFillRemaining(
-                    child:
-                        InventoryListWidget(savedWealths: state.savedWealths),
+                    child: InventoryListWidget(
+                        colors: state.colors, savedWealths: state.savedWealths),
                   ),
                 ],
               );

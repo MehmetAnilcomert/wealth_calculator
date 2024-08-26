@@ -7,8 +7,9 @@ import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
 
 class InventoryListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
+  final List<Color> colors;
 
-  InventoryListWidget({required this.savedWealths});
+  InventoryListWidget({required this.colors, required this.savedWealths});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +17,7 @@ class InventoryListWidget extends StatelessWidget {
       itemCount: savedWealths.length,
       itemBuilder: (context, index) {
         final wealth = savedWealths[index];
+        final color = colors[index];
         return Dismissible(
           key: Key(wealth.id.toString()),
           background: Container(
@@ -49,6 +51,15 @@ class InventoryListWidget extends StatelessWidget {
               padding: EdgeInsets.all(8.0),
               child: Row(
                 children: [
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

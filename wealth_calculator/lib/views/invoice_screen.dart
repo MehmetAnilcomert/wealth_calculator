@@ -85,7 +85,9 @@ class InvoiceListScreen extends StatelessWidget {
                         ),
                         SliverFillRemaining(
                           child: InvoiceListWidget(
-                              invoices: state.nonPaidInvoices),
+                            invoices: state.nonPaidInvoices,
+                            colors: colors,
+                          ),
                         ),
                       ],
                     ),
@@ -119,8 +121,8 @@ class InvoiceListScreen extends StatelessWidget {
                           bloc: context.read<InvoiceBloc>(),
                         ),
                         SliverFillRemaining(
-                          child:
-                              InvoiceListWidget(invoices: state.paidInvoices),
+                          child: InvoiceListWidget(
+                              colors: paidColors, invoices: state.paidInvoices),
                         ),
                       ],
                     ),
