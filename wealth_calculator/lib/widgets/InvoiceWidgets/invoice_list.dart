@@ -8,9 +8,13 @@ import 'package:wealth_calculator/views/invoice_adding.dart';
 
 class InvoiceListWidget extends StatelessWidget {
   final List<Invoice> invoices;
-  final List<Color> colors;
+  final Map<String, MaterialColor> colors = {
+    "yuksek": Colors.red,
+    "orta": Colors.orange,
+    "dusuk": Colors.yellow
+  };
 
-  InvoiceListWidget({required this.invoices, required this.colors});
+  InvoiceListWidget({required this.invoices});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,8 @@ class InvoiceListWidget extends StatelessWidget {
       itemCount: invoices.length,
       itemBuilder: (context, index) {
         final fatura = invoices[index];
-        final color = colors[index];
+        final color =
+            colors["${fatura.onemSeviyesi.toString().split('.').last}"];
         return Dismissible(
           key: Key(fatura.id.toString()),
           background: Container(

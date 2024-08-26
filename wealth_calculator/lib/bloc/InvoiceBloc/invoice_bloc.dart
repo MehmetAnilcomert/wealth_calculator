@@ -12,6 +12,38 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     on<AddInvoice>(_onAddFatura);
     on<UpdateInvoice>(_onUpdateFatura);
     on<DeleteInvoice>(_onDeleteFatura);
+    on<SortByImportance>(_onSortByImportance);
+    on<SortByDate>(_onSortByDate);
+  }
+
+  Future<void> _onSortByImportance(
+      SortByImportance event, Emitter<InvoiceState> emit) async {
+    if (state is InvoiceLoaded) {
+      final currentState = state as InvoiceLoaded;
+      final sortedNonPaid = List<Invoice>.from(currentState.nonPaidInvoices)
+        ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
+      final sortedPaid = List<Invoice>.from(currentState.paidInvoices)
+        ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
+      emit(InvoiceLoaded(
+        nonPaidInvoices: sortedNonPaid,
+        paidInvoices: sortedPaid,
+      ));
+    }
+  }
+
+  Future<void> _onSortByDate(
+      SortByDate event, Emitter<InvoiceState> emit) async {
+    if (state is InvoiceLoaded) {
+      final currentState = state as InvoiceLoaded;
+      final sortedNonPaid = List<Invoice>.from(currentState.nonPaidInvoices)
+        ..sort((a, b) => a.tarih.compareTo(b.tarih));
+      final sortedPaid = List<Invoice>.from(currentState.paidInvoices)
+        ..sort((a, b) => a.tarih.compareTo(b.tarih));
+      emit(InvoiceLoaded(
+        nonPaidInvoices: sortedNonPaid,
+        paidInvoices: sortedPaid,
+      ));
+    }
   }
 
   Future<void> _onLoadFaturalar(

@@ -10,6 +10,10 @@ abstract class InvoiceEvent extends Equatable {
 
 class LoadInvoices extends InvoiceEvent {}
 
+class SortByImportance extends InvoiceEvent {}
+
+class SortByDate extends InvoiceEvent {}
+
 class AddInvoice extends InvoiceEvent {
   final Invoice fatura;
 

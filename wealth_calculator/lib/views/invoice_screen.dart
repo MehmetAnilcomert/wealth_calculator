@@ -52,6 +52,27 @@ class InvoiceListScreen extends StatelessWidget {
                     ],
                     labelColor: Colors.black,
                   ),
+                  actions: [
+                    PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'importance') {
+                          context.read<InvoiceBloc>().add(SortByImportance());
+                        } else if (value == 'date') {
+                          context.read<InvoiceBloc>().add(SortByDate());
+                        }
+                      },
+                      itemBuilder: (BuildContext context) => [
+                        PopupMenuItem(
+                          value: 'importance',
+                          child: Text('Önem Sırası'),
+                        ),
+                        PopupMenuItem(
+                          value: 'date',
+                          child: Text('Tarih Sırası'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 body: TabBarView(
                   children: [
@@ -86,7 +107,6 @@ class InvoiceListScreen extends StatelessWidget {
                         SliverFillRemaining(
                           child: InvoiceListWidget(
                             invoices: state.nonPaidInvoices,
-                            colors: colors,
                           ),
                         ),
                       ],
@@ -121,8 +141,8 @@ class InvoiceListScreen extends StatelessWidget {
                           bloc: context.read<InvoiceBloc>(),
                         ),
                         SliverFillRemaining(
-                          child: InvoiceListWidget(
-                              colors: paidColors, invoices: state.paidInvoices),
+                          child:
+                              InvoiceListWidget(invoices: state.paidInvoices),
                         ),
                       ],
                     ),
