@@ -11,6 +11,17 @@ class WealthPriceCard extends StatelessWidget {
     Color changeColor = wealthPrice.change.startsWith('-')
         ? Colors.red
         : const Color.fromARGB(255, 67, 155, 70);
+    Icon icon = wealthPrice.change.startsWith('-')
+        ? Icon(
+            Icons.trending_down,
+            color: Colors.red,
+            size: 26.0,
+          )
+        : Icon(
+            Icons.trending_up,
+            color: Colors.green,
+            size: 26.0,
+          );
     return Container(
       margin: EdgeInsets.all(5),
       width: 180,
@@ -55,13 +66,21 @@ class WealthPriceCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.0),
-          Text(
-            'Change: ${wealthPrice.change}',
-            style: TextStyle(
-              fontSize: 14.0,
-              color: changeColor,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Text(
+                'Change: ${wealthPrice.change}',
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: changeColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              icon,
+            ],
           ),
           SizedBox(height: 4.0),
           Text(
