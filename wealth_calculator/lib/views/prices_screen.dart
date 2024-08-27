@@ -6,6 +6,7 @@ import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
+import 'package:wealth_calculator/views/profile.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
 import 'package:wealth_calculator/widgets/wealthCard.dart';
 
@@ -76,6 +77,20 @@ class _PricesScreenState extends State<PricesScreen>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
+                              builder: (context) => ProfileScreen(),
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.person_2,
+                          color: Colors.black,
+                        ),
+                      ),
+                      /* IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
                               builder: (context) => InvoiceListScreen(),
                             ),
                           );
@@ -96,7 +111,7 @@ class _PricesScreenState extends State<PricesScreen>
                         },
                         icon: Icon(Icons.account_balance_wallet,
                             color: Colors.black),
-                      ),
+                      ), */
                     ],
                   );
                 } else if (state is GoldPricesError) {

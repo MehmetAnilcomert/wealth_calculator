@@ -80,7 +80,7 @@ class InvoiceListScreen extends StatelessWidget {
                     CustomScrollView(
                       slivers: [
                         CustomSliverAppBar(
-                          expandedHeight: 200.0,
+                          expandedHeight: 220.0,
                           collapsedHeight: 250,
                           flexibleSpaceBackground: TotalPrice(
                             totalPrice: segments.fold(
