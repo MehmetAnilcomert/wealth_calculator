@@ -72,7 +72,7 @@ class _PricesScreenState extends State<PricesScreen>
                 } else if (state is GoldPricesLoaded) {
                   return Row(
                     children: [
-                      IconButton(
+                      /* IconButton(
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -85,8 +85,8 @@ class _PricesScreenState extends State<PricesScreen>
                           Icons.person_2,
                           color: Colors.black,
                         ),
-                      ),
-                      /* IconButton(
+                      ), */
+                      IconButton(
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -111,7 +111,7 @@ class _PricesScreenState extends State<PricesScreen>
                         },
                         icon: Icon(Icons.account_balance_wallet,
                             color: Colors.black),
-                      ), */
+                      ),
                     ],
                   );
                 } else if (state is GoldPricesError) {

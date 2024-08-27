@@ -19,10 +19,12 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   late Timer _timer;
   bool _loadingComplete = false;
+  late DateTime _startTime;
 
   @override
   void initState() {
     super.initState();
+    _startTime = DateTime.now(); // Başlangıç zamanını kaydet
     startTimer();
     _startLoadingData();
   }
@@ -37,7 +39,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _checkLoadingState() {
-    if (_loadingComplete) {
+    Duration elapsed = DateTime.now().difference(_startTime);
+
+    if (_loadingComplete || elapsed.inSeconds >= 10) {
+      // 10 saniye veya yükleme tamamlanmışsa
       _goHome();
     } else {
       // Eğer yükleme tamamlanmadıysa dinlemeye devam et

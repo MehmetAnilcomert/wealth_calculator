@@ -19,7 +19,7 @@ class CalculatorScreen extends StatelessWidget {
             if (state is InventoryError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Error: ${state.message}'),
+                  content: Text('Hata: Veriler yüklenemedi'),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -74,7 +74,7 @@ class CalculatorScreen extends StatelessWidget {
                 ],
               );
             } else {
-              return Center(child: Text('Unknown state'));
+              return Center(child: Text('Veriler yüklenirken hata oldu'));
             }
           },
         ),
