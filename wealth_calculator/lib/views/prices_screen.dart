@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
-import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
