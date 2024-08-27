@@ -105,7 +105,20 @@ class _PricesScreenState extends State<PricesScreen>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => InventoryScreen(),
+                              builder: (context) => BlocProvider.value(
+                                value: context.read<InventoryBloc>()
+                                  ..add(LoadInventoryData(
+                                    goldPrices: (context
+                                            .read<GoldPricesBloc>()
+                                            .state as GoldPricesLoaded)
+                                        .goldPrices,
+                                    currencyPrices: (context
+                                            .read<GoldPricesBloc>()
+                                            .state as GoldPricesLoaded)
+                                        .currencyPrices,
+                                  )),
+                                child: InventoryScreen(),
+                              ),
                             ),
                           );
                         },

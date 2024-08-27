@@ -20,13 +20,6 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
   Future<void> _onLoadInventoryData(
       LoadInventoryData event, Emitter<InventoryState> emit) async {
-    if (_savedWealths.isNotEmpty &&
-        _cachedGoldPrices.isNotEmpty &&
-        _cachedCurrencyPrices.isNotEmpty) {
-      print("Yüklenmiş veriler----------");
-      emit(_createLoadedState());
-      return;
-    }
     emit(InventoryLoading());
 
     try {
