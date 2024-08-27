@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempBloc.dart';
 import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempEvent.dart';
 import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempState.dart';
@@ -23,6 +24,8 @@ class CalculatorScreen extends StatelessWidget {
                   backgroundColor: Colors.red,
                 ),
               );
+            } else if (state is GoldPricesLoaded) {
+              context.read<TempInventoryBloc>().add(LoadInventoryData());
             }
           },
           builder: (context, state) {

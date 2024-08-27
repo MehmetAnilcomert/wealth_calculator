@@ -7,7 +7,7 @@ import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 import 'package:wealth_calculator/views/prices_screen.dart';
-import 'package:wealth_calculator/views/SplashScreen.dart';
+import 'package:wealth_calculator/views/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

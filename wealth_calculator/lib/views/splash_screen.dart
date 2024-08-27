@@ -24,13 +24,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _startTime = DateTime.now(); // Başlangıç zamanını kaydet
+    _startTime = DateTime.now();
     startTimer();
     _startLoadingData();
   }
 
   void startTimer() {
-    Duration duration = Duration(seconds: 3); // Animasyon süresi
+    Duration duration = Duration(seconds: 3);
     _timer = Timer(duration, _checkLoadingState);
   }
 
@@ -41,11 +41,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void _checkLoadingState() {
     Duration elapsed = DateTime.now().difference(_startTime);
 
-    if (_loadingComplete || elapsed.inSeconds >= 10) {
-      // 10 saniye veya yükleme tamamlanmışsa
+    if (_loadingComplete || elapsed.inSeconds >= 5) {
       _goHome();
     } else {
-      // Eğer yükleme tamamlanmadıysa dinlemeye devam et
       _timer = Timer(Duration(milliseconds: 500), _checkLoadingState);
     }
   }

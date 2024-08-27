@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
+import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
@@ -27,7 +28,7 @@ class InventoryScreen extends StatelessWidget {
       body: BlocConsumer<InventoryBloc, InventoryState>(
         bloc: inventoryBloc, // Aynı Bloc'u kullandığınızdan emin olun
         listener: (context, state) {
-          if (state is InventoryError) {
+          if (state is InventoryError || state is GoldPricesError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Hata: Veriler yüklenemedi'),

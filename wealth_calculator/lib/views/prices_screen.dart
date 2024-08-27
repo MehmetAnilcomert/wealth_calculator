@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
+import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
@@ -69,7 +70,7 @@ class _PricesScreenState extends State<PricesScreen>
               builder: (context, state) {
                 if (state is GoldPricesLoading) {
                   return CircularProgressIndicator();
-                } else if (state is GoldPricesLoaded) {
+                } else
                   return Row(
                     children: [
                       /* IconButton(
@@ -102,60 +103,82 @@ class _PricesScreenState extends State<PricesScreen>
                       ),
                       IconButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider.value(
-                                value: context.read<InventoryBloc>()
-                                  ..add(LoadInventoryData(
-                                    goldPrices: (context
-                                            .read<GoldPricesBloc>()
-                                            .state as GoldPricesLoaded)
-                                        .goldPrices,
-                                    currencyPrices: (context
-                                            .read<GoldPricesBloc>()
-                                            .state as GoldPricesLoaded)
-                                        .currencyPrices,
-                                  )),
-                                child: InventoryScreen(),
+                          if (context.read<GoldPricesBloc>().state
+                              is GoldPricesLoaded) {
+                            final goldPricesState = context
+                                .read<GoldPricesBloc>()
+                                .state as GoldPricesLoaded;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider.value(
+                                  value: context.read<InventoryBloc>()
+                                    ..add(LoadInventoryData(
+                                      goldPrices: goldPricesState.goldPrices,
+                                      currencyPrices:
+                                          goldPricesState.currencyPrices,
+                                    )),
+                                  child: InventoryScreen(),
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            // Show an error message or handle error case
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Envanter verileri yüklenemedi.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                         },
                         icon: Icon(Icons.account_balance_wallet,
                             color: Colors.black),
                       ),
                     ],
                   );
-                } else if (state is GoldPricesError) {
-                  return IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.error),
-                    tooltip: 'Hata: ${state.message}',
-                  );
-                } else {
-                  return SizedBox.shrink();
-                }
               },
             ),
           ],
         ),
-        body: TabBarView(
-          physics: NeverScrollableScrollPhysics(),
-          controller: _tabController,
-          children: [
-            buildPricesTab(
-                context.read<GoldPricesBloc>().state is GoldPricesLoaded
+        body: BlocBuilder<GoldPricesBloc, GoldPricesState>(
+          builder: (context, state) {
+            if (state is GoldPricesError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Veriler yüklenemedi:',
+                      style: TextStyle(color: Colors.red, fontSize: 18),
+                    ),
+                    Text(
+                      'İnternet bağlantınızı kontrol edin',
+                      style: TextStyle(color: Colors.red, fontSize: 18),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return TabBarView(
+              physics: NeverScrollableScrollPhysics(),
+              controller: _tabController,
+              children: [
+                buildPricesTab(context.read<GoldPricesBloc>().state
+                        is GoldPricesLoaded
                     ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
                         .goldPrices
                     : []),
-            buildPricesTab(
-                context.read<GoldPricesBloc>().state is GoldPricesLoaded
+                buildPricesTab(context.read<GoldPricesBloc>().state
+                        is GoldPricesLoaded
                     ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
                         .currencyPrices
                     : []),
-            CalculatorScreen(),
-          ],
+                CalculatorScreen(),
+              ],
+            );
+          },
         ),
         bottomNavigationBar: Container(
           color: Colors.blueGrey,
