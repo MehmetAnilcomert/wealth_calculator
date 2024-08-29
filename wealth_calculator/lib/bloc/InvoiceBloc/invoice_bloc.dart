@@ -3,6 +3,7 @@ import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_state.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
+import 'package:wealth_calculator/services/Notification.dart';
 
 class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   final DbHelper _dbHelper = DbHelper.instance;
@@ -134,6 +135,9 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     final currentState = state;
     if (currentState is InvoiceLoaded) {
       try {
+        // Bildirimi kaldır
+        NotificationService.cancelNotification(event.id);
+
         final db = await _dbHelper.faturaDatabase;
         await db.delete(
           'fatura',

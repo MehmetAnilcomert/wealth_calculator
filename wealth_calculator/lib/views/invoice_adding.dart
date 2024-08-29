@@ -40,13 +40,31 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
       if (widget.fatura!.tarih.isBefore(DateTime.now()) || _odendiMi) {
         _isNotificationEnabled = false;
       }
+    } else {
+      // Yeni fatura ekleme durumunda varsayılan tarih olarak bugünü ayarla
+      _tarihController.text = DateFormat('dd.MM.yyyy').format(DateTime.now());
     }
   }
 
   Future<void> _faturaEkleGuncelle(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       final dateFormat = DateFormat('dd.MM.yyyy');
-      final selectedDate = dateFormat.parse(_tarihController.text);
+      DateTime selectedDate;
+
+      try {
+        selectedDate = dateFormat.parse(_tarihController.text);
+      } catch (e) {
+        // Tarih formatı hatası
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Tarih formatı hatalı. Lütfen doğru formatta bir tarih girin.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final fatura = Invoice(
         id: widget.fatura?.id,
         tarih: selectedDate,
@@ -69,7 +87,9 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: widget.fatura?.tarih ?? DateTime.now(),
+      initialDate: _tarihController.text.isNotEmpty
+          ? DateFormat('dd.MM.yyyy').parse(_tarihController.text)
+          : DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
@@ -165,12 +185,7 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
                       },
                     ),
                     SwitchListTile(
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(Icons.notification_add),
-                        ],
-                      ),
+                      title: Text('Hatırlatma bildirimi gönderilsin mi?'),
                       value: _isNotificationEnabled,
                       onChanged: _odendiMi ||
                               DateFormat('dd.MM.yyyy')
@@ -193,12 +208,11 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
                                     scheduledDate.day,
                                     9,
                                     30);
-                                ;
                                 try {
                                   await NotificationService
                                       .scheduleNotification(
                                     context,
-                                    0,
+                                    notificationId,
                                     "Hatırlatma!",
                                     "${_tutarController.text} TL tutarında olan ${_aciklamaController.text} faturanızı ödemiş miydiniz?",
                                     scheduledDate,
