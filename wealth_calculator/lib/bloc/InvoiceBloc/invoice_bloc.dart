@@ -157,30 +157,31 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     if (currentState is InvoiceLoaded) {
       try {
         final db = await _dbHelper.faturaDatabase;
-        await db.update(
+        int updatedRows = await db.update(
           'fatura',
           event.fatura.toMap(),
           where: 'id = ?',
           whereArgs: [event.fatura.id],
         );
 
-        // Güncellenen faturayı bulun
+        if (updatedRows == 0) {
+          throw Exception('Fatura güncellenemedi. ID: ${event.fatura.id}');
+        }
+
         List<Invoice> updatedOdememisFaturalar =
             List.from(currentState.nonPaidInvoices);
         List<Invoice> updatedOdenmisFaturalar =
             List.from(currentState.paidInvoices);
 
+        updatedOdememisFaturalar.removeWhere((f) => f.id == event.fatura.id);
+        updatedOdenmisFaturalar.removeWhere((f) => f.id == event.fatura.id);
+
         if (event.fatura.odendiMi) {
-          // Fatura ödenmiş olarak güncellendiyse, ödenmemiş listeden çıkar ve ödenmiş listeye ekle
-          updatedOdememisFaturalar.removeWhere((f) => f.id == event.fatura.id);
           updatedOdenmisFaturalar.add(event.fatura);
         } else {
-          // Fatura ödenmemiş olarak güncellendiyse, ödenmiş listeden çıkar ve ödenmemiş listeye ekle
-          updatedOdenmisFaturalar.removeWhere((f) => f.id == event.fatura.id);
           updatedOdememisFaturalar.add(event.fatura);
         }
 
-        // Yeni durumu emit et
         emit(InvoiceLoaded(
           nonPaidInvoices: updatedOdememisFaturalar,
           paidInvoices: updatedOdenmisFaturalar,
@@ -188,6 +189,8 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       } catch (e) {
         emit(InvoiceError('Fatura güncellenirken bir hata oluştu: $e'));
       }
+    } else {
+      emit(InvoiceError('Geçersiz durum. Faturalar yüklenemedi.'));
     }
   }
 
