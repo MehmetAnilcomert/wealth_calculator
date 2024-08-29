@@ -15,6 +15,8 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     on<DeleteInvoice>(_onDeleteFatura);
     on<SortByImportance>(_onSortByImportance);
     on<SortByDate>(_onSortByDate);
+    on<SortByAmount>(_onSortByAmount);
+    on<SortByAmountAndDate>(_onSortByAmountAndDate);
   }
 
   Future<void> _onSortByImportance(
@@ -45,6 +47,65 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         paidInvoices: sortedPaid,
       ));
     }
+  }
+
+  Future<void> _onSortByAmount(
+      SortByAmount event, Emitter<InvoiceState> emit) async {
+    if (state is InvoiceLoaded) {
+      final currentState = state as InvoiceLoaded;
+      final sortedNonPaid = List<Invoice>.from(currentState.nonPaidInvoices)
+        ..sort((a, b) => b.tutar.compareTo(a.tutar)); // Azalan sıralama
+      final sortedPaid = List<Invoice>.from(currentState.paidInvoices)
+        ..sort((a, b) => b.tutar.compareTo(a.tutar)); // Azalan sıralama
+      emit(InvoiceLoaded(
+        nonPaidInvoices: sortedNonPaid,
+        paidInvoices: sortedPaid,
+      ));
+    }
+  }
+
+  Future<void> _onSortByAmountAndDate(
+      SortByAmountAndDate event, Emitter<InvoiceState> emit) async {
+    if (state is InvoiceLoaded) {
+      final currentState = state as InvoiceLoaded;
+
+      final sortedNonPaid = _sortByMonthAndAmount(currentState.nonPaidInvoices);
+      final sortedPaid = _sortByMonthAndAmount(currentState.paidInvoices);
+
+      emit(InvoiceLoaded(
+        nonPaidInvoices: sortedNonPaid,
+        paidInvoices: sortedPaid,
+      ));
+    }
+  }
+
+  List<Invoice> _sortByMonthAndAmount(List<Invoice> invoices) {
+    // Faturaları ay ve yıla göre gruplama
+    final groupedInvoices = <String, List<Invoice>>{};
+
+    for (var invoice in invoices) {
+      final key =
+          "${invoice.tarih.year}-${invoice.tarih.month.toString().padLeft(2, '0')}";
+      if (!groupedInvoices.containsKey(key)) {
+        groupedInvoices[key] = [];
+      }
+      groupedInvoices[key]!.add(invoice);
+    }
+
+    // Her grubu miktara göre azalan sırada sırala
+    groupedInvoices.forEach((key, group) {
+      group.sort((a, b) => b.tutar.compareTo(a.tutar));
+    });
+
+    // Grupları (ayları) tarihe göre artan sırada sırala
+    final sortedKeys = groupedInvoices.keys.toList()
+      ..sort((a, b) => a.compareTo(b));
+
+    // Sıralanmış grupları düz bir listeye dönüştür
+    final sortedInvoices =
+        sortedKeys.expand((key) => groupedInvoices[key]!).toList();
+
+    return sortedInvoices;
   }
 
   Future<void> _onLoadFaturalar(

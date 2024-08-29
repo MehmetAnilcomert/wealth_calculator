@@ -60,6 +60,12 @@ class InvoiceListScreen extends StatelessWidget {
                           context.read<InvoiceBloc>().add(SortByImportance());
                         } else if (value == 'date') {
                           context.read<InvoiceBloc>().add(SortByDate());
+                        } else if (value == 'amount') {
+                          context.read<InvoiceBloc>().add(SortByAmount());
+                        } else if (value == 'amount_date') {
+                          context
+                              .read<InvoiceBloc>()
+                              .add(SortByAmountAndDate());
                         }
                       },
                       itemBuilder: (BuildContext context) => [
@@ -70,6 +76,14 @@ class InvoiceListScreen extends StatelessWidget {
                         PopupMenuItem(
                           value: 'date',
                           child: Text('Tarih Sırası'),
+                        ),
+                        PopupMenuItem(
+                          value: 'amount',
+                          child: Text('Miktar Sırası'),
+                        ),
+                        PopupMenuItem(
+                          value: 'amount_date',
+                          child: Text('Miktar + Tarih Sırası'),
                         ),
                       ],
                     ),

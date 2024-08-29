@@ -14,6 +14,10 @@ class SortByImportance extends InvoiceEvent {}
 
 class SortByDate extends InvoiceEvent {}
 
+class SortByAmount extends InvoiceEvent {}
+
+class SortByAmountAndDate extends InvoiceEvent {}
+
 class AddInvoice extends InvoiceEvent {
   final Invoice fatura;
 
