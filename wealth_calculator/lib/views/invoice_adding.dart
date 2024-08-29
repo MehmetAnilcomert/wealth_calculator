@@ -35,8 +35,11 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
       _aciklamaController.text = widget.fatura!.aciklama;
       _secilenOnemSeviyesi = widget.fatura!.onemSeviyesi;
       _odendiMi = widget.fatura!.odendiMi;
-      _isNotificationEnabled =
-          widget.fatura!.isNotificationEnabled; // Bildirim durumu
+      _isNotificationEnabled = widget.fatura!.isNotificationEnabled;
+      // Bildirim durumu geçmiş tarihler için kapalı olabilir
+      if (widget.fatura!.tarih.isBefore(DateTime.now()) || _odendiMi) {
+        _isNotificationEnabled = false;
+      }
     }
   }
 
@@ -51,7 +54,7 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
         aciklama: _aciklamaController.text,
         onemSeviyesi: _secilenOnemSeviyesi,
         odendiMi: _odendiMi,
-        isNotificationEnabled: _isNotificationEnabled, // Bildirim durumu
+        isNotificationEnabled: _isNotificationEnabled,
       );
 
       if (widget.fatura == null) {
@@ -73,7 +76,10 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
     if (picked != null) {
       setState(() {
         _tarihController.text = DateFormat('dd.MM.yyyy').format(picked);
-        print(_tarihController);
+        // Tarih seçimi geçmiş tarihlerde ise bildirim seçeneğini kapalı yap
+        if (picked.isBefore(DateTime.now())) {
+          _isNotificationEnabled = false;
+        }
       });
     }
   }
@@ -146,77 +152,104 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
                       onChanged: (bool value) {
                         setState(() {
                           _odendiMi = value;
+                          if (_odendiMi) {
+                            _isNotificationEnabled = false;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Fatura ödendi, bildirim gönderimi kapalı.'),
+                              ),
+                            );
+                          }
                         });
                       },
                     ),
                     SwitchListTile(
-                      title: Text('Hatırlatma bildirimi gönderilsin mi?'),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(Icons.notification_add),
+                        ],
+                      ),
                       value: _isNotificationEnabled,
-                      onChanged: (bool value) async {
-                        setState(() {
-                          _isNotificationEnabled = value;
-                        });
+                      onChanged: _odendiMi ||
+                              DateFormat('dd.MM.yyyy')
+                                  .parse(_tarihController.text)
+                                  .isBefore(DateTime.now())
+                          ? null // Ödenmişse veya tarih geçmişse değiştirilemez
+                          : (bool value) async {
+                              setState(() {
+                                _isNotificationEnabled = value;
+                              });
 
-                        if (_isNotificationEnabled) {
-                          final notificationId = widget.fatura?.id ?? 0;
-                          DateTime scheduledDate = DateFormat('dd.MM.yyyy')
-                              .parse(_tarihController.text);
-                          scheduledDate = DateTime(scheduledDate.year,
-                              scheduledDate.month, scheduledDate.day, 2, 30);
-                          ;
-                          try {
-                            await NotificationService.scheduleNotification(
-                              context,
-                              0,
-                              "Hatırlatma!",
-                              "${_tutarController.text} TL tutarında olan ${_aciklamaController.text} faturanızı ödemiş miydiniz?",
-                              scheduledDate,
-                            );
-                          } catch (error) {
-                            // Hata durumunda Switch'i kapalı duruma getir
-                            setState(() {
-                              _isNotificationEnabled = false;
-                            });
+                              if (_isNotificationEnabled) {
+                                final notificationId = widget.fatura?.id ?? 0;
+                                DateTime scheduledDate =
+                                    DateFormat('dd.MM.yyyy')
+                                        .parse(_tarihController.text);
+                                scheduledDate = DateTime(
+                                    scheduledDate.year,
+                                    scheduledDate.month,
+                                    scheduledDate.day,
+                                    9,
+                                    30);
+                                ;
+                                try {
+                                  await NotificationService
+                                      .scheduleNotification(
+                                    context,
+                                    0,
+                                    "Hatırlatma!",
+                                    "${_tutarController.text} TL tutarında olan ${_aciklamaController.text} faturanızı ödemiş miydiniz?",
+                                    scheduledDate,
+                                  );
+                                } catch (error) {
+                                  // Hata durumunda Switch'i kapalı duruma getir
+                                  setState(() {
+                                    _isNotificationEnabled = false;
+                                  });
 
-                            // Hata mesajını kullanıcıya göster
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Bildirim planlanırken hata oluştu: $error'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        } else {
-                          try {
-                            final notificationId = widget.fatura?.id ?? 0;
+                                  // Hata mesajını kullanıcıya göster
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Bildirim planlanırken hata oluştu: $error'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              } else {
+                                try {
+                                  final notificationId = widget.fatura?.id ?? 0;
 
-                            // Bildirimi iptal et
-                            await NotificationService.cancelNotification(
-                                notificationId);
+                                  // Bildirimi iptal et
+                                  await NotificationService.cancelNotification(
+                                      notificationId);
 
-                            // Başarılı bildirim iptali mesajı göster
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Bildirim iptal edildi.')),
-                            );
-                          } catch (error) {
-                            // Hata durumunda Switch'i kapalı duruma getir
-                            setState(() {
-                              _isNotificationEnabled =
-                                  true; // Switch durumu açık bırakılabilir
-                            });
+                                  // Başarılı bildirim iptali mesajı göster
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content:
+                                            Text('Bildirim iptal edildi.')),
+                                  );
+                                } catch (error) {
+                                  // Hata durumunda Switch'i kapalı duruma getir
+                                  setState(() {
+                                    _isNotificationEnabled =
+                                        true; // Switch durumu açık bırakılabilir
+                                  });
 
-                            // Hata mesajını kullanıcıya göster
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Bildirim iptal edilirken hata oluştu: $error'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        }
-                      },
+                                  // Hata mesajını kullanıcıya göster
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Bildirim iptal edilirken hata oluştu: $error'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
                     ),
                     ElevatedButton(
                       onPressed: () => _faturaEkleGuncelle(context),
