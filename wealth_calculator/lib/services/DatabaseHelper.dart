@@ -26,7 +26,7 @@ class DbHelper {
     WidgetsFlutterBinding.ensureInitialized();
     return await openDatabase(
       join(await getDatabasesPath(), 'my_database.db'),
-      version: 1,
+      version: 2, // Version number incremented
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE fatura (
@@ -35,9 +35,19 @@ class DbHelper {
             tutar REAL NOT NULL,
             aciklama TEXT,
             onemSeviyesi TEXT,
-            odendiMi INTEGER
+            odendiMi INTEGER,
+            isNotificationEnabled INTEGER DEFAULT 0
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // Add new column when upgrading to version 2
+          await db.execute('''
+            ALTER TABLE fatura ADD COLUMN isNotificationEnabled INTEGER DEFAULT 0
+          ''');
+        }
+        // You can add further upgrades here for future versions
       },
     );
   }

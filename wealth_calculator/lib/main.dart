@@ -6,11 +6,15 @@ import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
+import 'package:wealth_calculator/services/Notification.dart';
 import 'package:wealth_calculator/views/prices_screen.dart';
 import 'package:wealth_calculator/views/splash_screen.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init();
+  tz.initializeTimeZones();
 
   // ignore: unused_local_variable
   final databaseHelper = DbHelper.instance;

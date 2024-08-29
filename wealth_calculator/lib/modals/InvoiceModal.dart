@@ -7,6 +7,7 @@ class Invoice {
   String aciklama;
   OnemSeviyesi onemSeviyesi;
   bool odendiMi;
+  bool isNotificationEnabled;
 
   Invoice({
     this.id,
@@ -15,6 +16,7 @@ class Invoice {
     required this.aciklama,
     this.onemSeviyesi = OnemSeviyesi.orta,
     this.odendiMi = false,
+    this.isNotificationEnabled = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class Invoice {
       'aciklama': aciklama,
       'onemSeviyesi': onemSeviyesi.toString().split('.').last, // Enum ismini al
       'odendiMi': odendiMi ? 1 : 0,
+      'isNotificationEnabled': isNotificationEnabled ? 1 : 0,
     };
   }
 
@@ -39,6 +42,7 @@ class Invoice {
         orElse: () => OnemSeviyesi.orta, // Varsayılan değer
       ),
       odendiMi: map['odendiMi'] == 1,
+      isNotificationEnabled: map['isNotificationEnabled'] == 1,
     );
   }
 }
