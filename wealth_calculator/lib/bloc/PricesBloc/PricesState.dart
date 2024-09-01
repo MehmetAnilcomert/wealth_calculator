@@ -12,11 +12,14 @@ class GoldPricesLoading extends GoldPricesState {}
 class GoldPricesLoaded extends GoldPricesState {
   final List<WealthPrice> goldPrices;
   final List<WealthPrice> currencyPrices;
-
-  GoldPricesLoaded({required this.goldPrices, required this.currencyPrices});
+  final List<WealthPrice> equityPrices;
+  GoldPricesLoaded(
+      {required this.goldPrices,
+      required this.currencyPrices,
+      required this.equityPrices});
 
   @override
-  List<Object?> get props => [goldPrices, currencyPrices];
+  List<Object?> get props => [goldPrices, currencyPrices, equityPrices];
 }
 
 class GoldPricesError extends GoldPricesState {

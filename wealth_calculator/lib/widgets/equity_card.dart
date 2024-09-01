@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:wealth_calculator/modals/EquityModal.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
-class WealthPriceCard extends StatelessWidget {
-  final WealthPrice wealthPrice;
+class EquityCard extends StatelessWidget {
+  final Equity equity;
 
-  WealthPriceCard({required this.wealthPrice});
+  EquityCard({required this.equity});
 
   @override
   Widget build(BuildContext context) {
-    Color changeColor = wealthPrice.change.startsWith('-')
+    Color changeColor = equity.changeAmount.startsWith('-')
         ? Colors.red
         : const Color.fromARGB(255, 67, 155, 70);
-    Icon icon = wealthPrice.change.startsWith('-')
+    Icon icon = equity.changeAmount.startsWith('-')
         ? Icon(
             Icons.trending_down,
             color: Colors.red,
@@ -23,14 +23,14 @@ class WealthPriceCard extends StatelessWidget {
             color: Colors.green,
             size: 26.0,
           );
+
     return Container(
       margin: EdgeInsets.all(5),
       width: 180,
-      height: 180,
+      height: 220, // Adjust height if needed to fit more information
       padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
-        color: Color.fromARGB(
-            255, 139, 202, 233), //Color.fromARGB(255, 218, 211, 211),
+        color: Color.fromARGB(255, 139, 202, 233),
         borderRadius: BorderRadius.circular(8.0),
         boxShadow: [
           BoxShadow(
@@ -43,7 +43,7 @@ class WealthPriceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            wealthPrice.title,
+            equity.title,
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
@@ -52,7 +52,7 @@ class WealthPriceCard extends StatelessWidget {
           ),
           SizedBox(height: 8.0),
           Text(
-            'Alış Fiyatı: ${wealthPrice.buyingPrice}',
+            'Current Price: ${equity.currentPrice}',
             style: TextStyle(
               fontSize: 14.0,
               color: Colors.black,
@@ -60,7 +60,7 @@ class WealthPriceCard extends StatelessWidget {
           ),
           SizedBox(height: 4.0),
           Text(
-            'Satış Fiyatı: ${wealthPrice.sellingPrice}',
+            'Volume: ${equity.volume}',
             style: TextStyle(
               fontSize: 14.0,
               color: Colors.black,
@@ -70,22 +70,20 @@ class WealthPriceCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Change: ${wealthPrice.change}',
+                'Change: ${equity.changeAmount}',
                 style: TextStyle(
                   fontSize: 14.0,
                   color: changeColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(
-                width: 10,
-              ),
+              SizedBox(width: 10),
               icon,
             ],
           ),
           SizedBox(height: 4.0),
           Text(
-            'Saati: ${wealthPrice.time}',
+            'Time: ${equity.time}',
             style: TextStyle(
               fontSize: 14.0,
               color: Colors.black,
@@ -97,16 +95,15 @@ class WealthPriceCard extends StatelessWidget {
   }
 }
 
-Widget buildPricesTab(List<dynamic> prices) {
+Widget buildEquityPricesTab(List<dynamic> equities) {
   List<Row> rows = [];
-  for (var i = 0; i < prices.length; i += 2) {
+  for (var i = 0; i < equities.length; i += 2) {
     rows.add(
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          WealthPriceCard(wealthPrice: prices[i]),
-          if (i + 1 < prices.length)
-            WealthPriceCard(wealthPrice: prices[i + 1]),
+          EquityCard(equity: equities[i]),
+          if (i + 1 < equities.length) EquityCard(equity: equities[i + 1]),
         ],
       ),
     );

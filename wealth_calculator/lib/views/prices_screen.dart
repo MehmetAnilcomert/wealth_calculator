@@ -6,9 +6,11 @@ import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
-import 'package:wealth_calculator/views/profile.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
+import 'package:wealth_calculator/widgets/equity_card.dart';
 import 'package:wealth_calculator/widgets/wealthCard.dart';
+import 'package:wealth_calculator/modals/EquityModal.dart';
+import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 class PricesScreen extends StatefulWidget {
   @override
@@ -18,11 +20,12 @@ class PricesScreen extends StatefulWidget {
 class _PricesScreenState extends State<PricesScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  String _searchQuery = "";
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabChange);
   }
 
@@ -42,8 +45,19 @@ class _PricesScreenState extends State<PricesScreen>
   }
 
   String _getAppBarTitle(int index) {
-    final titles = ['Altın Fiyatları', 'Döviz Fiyatları', 'Varlık Hesaplayıcı'];
-    return titles[index.clamp(0, 2)];
+    final titles = [
+      'Altın Fiyatları',
+      'Döviz Fiyatları',
+      'Bist100 Endeksi',
+      'Varlık Hesaplayıcı'
+    ];
+    return titles[index.clamp(0, 3)];
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query;
+    });
   }
 
   @override
@@ -69,23 +83,9 @@ class _PricesScreenState extends State<PricesScreen>
               builder: (context, state) {
                 if (state is GoldPricesLoading) {
                   return CircularProgressIndicator();
-                } else
+                } else {
                   return Row(
                     children: [
-                      /* IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileScreen(),
-                            ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.person_2,
-                          color: Colors.black,
-                        ),
-                      ), */
                       IconButton(
                         onPressed: () {
                           Navigator.push(
@@ -122,7 +122,6 @@ class _PricesScreenState extends State<PricesScreen>
                               ),
                             );
                           } else {
-                            // Show an error message or handle error case
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Envanter verileri yüklenemedi.'),
@@ -136,6 +135,7 @@ class _PricesScreenState extends State<PricesScreen>
                       ),
                     ],
                   );
+                }
               },
             ),
           ],
@@ -160,21 +160,70 @@ class _PricesScreenState extends State<PricesScreen>
               );
             }
 
-            return TabBarView(
-              physics: NeverScrollableScrollPhysics(),
-              controller: _tabController,
+            final goldPrices = (state is GoldPricesLoaded)
+                ? (state as GoldPricesLoaded)
+                    .goldPrices
+                    .map((dynamic item) => item as WealthPrice)
+                    .toList()
+                : [];
+            final currencyPrices = (state is GoldPricesLoaded)
+                ? (state as GoldPricesLoaded)
+                    .currencyPrices
+                    .map((dynamic item) => item as WealthPrice)
+                    .toList()
+                : [];
+            final equityPrices = (state is GoldPricesLoaded)
+                ? (state as GoldPricesLoaded)
+                    .equityPrices
+                    .map((dynamic item) => item as Equity)
+                    .toList()
+                : [];
+
+            return Column(
               children: [
-                buildPricesTab(context.read<GoldPricesBloc>().state
-                        is GoldPricesLoaded
-                    ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
-                        .goldPrices
-                    : []),
-                buildPricesTab(context.read<GoldPricesBloc>().state
-                        is GoldPricesLoaded
-                    ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
-                        .currencyPrices
-                    : []),
-                CalculatorScreen(),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4.0, right: 4, top: 4),
+                  child: TextField(
+                    onChanged: _onSearchChanged,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.blueGrey,
+                      hintText: 'Ara...',
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.white,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
+                    controller: _tabController,
+                    children: [
+                      buildPricesTab(goldPrices
+                          .where((price) => price.title
+                              .toLowerCase()
+                              .contains(_searchQuery.toLowerCase()))
+                          .toList()),
+                      buildPricesTab(currencyPrices
+                          .where((price) => price.title
+                              .toLowerCase()
+                              .contains(_searchQuery.toLowerCase()))
+                          .toList()),
+                      buildEquityPricesTab(equityPrices
+                          .where((equity) => equity.title
+                              .toLowerCase()
+                              .contains(_searchQuery.toLowerCase()))
+                          .toList()),
+                      CalculatorScreen(),
+                    ],
+                  ),
+                ),
               ],
             );
           },
@@ -186,6 +235,7 @@ class _PricesScreenState extends State<PricesScreen>
             tabs: [
               Tab(icon: Icon(Icons.gpp_good), text: 'Altın'),
               Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
+              Tab(icon: Icon(Icons.equalizer), text: 'Hisse'),
               Tab(icon: Icon(Icons.calculate), text: 'Hesapla'),
             ],
             labelColor: Colors.white,

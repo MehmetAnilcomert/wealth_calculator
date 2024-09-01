@@ -14,8 +14,11 @@ class GoldPricesBloc extends Bloc<GoldPricesEvent, GoldPricesState> {
     try {
       final goldPrices = await fetchGoldPrices();
       final currencyPrices = await fetchCurrencyPrices();
+      final equityPrices = await fetchEquityData();
       emit(GoldPricesLoaded(
-          goldPrices: goldPrices, currencyPrices: currencyPrices));
+          goldPrices: goldPrices,
+          currencyPrices: currencyPrices,
+          equityPrices: equityPrices));
     } catch (e) {
       print('Error occurred: $e');
       emit(GoldPricesError('Failed to load prices.'));
