@@ -70,7 +70,7 @@ class ItemDialogs {
 class SelectItemDialog extends StatefulWidget {
   final List<WealthPrice> futureGoldPrices;
   final List<WealthPrice> futureCurrencyPrices;
-  final Function(SavedWealths, int) onItemSelected;
+  final Function(SavedWealths, int)? onItemSelected;
   final List<String> disabledItems;
   final List<String> hiddenItems;
 
@@ -154,10 +154,10 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                                 await wealthsDao.getWealthByType(price.title);
 
                             if (existingWealth != null) {
-                              widget.onItemSelected(
+                              widget.onItemSelected!(
                                   existingWealth, existingWealth.amount);
                             } else {
-                              widget.onItemSelected(
+                              widget.onItemSelected!(
                                 SavedWealths(
                                   id: DateTime.now().millisecondsSinceEpoch,
                                   type: price.title,

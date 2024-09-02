@@ -4,10 +4,14 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
+import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
+import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
+import 'package:wealth_calculator/widgets/custom_list.dart';
 import 'package:wealth_calculator/widgets/equity_card.dart';
+import 'package:wealth_calculator/widgets/multi_item.dart';
 import 'package:wealth_calculator/widgets/wealthCard.dart';
 import 'package:wealth_calculator/modals/EquityModal.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
@@ -21,11 +25,12 @@ class _PricesScreenState extends State<PricesScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   String _searchQuery = "";
+  List<WealthPrice> _customPrices = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(_handleTabChange);
   }
 
@@ -49,15 +54,56 @@ class _PricesScreenState extends State<PricesScreen>
       'Altın Fiyatları',
       'Döviz Fiyatları',
       'Bist100 Endeksi',
-      'Varlık Hesaplayıcı'
+      'Varlık Hesaplayıcı',
+      'Kişisel Seçimler'
     ];
-    return titles[index.clamp(0, 3)];
+    return titles[index.clamp(0, 4)];
   }
 
   void _onSearchChanged(String query) {
     setState(() {
       _searchQuery = query;
     });
+  }
+
+  void _onAddPressed() {
+    // Multi-seçim yapılmasını sağlayan dialog çağırılır
+    MultiItemDialogs.showMultiSelectItemDialog(
+      context,
+      context.read<GoldPricesBloc>().state is GoldPricesLoaded
+          ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
+              .goldPrices
+          : [],
+      context.read<GoldPricesBloc>().state is GoldPricesLoaded
+          ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
+              .currencyPrices
+          : [],
+      context.read<GoldPricesBloc>().state is GoldPricesLoaded
+          ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
+              .equityPrices
+          : [],
+      (List<WealthPrice> selectedWealths) {
+        setState(() {
+          _customPrices.addAll(selectedWealths);
+          selectedWealths = _customPrices; // Debugging
+        });
+      },
+      hiddenItems: [
+        'Altın (ONS/\$)',
+        'Altın (\$/kg)',
+        'Altın (Euro/kg)',
+        'Külçe Altın (\$)',
+      ],
+    );
+  }
+
+  Widget buildCustomPrices() {
+    // Filtreleme işlemi
+    List<WealthPrice> filteredPrices = _customPrices.where((price) {
+      return price.title.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
+
+    return buildEquityPricesTab(filteredPrices);
   }
 
   @override
@@ -178,7 +224,6 @@ class _PricesScreenState extends State<PricesScreen>
                     .map((dynamic item) => item as Equity)
                     .toList()
                 : [];
-
             return Column(
               children: [
                 _tabController.index == 3
@@ -224,6 +269,11 @@ class _PricesScreenState extends State<PricesScreen>
                               .contains(_searchQuery.toLowerCase()))
                           .toList()),
                       CalculatorScreen(),
+                      CustomPricesWidget(
+                        customPrices: _customPrices,
+                        onAddPressed: _onAddPressed,
+                        buildCustomPrices: buildCustomPrices,
+                      )
                     ],
                   ),
                 ),
@@ -240,6 +290,7 @@ class _PricesScreenState extends State<PricesScreen>
               Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
               Tab(icon: Icon(Icons.equalizer), text: 'Hisse'),
               Tab(icon: Icon(Icons.calculate), text: 'Hesapla'),
+              Tab(icon: Icon(Icons.dashboard_customize), text: 'Kişisel'),
             ],
             labelColor: Colors.white,
             unselectedLabelColor: Color.fromARGB(255, 142, 140, 140),

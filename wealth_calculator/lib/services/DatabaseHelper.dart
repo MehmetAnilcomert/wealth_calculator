@@ -9,6 +9,7 @@ class DbHelper {
   static final DbHelper instance = DbHelper._privateConstructor();
   static Database? _faturaDatabase;
   static Database? _inventoryDatabase;
+  static Database? _customListDatabase;
 
   Future<Database> get faturaDatabase async {
     if (_faturaDatabase != null) return _faturaDatabase!;
@@ -20,6 +21,12 @@ class DbHelper {
     if (_inventoryDatabase != null) return _inventoryDatabase!;
     _inventoryDatabase = await _initInventoryDatabase();
     return _inventoryDatabase!;
+  }
+
+  Future<Database> get customListDatabase async {
+    if (_customListDatabase != null) return _customListDatabase!;
+    _customListDatabase = await _initWealthPriceDatabase();
+    return _customListDatabase!;
   }
 
   Future<Database> _initFaturaDatabase() async {
@@ -66,5 +73,29 @@ class DbHelper {
     }
 
     return openDatabase(dbPath);
+  }
+
+  Future<Database> _initWealthPriceDatabase() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    return await openDatabase(
+      join(await getDatabasesPath(), 'customList.db'),
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE wealth_prices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            buyingPrice REAL NOT NULL,
+            sellingPrice REAL NOT NULL,
+            change REAL NOT NULL,
+            time TEXT NOT NULL,
+            type INTEGER NOT NULL, 
+            currentPrice TEXT, 
+            volume TEXT, 
+            changeAmount TEXT
+          )
+        ''');
+      },
+    );
   }
 }

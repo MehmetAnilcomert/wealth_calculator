@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/modals/EquityModal.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 class EquityCard extends StatelessWidget {
-  final Equity equity;
+  final WealthPrice equity;
 
   EquityCard({required this.equity});
 
   @override
   Widget build(BuildContext context) {
-    Color changeColor = equity.changeAmount.startsWith('-')
+    String tarih = equity.type.index == 2 ? 'Tarih' : 'Saat';
+    Color changeColor = equity.change.startsWith('-')
         ? Colors.red
         : const Color.fromARGB(255, 67, 155, 70);
-    Icon icon = equity.changeAmount.startsWith('-')
+    Icon icon = equity.change.startsWith('-')
         ? Icon(
             Icons.trending_down,
             color: Colors.red,
@@ -26,8 +26,8 @@ class EquityCard extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.all(5),
-      width: MediaQuery.of(context).size.width * 0.474,
-      height: MediaQuery.of(context).size.height * 0.39,
+      width: MediaQuery.of(context).size.width * 0.473,
+      height: MediaQuery.of(context).size.height * 0.41,
       padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 139, 202, 233),
@@ -51,14 +51,15 @@ class EquityCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8.0),
-          Text(
-            'Anlık fiyat: ${equity.currentPrice}',
-            style: TextStyle(
-              fontSize: 14.0,
-              color: Colors.black,
+          if (equity.currentPrice != null)
+            Text(
+              'Anlık fiyat: ${equity.currentPrice}',
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Colors.black,
+              ),
             ),
-          ),
-          SizedBox(height: 8.0),
+          if (equity.currentPrice != null) SizedBox(height: 8.0),
           Text(
             'En yüksek fiyat: ${equity.buyingPrice}',
             style: TextStyle(
@@ -75,20 +76,22 @@ class EquityCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.0),
-          Text(
-            'Volume: ${equity.volume}',
-            style: TextStyle(
-              fontSize: 14.0,
-              color: Colors.black,
+          if (equity.volume != null)
+            Text(
+              'Volume: ${equity.volume}',
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Colors.black,
+              ),
             ),
-          ),
-          SizedBox(height: 4.0),
-          Text(
-            'Değişim (miktar): ${equity.changeAmount}',
-            style: TextStyle(
-              fontSize: 14.0,
+          if (equity.volume != null) SizedBox(height: 4.0),
+          if (equity.changeAmount != null)
+            Text(
+              'Değişim (miktar): ${equity.changeAmount}',
+              style: TextStyle(
+                fontSize: 14.0,
+              ),
             ),
-          ),
           SizedBox(height: 4.0),
           Row(
             children: [
@@ -105,7 +108,7 @@ class EquityCard extends StatelessWidget {
           ),
           SizedBox(height: 4.0),
           Text(
-            'Tarih: ${equity.time}',
+            '${tarih}: ${equity.time}',
             style: TextStyle(
               fontSize: 14.0,
               color: Colors.black,
