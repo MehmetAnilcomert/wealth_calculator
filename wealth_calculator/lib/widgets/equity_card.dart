@@ -26,8 +26,8 @@ class EquityCard extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.all(5),
-      width: 180,
-      height: 220, // Adjust height if needed to fit more information
+      width: MediaQuery.of(context).size.width * 0.474,
+      height: MediaQuery.of(context).size.height * 0.39,
       padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 139, 202, 233),
@@ -52,7 +52,23 @@ class EquityCard extends StatelessWidget {
           ),
           SizedBox(height: 8.0),
           Text(
-            'Current Price: ${equity.currentPrice}',
+            'Anlık fiyat: ${equity.currentPrice}',
+            style: TextStyle(
+              fontSize: 14.0,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'En yüksek fiyat: ${equity.buyingPrice}',
+            style: TextStyle(
+              fontSize: 14.0,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'En düşük fiyat: ${equity.sellingPrice}',
             style: TextStyle(
               fontSize: 14.0,
               color: Colors.black,
@@ -67,23 +83,29 @@ class EquityCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.0),
+          Text(
+            'Değişim (miktar): ${equity.changeAmount}',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+          SizedBox(height: 4.0),
           Row(
             children: [
               Text(
-                'Change: ${equity.changeAmount}',
+                'Değişim(%): ${equity.change}',
                 style: TextStyle(
                   fontSize: 14.0,
                   color: changeColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(width: 10),
               icon,
             ],
           ),
           SizedBox(height: 4.0),
           Text(
-            'Time: ${equity.time}',
+            'Tarih: ${equity.time}',
             style: TextStyle(
               fontSize: 14.0,
               color: Colors.black,
