@@ -181,25 +181,28 @@ class _PricesScreenState extends State<PricesScreen>
 
             return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 4.0, right: 4, top: 4),
-                  child: TextField(
-                    onChanged: _onSearchChanged,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.blueGrey,
-                      hintText: 'Ara...',
-                      hintStyle: TextStyle(color: Colors.white),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.white,
+                _tabController.index == 3
+                    ? SizedBox()
+                    : Padding(
+                        padding:
+                            const EdgeInsets.only(left: 4.0, right: 4, top: 4),
+                        child: TextField(
+                          onChanged: _onSearchChanged,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.blueGrey,
+                            hintText: 'Ara...',
+                            hintStyle: TextStyle(color: Colors.white),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.white,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                          ),
+                        ),
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                    ),
-                  ),
-                ),
                 Expanded(
                   child: TabBarView(
                     physics: NeverScrollableScrollPhysics(),
