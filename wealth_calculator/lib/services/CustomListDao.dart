@@ -6,7 +6,7 @@ class CustomListDao {
   // WealthPrice nesnesini tabloya eklemek için fonksiyon
   Future<void> insertWealthPrice(WealthPrice wealthPrice) async {
     final db = await DbHelper.instance.customListDatabase;
-
+    print("${wealthPrice.title} dbye eklendi");
     await db.insert(
       'wealth_prices',
       wealthPrice.toMap(),
@@ -23,12 +23,12 @@ class CustomListDao {
     return List.generate(maps.length, (i) {
       return WealthPrice(
         title: maps[i]['title'],
-        buyingPrice: maps[i]['buyingPrice'],
-        sellingPrice: maps[i]['sellingPrice'],
+        buyingPrice: maps[i]['buyingPrice'].toString(),
+        sellingPrice: maps[i]['sellingPrice'].toString(),
         change: maps[i]['change'],
         time: maps[i]['time'],
         type: PriceType.values[maps[i]['type']],
-        currentPrice: maps[i]['currentPrice'],
+        currentPrice: maps[i]['currentPrice'].toString(),
         volume: maps[i]['volume'],
         changeAmount: maps[i]['changeAmount'],
       );

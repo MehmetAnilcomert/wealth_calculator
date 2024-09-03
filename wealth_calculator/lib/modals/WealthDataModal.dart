@@ -51,4 +51,11 @@ class WealthPrice {
       changeAmount: map['changeAmount'],
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is WealthPrice &&
+          runtimeType == other.runtimeType &&
+          title == other.title;
 }

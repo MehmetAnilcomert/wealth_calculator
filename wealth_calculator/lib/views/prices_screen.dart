@@ -5,12 +5,12 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
+import 'package:wealth_calculator/services/CustomListDao.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
 import 'package:wealth_calculator/widgets/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/widgets/custom_list.dart';
-import 'package:wealth_calculator/widgets/wealth_card.dart';
 import 'package:wealth_calculator/widgets/multi_item.dart';
 
 class PricesScreen extends StatefulWidget {
@@ -23,12 +23,25 @@ class _PricesScreenState extends State<PricesScreen>
   late TabController _tabController;
   String _searchQuery = '';
   List<WealthPrice> _customPrices = [];
+  final CustomListDao _customListDao = CustomListDao();
 
   @override
   void initState() {
     super.initState();
+    _loadCustomPrices(); // Load custom prices in initState
     _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(_handleTabChange);
+  }
+
+  Future<void> _loadCustomPrices() async {
+    try {
+      final prices = await _customListDao.getWealthPrices();
+      setState(() {
+        _customPrices = prices;
+      });
+    } catch (e) {
+      print('Error loading custom prices: $e');
+    }
   }
 
   @override
@@ -64,7 +77,6 @@ class _PricesScreenState extends State<PricesScreen>
   }
 
   void _onAddPressed() {
-    // Multi-seçim yapılmasını sağlayan dialog çağırılır
     MultiItemDialogs.showMultiSelectItemDialog(
       context,
       context.read<PricesBloc>().state is PricesLoaded
@@ -78,8 +90,21 @@ class _PricesScreenState extends State<PricesScreen>
           : [],
       (List<WealthPrice> selectedWealths) {
         setState(() {
-          _customPrices.addAll(selectedWealths);
-          selectedWealths = _customPrices; // Debugging
+          for (WealthPrice wealthPrice in selectedWealths) {
+            print(_customPrices); // Mevcut listeyi yazdır
+            if (!_customPrices.contains(wealthPrice)) {
+              _customPrices.add(wealthPrice);
+              _customListDao.insertWealthPrice(wealthPrice);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${wealthPrice.title} zaten listede mevcut.'),
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+          }
         });
       },
       hiddenItems: [
@@ -221,8 +246,8 @@ class _PricesScreenState extends State<PricesScreen>
               Tab(icon: Icon(Icons.gpp_good), text: 'Altın'),
               Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
               Tab(icon: Icon(Icons.equalizer), text: 'Hisse'),
+              Tab(icon: Icon(Icons.dashboard_customize), text: 'Portföy'),
               Tab(icon: Icon(Icons.calculate), text: 'Hesapla'),
-              Tab(icon: Icon(Icons.dashboard_customize), text: 'Kişisel'),
             ],
             labelColor: Colors.white,
             unselectedLabelColor: Color.fromARGB(255, 142, 140, 140),
