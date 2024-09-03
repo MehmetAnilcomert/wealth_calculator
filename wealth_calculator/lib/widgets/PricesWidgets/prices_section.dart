@@ -6,6 +6,10 @@ import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/widgets/wealth_card.dart';
 
 Widget buildPricesSection(BuildContext context, String type, String query) {
+  dynamic noop(WealthPrice price) {
+    return 0;
+  }
+
   return BlocBuilder<PricesBloc, PricesState>(
     builder: (context, state) {
       if (state is PricesLoading) {
@@ -27,7 +31,7 @@ Widget buildPricesSection(BuildContext context, String type, String query) {
                 price.title.toLowerCase().contains(query.toLowerCase()))
             .toList();
 
-        return buildEquityPricesTab(prices);
+        return buildEquityPricesTab(prices, noop);
       } else {
         return Center(child: Text('No data available'));
       }

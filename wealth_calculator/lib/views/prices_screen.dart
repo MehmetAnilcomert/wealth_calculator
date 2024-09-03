@@ -91,7 +91,6 @@ class _PricesScreenState extends State<PricesScreen>
       (List<WealthPrice> selectedWealths) {
         setState(() {
           for (WealthPrice wealthPrice in selectedWealths) {
-            print(_customPrices); // Mevcut listeyi yazdır
             if (!_customPrices.contains(wealthPrice)) {
               _customPrices.add(wealthPrice);
               _customListDao.insertWealthPrice(wealthPrice);
@@ -231,6 +230,13 @@ class _PricesScreenState extends State<PricesScreen>
                     customPrices: _customPrices,
                     onAddPressed: _onAddPressed,
                     query: _searchQuery,
+                    onDeletePrice: (WealthPrice wealthPrice) {
+                      setState(() {
+                        _customPrices.remove(wealthPrice);
+                        _customListDao.deleteWealthPrice(
+                            wealthPrice.title); // Veritabanından silme
+                      });
+                    },
                   ),
                   CalculatorScreen(),
                 ],

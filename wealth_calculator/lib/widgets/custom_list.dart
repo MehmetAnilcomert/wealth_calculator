@@ -6,12 +6,13 @@ class CustomPricesWidget extends StatelessWidget {
   final List<dynamic> customPrices;
   final Function() onAddPressed;
   final String query;
-
+  final Function(WealthPrice) onDeletePrice;
   const CustomPricesWidget(
       {Key? key,
       required this.customPrices,
       required this.onAddPressed,
-      required this.query})
+      required this.query,
+      required this.onDeletePrice})
       : super(key: key);
 
   @override
@@ -56,6 +57,6 @@ class CustomPricesWidget extends StatelessWidget {
       return price.title.toLowerCase().contains(query.toLowerCase());
     }).toList();
 
-    return buildEquityPricesTab(filteredPrices);
+    return buildEquityPricesTab(filteredPrices, onDeletePrice);
   }
 }

@@ -36,13 +36,13 @@ class CustomListDao {
   }
 
   // WealthPrice nesnesini silmek için fonksiyon
-  Future<void> deleteWealthPrice(int id) async {
+  Future<void> deleteWealthPrice(String title) async {
     final db = await DbHelper.instance.customListDatabase;
 
     await db.delete(
       'wealth_prices',
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'title = ?',
+      whereArgs: [title],
     );
   }
 }

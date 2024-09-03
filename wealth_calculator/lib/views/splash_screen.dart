@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void _checkLoadingState() {
     Duration elapsed = DateTime.now().difference(_startTime);
 
-    if (_loadingComplete || elapsed.inSeconds >= 5) {
+    if (_loadingComplete || elapsed.inSeconds >= 7) {
       _goHome();
     } else {
       _timer = Timer(Duration(milliseconds: 500), _checkLoadingState);
