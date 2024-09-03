@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/modals/WealthDataModal.dart';
+import 'package:wealth_calculator/widgets/wealth_card.dart';
 
 class CustomPricesWidget extends StatelessWidget {
   final List<dynamic> customPrices;
   final Function() onAddPressed;
-  final Widget Function() buildCustomPrices;
+  final String query;
 
-  const CustomPricesWidget({
-    Key? key,
-    required this.customPrices,
-    required this.onAddPressed,
-    required this.buildCustomPrices,
-  }) : super(key: key);
+  const CustomPricesWidget(
+      {Key? key,
+      required this.customPrices,
+      required this.onAddPressed,
+      required this.query})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class CustomPricesWidget extends StatelessWidget {
             Expanded(
               child: customPrices.isEmpty
                   ? Center(child: Text('Henüz bir seçim yapılmadı.'))
-                  : buildCustomPrices(),
+                  : buildCustomPrices(customPrices, query),
             ),
           ],
         ),
@@ -46,5 +48,14 @@ class CustomPricesWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget buildCustomPrices(List<dynamic> customPrices, String query) {
+    // Filtreleme işlemi
+    List filteredPrices = customPrices.where((price) {
+      return price.title.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    return buildEquityPricesTab(filteredPrices);
   }
 }

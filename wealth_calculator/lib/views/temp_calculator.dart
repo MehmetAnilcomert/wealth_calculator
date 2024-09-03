@@ -24,7 +24,7 @@ class CalculatorScreen extends StatelessWidget {
                   backgroundColor: Colors.red,
                 ),
               );
-            } else if (state is GoldPricesLoaded) {
+            } else if (state is PricesLoaded) {
               context.read<TempInventoryBloc>().add(LoadInventoryData());
             }
           },

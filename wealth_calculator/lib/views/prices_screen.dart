@@ -4,17 +4,14 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
-import 'package:wealth_calculator/modals/Wealths.dart';
+import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
-import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
+import 'package:wealth_calculator/widgets/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/widgets/custom_list.dart';
-import 'package:wealth_calculator/widgets/equity_card.dart';
+import 'package:wealth_calculator/widgets/wealth_card.dart';
 import 'package:wealth_calculator/widgets/multi_item.dart';
-import 'package:wealth_calculator/widgets/wealthCard.dart';
-import 'package:wealth_calculator/modals/EquityModal.dart';
-import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 class PricesScreen extends StatefulWidget {
   @override
@@ -22,9 +19,9 @@ class PricesScreen extends StatefulWidget {
 }
 
 class _PricesScreenState extends State<PricesScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String _searchQuery = "";
+  String _searchQuery = '';
   List<WealthPrice> _customPrices = [];
 
   @override
@@ -32,6 +29,13 @@ class _PricesScreenState extends State<PricesScreen>
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(_handleTabChange);
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabChange);
+    _tabController.dispose();
+    super.dispose();
   }
 
   void _handleTabChange() {
@@ -42,20 +46,13 @@ class _PricesScreenState extends State<PricesScreen>
     }
   }
 
-  @override
-  void dispose() {
-    _tabController.removeListener(_handleTabChange);
-    _tabController.dispose();
-    super.dispose();
-  }
-
   String _getAppBarTitle(int index) {
     final titles = [
       'Altın Fiyatları',
       'Döviz Fiyatları',
       'Bist100 Endeksi',
-      'Varlık Hesaplayıcı',
-      'Kişisel Seçimler'
+      'Kişisel Portföy',
+      'Varlık Hesaplayıcı'
     ];
     return titles[index.clamp(0, 4)];
   }
@@ -70,17 +67,14 @@ class _PricesScreenState extends State<PricesScreen>
     // Multi-seçim yapılmasını sağlayan dialog çağırılır
     MultiItemDialogs.showMultiSelectItemDialog(
       context,
-      context.read<GoldPricesBloc>().state is GoldPricesLoaded
-          ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
-              .goldPrices
+      context.read<PricesBloc>().state is PricesLoaded
+          ? (context.read<PricesBloc>().state as PricesLoaded).goldPrices
           : [],
-      context.read<GoldPricesBloc>().state is GoldPricesLoaded
-          ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
-              .currencyPrices
+      context.read<PricesBloc>().state is PricesLoaded
+          ? (context.read<PricesBloc>().state as PricesLoaded).currencyPrices
           : [],
-      context.read<GoldPricesBloc>().state is GoldPricesLoaded
-          ? (context.read<GoldPricesBloc>().state as GoldPricesLoaded)
-              .equityPrices
+      context.read<PricesBloc>().state is PricesLoaded
+          ? (context.read<PricesBloc>().state as PricesLoaded).equityPrices
           : [],
       (List<WealthPrice> selectedWealths) {
         setState(() {
@@ -97,20 +91,11 @@ class _PricesScreenState extends State<PricesScreen>
     );
   }
 
-  Widget buildCustomPrices() {
-    // Filtreleme işlemi
-    List<WealthPrice> filteredPrices = _customPrices.where((price) {
-      return price.title.toLowerCase().contains(_searchQuery.toLowerCase());
-    }).toList();
-
-    return buildEquityPricesTab(filteredPrices);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocListener<GoldPricesBloc, GoldPricesState>(
+    return BlocListener<PricesBloc, PricesState>(
       listener: (context, state) {
-        if (state is GoldPricesLoaded) {
+        if (state is PricesLoaded) {
           context.read<InventoryBloc>().add(LoadInventoryData());
         }
       },
@@ -125,9 +110,9 @@ class _PricesScreenState extends State<PricesScreen>
                   fontWeight: FontWeight.bold),
               _getAppBarTitle(_tabController.index)),
           actions: [
-            BlocBuilder<GoldPricesBloc, GoldPricesState>(
+            BlocBuilder<PricesBloc, PricesState>(
               builder: (context, state) {
-                if (state is GoldPricesLoading) {
+                if (state is PricesLoading) {
                   return CircularProgressIndicator();
                 } else {
                   return Row(
@@ -148,11 +133,11 @@ class _PricesScreenState extends State<PricesScreen>
                       ),
                       IconButton(
                         onPressed: () {
-                          if (context.read<GoldPricesBloc>().state
-                              is GoldPricesLoaded) {
+                          if (context.read<PricesBloc>().state
+                              is PricesLoaded) {
                             final goldPricesState = context
-                                .read<GoldPricesBloc>()
-                                .state as GoldPricesLoaded;
+                                .read<PricesBloc>()
+                                .state as PricesLoaded;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -186,100 +171,47 @@ class _PricesScreenState extends State<PricesScreen>
             ),
           ],
         ),
-        body: BlocBuilder<GoldPricesBloc, GoldPricesState>(
-          builder: (context, state) {
-            if (state is GoldPricesError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Veriler yüklenemedi:',
-                      style: TextStyle(color: Colors.red, fontSize: 18),
-                    ),
-                    Text(
-                      'İnternet bağlantınızı kontrol edin',
-                      style: TextStyle(color: Colors.red, fontSize: 18),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            final goldPrices = (state is GoldPricesLoaded)
-                ? (state as GoldPricesLoaded)
-                    .goldPrices
-                    .map((dynamic item) => item as WealthPrice)
-                    .toList()
-                : [];
-            final currencyPrices = (state is GoldPricesLoaded)
-                ? (state as GoldPricesLoaded)
-                    .currencyPrices
-                    .map((dynamic item) => item as WealthPrice)
-                    .toList()
-                : [];
-            final equityPrices = (state is GoldPricesLoaded)
-                ? (state as GoldPricesLoaded)
-                    .equityPrices
-                    .map((dynamic item) => item as Equity)
-                    .toList()
-                : [];
-            return Column(
-              children: [
-                _tabController.index == 3
-                    ? SizedBox()
-                    : Padding(
-                        padding:
-                            const EdgeInsets.only(left: 4.0, right: 4, top: 4),
-                        child: TextField(
-                          onChanged: _onSearchChanged,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.blueGrey,
-                            hintText: 'Ara...',
-                            hintStyle: TextStyle(color: Colors.white),
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: Colors.white,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                          ),
+        body: Column(
+          children: [
+            _tabController.index == 4
+                ? SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.only(left: 4, right: 4, top: 4),
+                    child: TextField(
+                      onChanged: _onSearchChanged,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.blueGrey,
+                        hintText: 'Ara...',
+                        hintStyle: TextStyle(color: Colors.white),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40),
                         ),
                       ),
-                Expanded(
-                  child: TabBarView(
-                    physics: NeverScrollableScrollPhysics(),
-                    controller: _tabController,
-                    children: [
-                      buildPricesTab(goldPrices
-                          .where((price) => price.title
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase()))
-                          .toList()),
-                      buildPricesTab(currencyPrices
-                          .where((price) => price.title
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase()))
-                          .toList()),
-                      buildEquityPricesTab(equityPrices
-                          .where((equity) => equity.title
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase()))
-                          .toList()),
-                      CalculatorScreen(),
-                      CustomPricesWidget(
-                        customPrices: _customPrices,
-                        onAddPressed: _onAddPressed,
-                        buildCustomPrices: buildCustomPrices,
-                      )
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
+            Expanded(
+              child: TabBarView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _tabController,
+                children: [
+                  buildPricesSection(context, 'goldPrices', _searchQuery),
+                  buildPricesSection(context, 'currencyPrices', _searchQuery),
+                  buildPricesSection(context, 'equityPrices', _searchQuery),
+                  CustomPricesWidget(
+                    customPrices: _customPrices,
+                    onAddPressed: _onAddPressed,
+                    query: _searchQuery,
+                  ),
+                  CalculatorScreen(),
+                ],
+              ),
+            ),
+          ],
         ),
         bottomNavigationBar: Container(
           color: Colors.blueGrey,

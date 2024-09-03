@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
-class EquityCard extends StatelessWidget {
+class WealthPriceCard extends StatelessWidget {
   final WealthPrice equity;
 
-  EquityCard({required this.equity});
+  WealthPriceCard({required this.equity});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +24,24 @@ class EquityCard extends StatelessWidget {
             size: 26.0,
           );
 
+    double _getHeightValue() {
+      double heightValue;
+      if (equity.type.index == 2) {
+        heightValue = MediaQuery.of(context).size.height * 0.41;
+        return heightValue;
+      } else if (equity.type.index == 0) {
+        heightValue = MediaQuery.of(context).size.height * 0.3;
+        return heightValue;
+      } else {
+        heightValue = MediaQuery.of(context).size.height * 0.245;
+        return heightValue;
+      }
+    }
+
     return Container(
       margin: EdgeInsets.all(5),
       width: MediaQuery.of(context).size.width * 0.473,
-      height: MediaQuery.of(context).size.height * 0.41,
+      height: _getHeightValue(),
       padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 139, 202, 233),
@@ -127,8 +141,8 @@ Widget buildEquityPricesTab(List<dynamic> equities) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          EquityCard(equity: equities[i]),
-          if (i + 1 < equities.length) EquityCard(equity: equities[i + 1]),
+          WealthPriceCard(equity: equities[i]),
+          if (i + 1 < equities.length) WealthPriceCard(equity: equities[i + 1]),
         ],
       ),
     );

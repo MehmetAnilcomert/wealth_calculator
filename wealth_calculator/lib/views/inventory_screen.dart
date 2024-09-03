@@ -28,7 +28,7 @@ class InventoryScreen extends StatelessWidget {
       body: BlocConsumer<InventoryBloc, InventoryState>(
         bloc: inventoryBloc, // Aynı Bloc'u kullandığınızdan emin olun
         listener: (context, state) {
-          if (state is InventoryError || state is GoldPricesError) {
+          if (state is InventoryError || state is PricesError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Hata: Veriler yüklenemedi'),

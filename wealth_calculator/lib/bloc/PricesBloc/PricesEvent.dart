@@ -1,11 +1,17 @@
-// prices_event.dart
 import 'package:equatable/equatable.dart';
 
-abstract class GoldPricesEvent extends Equatable {
+abstract class PricesEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class LoadGoldPrices extends GoldPricesEvent {}
+class LoadPrices extends PricesEvent {}
 
-class LoadCurrencyPrices extends GoldPricesEvent {}
+class SearchPrices extends PricesEvent {
+  final String query;
+
+  SearchPrices(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

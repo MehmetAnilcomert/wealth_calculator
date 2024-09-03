@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startLoadingData() {
-    context.read<GoldPricesBloc>().add(LoadGoldPrices());
+    context.read<PricesBloc>().add(LoadPrices());
   }
 
   void _checkLoadingState() {
@@ -63,9 +63,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<GoldPricesBloc, GoldPricesState>(
+    return BlocListener<PricesBloc, PricesState>(
       listener: (context, state) {
-        if (state is GoldPricesLoaded) {
+        if (state is PricesLoaded) {
           _loadingComplete = true;
         }
       },

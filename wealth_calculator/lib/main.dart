@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => GoldPricesBloc()..add(LoadGoldPrices()),
+          create: (context) => PricesBloc()..add(LoadPrices()),
           child: PricesScreen(),
         ),
         BlocProvider(
