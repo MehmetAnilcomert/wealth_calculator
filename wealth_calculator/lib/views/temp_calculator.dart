@@ -15,6 +15,11 @@ class CalculatorScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => TempInventoryBloc()..add(LoadInventoryData()),
       child: Scaffold(
+        appBar: AppBar(
+          title: Text("Varlık Hesaplama Makinesi"),
+          backgroundColor: Colors.blueGrey,
+        ),
+        backgroundColor: Colors.blueGrey,
         body: BlocConsumer<TempInventoryBloc, TempInventoryState>(
           listener: (context, state) {
             if (state is InventoryError) {

@@ -6,10 +6,9 @@ import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/services/CustomListDao.dart';
-import 'package:wealth_calculator/views/inventory_screen.dart';
-import 'package:wealth_calculator/views/invoice_screen.dart';
 import 'package:wealth_calculator/widgets/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/widgets/custom_list.dart';
+import 'package:wealth_calculator/widgets/drawer.dart';
 import 'package:wealth_calculator/widgets/multi_item.dart';
 import 'package:collection/collection.dart';
 
@@ -193,62 +192,22 @@ class _PricesScreenState extends State<PricesScreen>
                 if (state is PricesLoading) {
                   return CircularProgressIndicator();
                 } else {
-                  return Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InvoiceListScreen(),
-                            ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.cases_outlined,
-                          color: Colors.black,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          if (context.read<PricesBloc>().state
-                              is PricesLoaded) {
-                            final goldPricesState = context
-                                .read<PricesBloc>()
-                                .state as PricesLoaded;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider.value(
-                                  value: context.read<InventoryBloc>()
-                                    ..add(LoadInventoryData(
-                                      goldPrices: goldPricesState.goldPrices,
-                                      currencyPrices:
-                                          goldPricesState.currencyPrices,
-                                    )),
-                                  child: InventoryScreen(),
-                                ),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Envanter verileri yüklenemedi.'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        },
-                        icon: Icon(Icons.account_balance_wallet,
-                            color: Colors.black),
-                      ),
-                    ],
+                  return IconButton(
+                    icon: const Icon(
+                      Icons.menu,
+                      size: 35.0,
+                    ),
+                    onPressed: () {
+                      // Use the new context to open the drawer
+                      Scaffold.of(context).openEndDrawer();
+                    },
                   );
                 }
               },
             ),
           ],
         ),
+        endDrawer: const AppDrawer(),
         body: Column(
           children: [
             _tabController.index == 4
