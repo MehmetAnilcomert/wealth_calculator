@@ -46,19 +46,10 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Envanter'),
             onTap: () {
               Navigator.of(context).pop();
-              final goldPricesState =
-                  context.read<PricesBloc>().state as PricesLoaded;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => BlocProvider.value(
-                    value: context.read<InventoryBloc>()
-                      ..add(LoadInventoryData(
-                        goldPrices: goldPricesState.goldPrices,
-                        currencyPrices: goldPricesState.currencyPrices,
-                      )),
-                    child: InventoryScreen(),
-                  ),
+                  builder: (context) => InventoryScreen(),
                 ),
               );
             },

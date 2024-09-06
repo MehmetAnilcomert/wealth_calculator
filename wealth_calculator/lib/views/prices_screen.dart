@@ -192,6 +192,17 @@ class _PricesScreenState extends State<PricesScreen>
                 if (state is PricesLoading) {
                   return CircularProgressIndicator();
                 } else {
+                  final goldPricesState =
+                      context.read<PricesBloc>().state as PricesLoaded;
+                  MaterialPageRoute(
+                    builder: (context) => BlocProvider.value(
+                      value: context.read<InventoryBloc>()
+                        ..add(LoadInventoryData(
+                          goldPrices: goldPricesState.goldPrices,
+                          currencyPrices: goldPricesState.currencyPrices,
+                        )),
+                    ),
+                  );
                   return IconButton(
                     icon: const Icon(
                       Icons.menu,

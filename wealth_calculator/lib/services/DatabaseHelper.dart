@@ -63,7 +63,7 @@ class DbHelper {
     String dbPath = join(await getDatabasesPath(), "inventory.db");
 
     if (await databaseExists(dbPath)) {
-      print("Inventory database already exists.");
+      //print("Inventory database already exists.");
     } else {
       ByteData data = await rootBundle.load("database/inventory.db");
       List<int> bytes =
