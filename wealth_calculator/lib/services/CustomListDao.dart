@@ -45,4 +45,16 @@ class CustomListDao {
       whereArgs: [title],
     );
   }
+
+  Future<void> updateWealthPrices(List<WealthPrice> updatedPrices) async {
+    final db = await DbHelper.instance.customListDatabase;
+    for (WealthPrice wealthPrice in updatedPrices) {
+      await db.update(
+        'wealth_prices',
+        wealthPrice.toMap(),
+        where: 'title = ?',
+        whereArgs: [wealthPrice.title],
+      );
+    }
+  }
 }

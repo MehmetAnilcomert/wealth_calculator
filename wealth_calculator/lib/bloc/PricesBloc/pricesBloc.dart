@@ -15,6 +15,7 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
       final goldPrices = await fetchGoldPrices();
       final currencyPrices = await fetchCurrencyPrices();
       final equityPrices = await fetchEquityData();
+      fetchCommodityPrices();
       emit(PricesLoaded(
           goldPrices: goldPrices,
           currencyPrices: currencyPrices,

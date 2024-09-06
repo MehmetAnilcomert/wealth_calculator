@@ -103,7 +103,7 @@ Future<List<WealthPrice>> fetchCurrencyPrices() async {
   return [];
 }
 
-Future<void> scrapeCommodityDataFromInvesting() async {
+Future<void> fetchCommodityPrices() async {
   // Verilen URL'den HTML veriyi çek
   const url = 'https://tr.investing.com/commodities/real-time-futures';
   final response = await http.get(Uri.parse(url));
