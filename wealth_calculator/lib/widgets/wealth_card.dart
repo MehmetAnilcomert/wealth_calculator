@@ -12,7 +12,7 @@ class WealthPriceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String tarih = equity.type.index == 2 ? 'Tarih' : 'Saat';
+    String tarih = (equity.type.index == 2 | 3) ? 'Tarih' : 'Saat';
     Color changeColor = equity.change.startsWith('-')
         ? Colors.red
         : const Color.fromARGB(255, 67, 155, 70);
@@ -35,6 +35,9 @@ class WealthPriceCard extends StatelessWidget {
         return heightValue;
       } else if (equity.type.index == 0) {
         heightValue = MediaQuery.of(context).size.height * 0.3;
+        return heightValue;
+      } else if (equity.type.index == 3) {
+        heightValue = MediaQuery.of(context).size.height * 0.38;
         return heightValue;
       } else {
         heightValue = MediaQuery.of(context).size.height * 0.248;

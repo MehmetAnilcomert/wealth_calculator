@@ -12,8 +12,10 @@ class PricesLoaded extends PricesState {
   final List<WealthPrice> goldPrices;
   final List<WealthPrice> currencyPrices;
   final List<WealthPrice> equityPrices;
+  final List<WealthPrice> commodityPrices;
 
   PricesLoaded({
+    required this.commodityPrices,
     required this.goldPrices,
     required this.currencyPrices,
     required this.equityPrices,

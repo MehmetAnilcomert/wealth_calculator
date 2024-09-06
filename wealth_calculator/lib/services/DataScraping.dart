@@ -103,35 +103,69 @@ Future<List<WealthPrice>> fetchCurrencyPrices() async {
   return [];
 }
 
-Future<void> fetchCommodityPrices() async {
-  // Verilen URL'den HTML veriyi çek
+Future<List<WealthPrice>> fetchCommodityPrices() async {
+  final Set<String> necessaryCommodities = {
+    "Gümüş derived",
+    "Bakır derived",
+    "Platin derived",
+    "Paladyum derived",
+    "Ham Petrol derived",
+    "Brent Petrol derived",
+    "Doğal Gaz derived",
+    "Kalorifer Yakıtı derived",
+    "Londra Gaz Yağı derived",
+    "Alüminyum derived",
+    "Çinko derived",
+    "Nikel derived",
+    "Amerikan Buğday derived",
+    "Kaba Pirinç derived",
+    "Amerikan Mısır derived",
+    "Londra Kahve derived",
+    "Amerikan Kakao derived",
+    "Yulaf derived",
+    "Kereste",
+    "Besi Sığırı derived"
+  };
+
   const url = 'https://tr.investing.com/commodities/real-time-futures';
   final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    // HTML içeriğini parse et
-    final document = parse(response.body);
-
-    // tbody içindeki tüm tr etiketlerini seç
-    final tbody = document.querySelector('.datatable-v2_body__8TXQk');
-
-    if (tbody != null) {
-      final rows = tbody.querySelectorAll('tr');
-
-      for (var row in rows) {
-        // Her bir tr içerisindeki td etiketlerini seç
-        final cells = row.querySelectorAll('td');
-
-        // Verileri al ve yazdır
-        final data = cells.map((cell) => cell.text.trim()).toList();
-        print(data);
-      }
-    } else {
-      print('tbody element bulunamadı.');
-    }
-  } else {
-    print('İstek başarısız oldu: ${response.statusCode}');
+  if (response.statusCode != 200) {
+    throw Exception('İstek başarısız oldu: ${response.statusCode}');
   }
+
+  final document = parse(response.body);
+  final tbody = document.querySelector('.datatable-v2_body__8TXQk');
+
+  if (tbody == null) {
+    throw Exception('tbody element bulunamadı.');
+  }
+
+  return tbody
+      .querySelectorAll('tr')
+      .map((row) => _parseRow(row, necessaryCommodities))
+      .where((wealthPrice) => wealthPrice != null)
+      .cast<WealthPrice>()
+      .toList();
+}
+
+WealthPrice? _parseRow(element, Set<String> necessaryCommodities) {
+  final cells = element.querySelectorAll('td');
+  if (cells.length < 8) return null;
+
+  final titleWithDerived = cells[1].text.trim();
+  if (!necessaryCommodities.contains(titleWithDerived)) return null;
+  final title = titleWithDerived.replaceAll(' derived', '');
+  return WealthPrice(
+    title: title,
+    currentPrice: cells[3].text.trim(),
+    buyingPrice: cells[4].text.trim(),
+    sellingPrice: cells[5].text.trim(),
+    changeAmount: cells[6].text.trim(),
+    change: cells[7].text.trim(),
+    time: cells.length > 8 ? cells[8].text.trim() : '',
+    type: PriceType.commodity,
+  );
 }
 
 Future<List<WealthPrice>> fetchEquityData() async {

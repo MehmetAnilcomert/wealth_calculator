@@ -24,6 +24,8 @@ Widget buildPricesSection(BuildContext context, String type, String query) {
           prices = state.currencyPrices;
         } else if (type == 'equityPrices') {
           prices = state.equityPrices;
+        } else if (type == 'commodityPrices') {
+          prices = state.commodityPrices;
         }
 
         prices = prices

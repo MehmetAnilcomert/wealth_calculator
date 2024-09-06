@@ -7,6 +7,7 @@ class MultiItemDialogs {
     List<WealthPrice> futureGoldPrices,
     List<WealthPrice> futureCurrencyPrices,
     List<WealthPrice> futureEquityPrices,
+    List<WealthPrice> futureCommodityPrices,
     Function(List<WealthPrice>) onItemsSelected, {
     List<String> disabledItems = const [],
     List<String> hiddenItems = const [],
@@ -18,6 +19,7 @@ class MultiItemDialogs {
           futureGoldPrices: futureGoldPrices,
           futureCurrencyPrices: futureCurrencyPrices,
           futureEquityPrices: futureEquityPrices,
+          futureCommodityPrices: futureCommodityPrices,
           onItemsSelected: onItemsSelected,
           disabledItems: disabledItems,
           hiddenItems: hiddenItems,
@@ -31,6 +33,7 @@ class MultiSelectItemDialog extends StatefulWidget {
   final List<WealthPrice> futureGoldPrices;
   final List<WealthPrice> futureCurrencyPrices;
   final List<WealthPrice> futureEquityPrices;
+  final List<WealthPrice> futureCommodityPrices;
   final Function(List<WealthPrice>) onItemsSelected;
   final List<String> disabledItems;
   final List<String> hiddenItems;
@@ -39,6 +42,7 @@ class MultiSelectItemDialog extends StatefulWidget {
     required this.futureGoldPrices,
     required this.futureCurrencyPrices,
     required this.futureEquityPrices,
+    required this.futureCommodityPrices,
     required this.onItemsSelected,
     this.disabledItems = const [],
     this.hiddenItems = const [],
@@ -54,11 +58,25 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final allItems = [
-      ...widget.futureGoldPrices,
-      ...widget.futureCurrencyPrices,
-      ...widget.futureEquityPrices
-    ].where((item) => !widget.hiddenItems.contains(item.title)).toList();
+    // Seçilen seçeneğe göre gösterilecek listeyi belirle
+    List<WealthPrice> getSelectedList() {
+      switch (_selectedOption) {
+        case 'Döviz Seç':
+          return widget.futureCurrencyPrices;
+        case 'Hisse Senetleri Seç':
+          return widget.futureEquityPrices;
+        case 'Emtia Seç':
+          return widget.futureCommodityPrices;
+        case 'Altın Seç':
+        default:
+          return widget.futureGoldPrices;
+      }
+    }
+
+    // Filtrelenmiş listeyi elde et
+    final allItems = getSelectedList()
+        .where((item) => !widget.hiddenItems.contains(item.title))
+        .toList();
 
     return AlertDialog(
       title: Text('Seçim Yapın'),
@@ -78,15 +96,19 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
                 value: 'Döviz Seç',
-                child: Text('Döviz Seç'),
+                child: Text('Döviz'),
               ),
               const PopupMenuItem<String>(
                 value: 'Altın Seç',
-                child: Text('Altın Seç'),
+                child: Text('Altın'),
               ),
               const PopupMenuItem<String>(
                 value: 'Hisse Senetleri Seç',
-                child: Text('Hisse Senetleri Seç'),
+                child: Text('Hisse Senetleri'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Emtia Seç',
+                child: Text('Emtia'),
               ),
             ],
           ),
@@ -94,11 +116,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (var price in _selectedOption == 'Altın Seç'
-                      ? widget.futureGoldPrices
-                      : _selectedOption == 'Döviz Seç'
-                          ? widget.futureCurrencyPrices
-                          : widget.futureEquityPrices)
+                  for (var price in allItems)
                     ListTile(
                       title: Text(price.title),
                       enabled: !widget.disabledItems.contains(price.title),

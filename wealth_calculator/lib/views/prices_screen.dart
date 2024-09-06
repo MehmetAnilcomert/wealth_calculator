@@ -8,7 +8,6 @@ import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/services/CustomListDao.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
-import 'package:wealth_calculator/views/temp_calculator.dart';
 import 'package:wealth_calculator/widgets/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/widgets/custom_list.dart';
 import 'package:wealth_calculator/widgets/multi_item.dart';
@@ -74,6 +73,11 @@ class _PricesScreenState extends State<PricesScreen>
                 .firstWhereOrNull((price) => price.title == wealthPrice.title);
           }
 
+          // Eğer döviz fiyatları arasında yoksa borsa fiyatlarını kontrol et
+          if (updatedPrice == null) {
+            updatedPrice = pricesState.commodityPrices
+                .firstWhereOrNull((price) => price.title == wealthPrice.title);
+          }
           // Eşleşen fiyat varsa listeye ekle, yoksa eski fiyatla devam et
           updatedCustomPrices.add(updatedPrice ?? wealthPrice);
         }
@@ -111,10 +115,10 @@ class _PricesScreenState extends State<PricesScreen>
       'Altın Fiyatları',
       'Döviz Fiyatları',
       'Bist100 Endeksi',
+      'Emtia',
       'Kişisel Portföy',
-      'Varlık Hesaplayıcı'
     ];
-    return titles[index.clamp(0, 4)];
+    return titles[index.clamp(0, 6)];
   }
 
   void _onSearchChanged(String query) {
@@ -134,6 +138,9 @@ class _PricesScreenState extends State<PricesScreen>
           : [],
       context.read<PricesBloc>().state is PricesLoaded
           ? (context.read<PricesBloc>().state as PricesLoaded).equityPrices
+          : [],
+      context.read<PricesBloc>().state is PricesLoaded
+          ? (context.read<PricesBloc>().state as PricesLoaded).commodityPrices
           : [],
       (List<WealthPrice> selectedWealths) {
         setState(() {
@@ -273,6 +280,7 @@ class _PricesScreenState extends State<PricesScreen>
                   buildPricesSection(context, 'goldPrices', _searchQuery),
                   buildPricesSection(context, 'currencyPrices', _searchQuery),
                   buildPricesSection(context, 'equityPrices', _searchQuery),
+                  buildPricesSection(context, 'commodityPrices', _searchQuery),
                   CustomPricesWidget(
                     customPrices: _customPrices,
                     onAddPressed: _onAddPressed,
@@ -285,7 +293,6 @@ class _PricesScreenState extends State<PricesScreen>
                       });
                     },
                   ),
-                  CalculatorScreen(),
                 ],
               ),
             ),
@@ -299,8 +306,8 @@ class _PricesScreenState extends State<PricesScreen>
               Tab(icon: Icon(Icons.gpp_good), text: 'Altın'),
               Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
               Tab(icon: Icon(Icons.equalizer), text: 'Hisse'),
+              Tab(icon: Icon(Icons.oil_barrel), text: 'Emtia'),
               Tab(icon: Icon(Icons.dashboard_customize), text: 'Portföy'),
-              Tab(icon: Icon(Icons.calculate), text: 'Hesapla'),
             ],
             labelColor: Colors.white,
             unselectedLabelColor: Color.fromARGB(255, 142, 140, 140),

@@ -1,4 +1,4 @@
-enum PriceType { gold, currency, equity }
+enum PriceType { gold, currency, equity, commodity }
 
 class WealthPrice {
   final String title;
