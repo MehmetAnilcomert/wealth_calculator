@@ -25,13 +25,14 @@ class AppDrawer extends StatelessWidget {
               child: Icon(Icons.person, color: Colors.blue),
             ),
             decoration: BoxDecoration(
-              color: Colors.blueGrey, // Background color for the header
+              color: Colors.blueGrey,
             ),
           ),
           ListTile(
             leading: const Icon(Icons.receipt),
             title: const Text('Faturalar'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -44,6 +45,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.inventory),
             title: const Text('Envanter'),
             onTap: () {
+              Navigator.of(context).pop();
               final goldPricesState =
                   context.read<PricesBloc>().state as PricesLoaded;
               Navigator.push(
@@ -65,6 +67,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.calculate),
             title: const Text('Varlık Hesaplayıcı'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -78,6 +81,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.pushReplacementNamed(context, '/settings');
             },
           ),
@@ -85,6 +89,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.help),
             title: const Text('Help'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.pushReplacementNamed(context, '/help');
             },
           ),
@@ -93,7 +98,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
-              // Implement logout logic here
+              Navigator.of(context).pop();
               Navigator.pushReplacementNamed(context, '/login');
             },
           ),
