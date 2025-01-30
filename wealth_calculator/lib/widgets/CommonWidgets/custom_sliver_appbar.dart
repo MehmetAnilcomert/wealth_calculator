@@ -25,19 +25,6 @@ class CustomSliverAppBar extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         background: flexibleSpaceBackground,
       ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 10.0, top: 5),
-          child: FloatingActionButton(
-            backgroundColor: Color.fromARGB(255, 59, 150, 223),
-            onPressed: onAddPressed,
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
