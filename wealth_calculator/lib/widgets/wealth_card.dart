@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class WealthPriceCard extends StatefulWidget {
   final WealthPrice equity;
