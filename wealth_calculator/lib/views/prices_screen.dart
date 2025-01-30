@@ -177,71 +177,111 @@ class _PricesScreenState extends State<PricesScreen>
         }
       },
       child: Scaffold(
+        backgroundColor: Color(0xFFF5F7FA),
         appBar: AppBar(
-          leading: Image.asset("images/logo2.png"),
-          backgroundColor: Colors.blueGrey,
-          centerTitle: true,
-          title: Text(
-              style: TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  fontWeight: FontWeight.bold),
-              _getAppBarTitle(_tabController.index)),
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+              ),
+              child: Image.asset("images/logo2.png"),
+            ),
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF2C3E50),
+                  Color(0xFF3498DB),
+                ],
+              ),
+            ),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _getAppBarTitle(_tabController.index),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Güncel Piyasa Verileri',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
           actions: [
             BlocBuilder<PricesBloc, PricesState>(
               builder: (context, state) {
                 if (state is PricesLoading) {
-                  return CircularProgressIndicator();
-                } else {
-                  final goldPricesState =
-                      context.read<PricesBloc>().state as PricesLoaded;
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider.value(
-                      value: context.read<InventoryBloc>()
-                        ..add(LoadInventoryData(
-                          goldPrices: goldPricesState.goldPrices,
-                          currencyPrices: goldPricesState.currencyPrices,
-                        )),
+                  return Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
                     ),
-                  );
-                  return IconButton(
-                    icon: const Icon(
-                      Icons.menu,
-                      size: 35.0,
-                    ),
-                    onPressed: () {
-                      // Use the new context to open the drawer
-                      Scaffold.of(context).openEndDrawer();
-                    },
                   );
                 }
+                return IconButton(
+                  icon: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.2),
+                    ),
+                    child: Icon(Icons.menu, color: Colors.white),
+                  ),
+                  onPressed: () => Scaffold.of(context).openEndDrawer(),
+                );
               },
             ),
+            SizedBox(width: 8),
           ],
         ),
         endDrawer: const AppDrawer(),
         body: Column(
           children: [
-            _tabController.index == 4
-                ? SizedBox()
-                : Padding(
-                    padding: const EdgeInsets.only(left: 4, right: 4, top: 4),
-                    child: TextField(
-                      onChanged: _onSearchChanged,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.blueGrey,
-                        hintText: 'Ara...',
-                        hintStyle: TextStyle(color: Colors.white),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.white,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                      ),
+            if (_tabController.index != 4)
+              Container(
+                margin: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
                     ),
+                  ],
+                ),
+                child: TextField(
+                  onChanged: _onSearchChanged,
+                  decoration: InputDecoration(
+                    hintText: 'Ara...',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    prefixIcon: Icon(Icons.search, color: Color(0xFF3498DB)),
+                    border: InputBorder.none,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
+                ),
+              ),
             Expanded(
               child: TabBarView(
                 physics: NeverScrollableScrollPhysics(),
@@ -258,8 +298,7 @@ class _PricesScreenState extends State<PricesScreen>
                     onDeletePrice: (WealthPrice wealthPrice) {
                       setState(() {
                         _customPrices.remove(wealthPrice);
-                        _customListDao.deleteWealthPrice(
-                            wealthPrice.title); // Veritabanından silme
+                        _customListDao.deleteWealthPrice(wealthPrice.title);
                       });
                     },
                   ),
@@ -269,20 +308,49 @@ class _PricesScreenState extends State<PricesScreen>
           ],
         ),
         bottomNavigationBar: Container(
-          color: Colors.blueGrey,
-          child: TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(icon: Icon(Icons.gpp_good), text: 'Altın'),
-              Tab(icon: Icon(Icons.attach_money), text: 'Döviz'),
-              Tab(icon: Icon(Icons.equalizer), text: 'Hisse'),
-              Tab(icon: Icon(Icons.oil_barrel), text: 'Emtia'),
-              Tab(icon: Icon(Icons.dashboard_customize), text: 'Portföy'),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: Offset(0, -4),
+              ),
             ],
-            labelColor: Colors.white,
-            unselectedLabelColor: Color.fromARGB(255, 142, 140, 140),
+          ),
+          child: SafeArea(
+            child: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Color(0xFF3498DB),
+                    width: 3,
+                  ),
+                ),
+              ),
+              tabs: [
+                _buildTab(Icons.monetization_on_outlined, 'Altın'),
+                _buildTab(Icons.currency_exchange, 'Döviz'),
+                _buildTab(Icons.show_chart, 'Hisse'),
+                _buildTab(Icons.diamond_outlined, 'Emtia'),
+                _buildTab(Icons.account_balance_wallet_outlined, 'Portföy'),
+              ],
+              labelColor: Color(0xFF3498DB),
+              unselectedLabelColor: Colors.grey,
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTab(IconData icon, String label) {
+    return Tab(
+      icon: Icon(icon, size: 24),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 12),
       ),
     );
   }
