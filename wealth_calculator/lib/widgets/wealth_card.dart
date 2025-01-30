@@ -1,179 +1,242 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class WealthPriceCard extends StatelessWidget {
+class WealthPriceCard extends StatefulWidget {
   final WealthPrice equity;
-  final Function(WealthPrice)? onLongPress; // Uzun basma işlevi için callback
+  final Function(WealthPrice) onLongPress;
 
-  WealthPriceCard({
+  const WealthPriceCard({
+    Key? key,
     required this.equity,
-    this.onLongPress, // Callback ekleyin
-  });
+    required this.onLongPress,
+  }) : super(key: key);
+
+  @override
+  _WealthPriceCardState createState() => _WealthPriceCardState();
+}
+
+class _WealthPriceCardState extends State<WealthPriceCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  bool _isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.98).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    String tarih = (equity.type.index == 2 | 3) ? 'Tarih' : 'Saat';
-    Color changeColor = equity.change.startsWith('-')
-        ? Colors.red
-        : const Color.fromARGB(255, 67, 155, 70);
-    Icon icon = equity.change.startsWith('-')
-        ? Icon(
-            Icons.trending_down,
-            color: Colors.red,
-            size: 26.0,
-          )
-        : Icon(
-            Icons.trending_up,
-            color: Colors.green,
-            size: 26.0,
-          );
-
-    double _getHeightValue() {
-      double heightValue;
-      if (equity.type.index == 2) {
-        heightValue = MediaQuery.of(context).size.height * 0.41;
-        return heightValue;
-      } else if (equity.type.index == 0) {
-        heightValue = MediaQuery.of(context).size.height * 0.3;
-        return heightValue;
-      } else if (equity.type.index == 3) {
-        heightValue = MediaQuery.of(context).size.height * 0.38;
-        return heightValue;
-      } else {
-        heightValue = MediaQuery.of(context).size.height * 0.248;
-        return heightValue;
-      }
-    }
+    final isNegativeChange = widget.equity.change.startsWith('-');
+    final changeColor = isNegativeChange ? Colors.red : Colors.green;
+    final icon = isNegativeChange ? Icons.trending_down : Icons.trending_up;
 
     return GestureDetector(
-      onLongPress: () {
-        if (onLongPress != null) {
-          _showDeleteConfirmationDialog(context, equity);
+      onLongPress: () => widget.onLongPress(widget.equity),
+      onTap: () {
+        setState(() {
+          _isExpanded = !_isExpanded;
+        });
+        if (_isExpanded) {
+          _controller.forward();
+        } else {
+          _controller.reverse();
         }
       },
-      child: Container(
-        margin: EdgeInsets.all(5),
-        width: MediaQuery.of(context).size.width * 0.473,
-        height: _getHeightValue(),
-        padding: const EdgeInsets.all(14.0),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 139, 202, 233),
-          borderRadius: BorderRadius.circular(8.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 4.0,
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              equity.title,
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: child,
+          );
+        },
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          width: MediaQuery.of(context).size.width * 0.45,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: changeColor.withOpacity(0.2),
+                spreadRadius: 2,
+                blurRadius: 15,
+                offset: const Offset(0, 5),
               ),
-            ),
-            SizedBox(height: 8.0),
-            if (equity.currentPrice != null)
-              Text(
-                'Anlık fiyat: ${equity.currentPrice}',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.black,
-                ),
-              ),
-            if (equity.currentPrice != null) SizedBox(height: 8.0),
-            Text(
-              'En yüksek fiyat: ${equity.buyingPrice}',
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              'En düşük fiyat: ${equity.sellingPrice}',
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 4.0),
-            if (equity.volume != null)
-              Text(
-                'Volume: ${equity.volume}',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.black,
-                ),
-              ),
-            if (equity.volume != null) SizedBox(height: 4.0),
-            if (equity.changeAmount != null)
-              Text(
-                'Değişim (miktar): ${equity.changeAmount}',
-                style: TextStyle(
-                  fontSize: 14.0,
-                ),
-              ),
-            SizedBox(height: 4.0),
-            Row(
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Stack(
               children: [
-                Text(
-                  'Değişim(%): ${equity.change}',
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: changeColor,
-                    fontWeight: FontWeight.bold,
+                Positioned(
+                  top: -30,
+                  right: -30,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: changeColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
-                icon,
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              widget.equity.title,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                          _buildChangeIndicator(changeColor, icon),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      if (widget.equity.currentPrice != null)
+                        _buildMainPriceRow(
+                            'Anlık fiyat:', widget.equity.currentPrice!)
+                      else
+                        _buildMainPriceRow(
+                            'Anlık fiyat:', widget.equity.buyingPrice),
+                      AnimatedCrossFade(
+                        firstChild: const SizedBox.shrink(),
+                        secondChild: Column(
+                          children: [
+                            _buildInfoRow(
+                                'En yüksek:', widget.equity.buyingPrice),
+                            _buildInfoRow(
+                                'En düşük:', widget.equity.sellingPrice),
+                            if (widget.equity.volume != null)
+                              _buildInfoRow('Volume:', widget.equity.volume!),
+                          ],
+                        ),
+                        crossFadeState: _isExpanded
+                            ? CrossFadeState.showSecond
+                            : CrossFadeState.showFirst,
+                        duration: const Duration(milliseconds: 300),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${widget.equity.type == PriceType.commodity || widget.equity.type == PriceType.equity ? 'Tarih' : 'Saat'}: ${widget.equity.time}',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  child: Icon(
+                    _isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: Colors.grey[400],
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 4.0),
-            Text(
-              '${tarih}: ${equity.time}',
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.black,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context, WealthPrice equity) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Sil'),
-          content:
-              Text('${equity.title} öğesini silmek istediğinize emin misiniz?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Evet'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-                if (onLongPress != null) {
-                  onLongPress!(equity); // Call the onLongPress function
-                }
-              },
+  Widget _buildChangeIndicator(Color color, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 16),
+          const SizedBox(width: 4),
+          Text(
+            widget.equity.change,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
-            TextButton(
-              child: Text('Hayır'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-              },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMainPriceRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
-          ],
-        );
-      },
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87),
+          ),
+        ],
+      ),
     );
   }
 }

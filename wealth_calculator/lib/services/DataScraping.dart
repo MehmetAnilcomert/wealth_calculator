@@ -29,8 +29,8 @@ Future<List<WealthPrice>> fetchGoldPrices() async {
 
         if (columns.isNotEmpty) {
           String title = columns[0].text.trim();
-          String price1 = columns[1].text.trim();
-          String price2 = columns[2].text.trim();
+          String price1 = columns[2].text.trim();
+          String price2 = columns[1].text.trim();
           String change = columns[3].text.trim();
           String time = columns[4].text.trim();
 
@@ -78,8 +78,8 @@ Future<List<WealthPrice>> fetchCurrencyPrices() async {
         if (columns.isNotEmpty) {
           String title =
               row.querySelector('span.hisse-name-text')?.text.trim() ?? '';
-          String buyingPrice = columns[1].text.trim();
-          String sellingPrice = columns[2].text.trim();
+          String buyingPrice = columns[2].text.trim();
+          String sellingPrice = columns[1].text.trim();
           String change = columns[3].text.trim();
           String time = columns[4].text.trim();
 
