@@ -4,7 +4,7 @@ import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_state.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
-import 'package:wealth_calculator/services/InvoiceService.dart';
+import 'package:wealth_calculator/utils/invoice_utils.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/views/invoice_adding.dart';
 import 'package:wealth_calculator/widgets/InvoiceWidgets/invoice_list.dart';
@@ -33,16 +33,14 @@ class InvoiceListScreen extends StatelessWidget {
         builder: (context, state) {
           if (state is InvoiceLoaded) {
             final segments =
-                InvoiceService.calculateSegments(state.nonPaidInvoices);
+                InvoiceUtils.calculateSegments(state.nonPaidInvoices);
             final colors = segments
-                .map(
-                    (segment) => InvoiceService.getImportanceColor(segment.key))
+                .map((segment) => InvoiceUtils.getImportanceColor(segment.key))
                 .toList();
             final paidSegments =
-                InvoiceService.calculateSegments(state.paidInvoices);
+                InvoiceUtils.calculateSegments(state.paidInvoices);
             final paidColors = paidSegments
-                .map(
-                    (segment) => InvoiceService.getImportanceColor(segment.key))
+                .map((segment) => InvoiceUtils.getImportanceColor(segment.key))
                 .toList();
 
             return DefaultTabController(
