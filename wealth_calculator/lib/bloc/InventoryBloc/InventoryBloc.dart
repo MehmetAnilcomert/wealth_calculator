@@ -9,8 +9,7 @@ import 'package:wealth_calculator/services/Wealthsdao.dart';
 import 'package:wealth_calculator/utils/inventory_utils.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
-  final SavedWealthsdao _wealthsDao =
-      SavedWealthsdao(); // Burada tek bir instance oluşturduk
+  final SavedWealthsdao _wealthsDao = SavedWealthsdao();
 
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];

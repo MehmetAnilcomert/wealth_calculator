@@ -9,6 +9,7 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
     on<SearchPrices>(_onSearchPrices);
   }
 
+  // This method is used to load the prices from the internet with the help of the DataScraping service
   Future<void> _onLoadPrices(
       LoadPrices event, Emitter<PricesState> emit) async {
     try {
@@ -27,16 +28,15 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
     }
   }
 
+  // This method is used to search the prices on the loaded prices in prices screen
   void _onSearchPrices(SearchPrices event, Emitter<PricesState> emit) {
     if (state is PricesLoaded) {
       final currentState = state as PricesLoaded;
 
-      // Arama mantığı
       final filteredPrices = currentState.goldPrices.where((price) {
         return price.title.toLowerCase().contains(event.query.toLowerCase());
       }).toList();
 
-      // Sonuçları emit etme
       emit(PricesSearchResult(filteredPrices));
     }
   }

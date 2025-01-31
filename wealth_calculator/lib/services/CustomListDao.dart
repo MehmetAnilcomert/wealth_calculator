@@ -6,8 +6,7 @@ import 'package:wealth_calculator/services/DatabaseHelper.dart';
 class CustomListDao {
   // WealthPrice nesnesini tabloya eklemek için fonksiyon
   Future<void> insertWealthPrice(WealthPrice wealthPrice) async {
-    final db = await DbHelper.instance.customListDatabase;
-    print("${wealthPrice.title} dbye eklendi");
+    final db = await DbHelper.instance.database; // Güncellendi!
     await db.insert(
       'wealth_prices',
       wealthPrice.toMap(),
@@ -17,7 +16,7 @@ class CustomListDao {
 
   // Tüm WealthPrice nesnelerini almak için fonksiyon
   Future<List<WealthPrice>> getWealthPrices() async {
-    final db = await DbHelper.instance.customListDatabase;
+    final db = await DbHelper.instance.database;
 
     final List<Map<String, dynamic>> maps = await db.query('wealth_prices');
 
@@ -38,7 +37,7 @@ class CustomListDao {
 
   // WealthPrice nesnesini silmek için fonksiyon
   Future<void> deleteWealthPrice(String title) async {
-    final db = await DbHelper.instance.customListDatabase;
+    final db = await DbHelper.instance.database; // Güncellendi!
 
     await db.delete(
       'wealth_prices',
@@ -47,8 +46,9 @@ class CustomListDao {
     );
   }
 
+  // WealthPrice nesnelerini güncellemek için fonksiyon
   Future<void> updateWealthPrices(List<WealthPrice> updatedPrices) async {
-    final db = await DbHelper.instance.customListDatabase;
+    final db = await DbHelper.instance.database; // Güncellendi!
     for (WealthPrice wealthPrice in updatedPrices) {
       await db.update(
         'wealth_prices',

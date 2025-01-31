@@ -112,7 +112,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       LoadInvoices event, Emitter<InvoiceState> emit) async {
     emit(InvoiceLoading());
     try {
-      final db = await _dbHelper.faturaDatabase;
+      final db = await _dbHelper.database;
       final List<Map<String, dynamic>> maps = await db.query('fatura');
       final List<Invoice> faturalar =
           maps.map((map) => Invoice.fromMap(map)).toList();
@@ -141,9 +141,8 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   Future<void> _onAddFatura(
       AddInvoice event, Emitter<InvoiceState> emit) async {
     try {
-      final db = await _dbHelper.faturaDatabase;
+      final db = await _dbHelper.database;
       await db.insert('fatura', event.fatura.toMap());
-      print('Invoice added successfully'); // Debug print
       add(LoadInvoices());
     } catch (e) {
       print('Error adding invoice: $e'); // Debug print
@@ -156,7 +155,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     final currentState = state;
     if (currentState is InvoiceLoaded) {
       try {
-        final db = await _dbHelper.faturaDatabase;
+        final db = await _dbHelper.database;
         int updatedRows = await db.update(
           'fatura',
           event.fatura.toMap(),
@@ -202,7 +201,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         // Bildirimi kaldır
         NotificationService.cancelNotification(event.id);
 
-        final db = await _dbHelper.faturaDatabase;
+        final db = await _dbHelper.database;
         await db.delete(
           'fatura',
           where: 'id = ?',

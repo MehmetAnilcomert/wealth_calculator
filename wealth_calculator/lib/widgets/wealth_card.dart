@@ -119,7 +119,8 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                         ],
                       ),
                       const SizedBox(height: 12),
-                      if (widget.equity.currentPrice != null)
+                      if (widget.equity.type == PriceType.equity ||
+                          widget.equity.type == PriceType.commodity)
                         _buildMainPriceRow(
                             'Anlık fiyat:', widget.equity.currentPrice!)
                       else
