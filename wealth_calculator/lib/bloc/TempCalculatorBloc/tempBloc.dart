@@ -24,7 +24,7 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
 
     try {
       // Geçici listelere test verilerini atıyoruz
-      _savedWealths = []; // Geçici listeyi temizle
+      _savedWealths = [];
 
       if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
         _cachedGoldPrices = await fetchGoldPrices();
@@ -155,7 +155,7 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
       'Yarım Altın': Colors.yellow,
       'Çeyrek Altın': Colors.yellow,
       'ABD Doları': Colors.green,
-      'Euro': Colors.blue,
+      'Euro': Colors.blue[700],
       'İngiliz Sterlini': Colors.purple,
       'TL': Colors.red,
     };

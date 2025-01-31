@@ -165,7 +165,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       'Yarım Altın': Colors.yellow,
       'Çeyrek Altın': Colors.yellow,
       'ABD Doları': Colors.green,
-      'Euro': Colors.blue,
+      'Euro': Colors.blue[700],
       'İngiliz Sterlini': Colors.purple,
       'TL': Colors.red,
     };

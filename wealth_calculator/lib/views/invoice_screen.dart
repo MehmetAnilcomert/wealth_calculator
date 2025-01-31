@@ -179,7 +179,7 @@ class InvoiceListScreen extends StatelessWidget {
       slivers: [
         CustomSliverAppBar(
           expandedHeight: 220.0,
-          collapsedHeight: 250,
+          collapsedHeight: 280,
           flexibleSpaceBackground: TotalPrice(
             totalPrice: segments.fold(0, (sum, entry) => sum + entry.value),
             segments: segments.map((entry) => entry.value).toList(),
@@ -201,12 +201,12 @@ class InvoiceListScreen extends StatelessWidget {
       value: value,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Color(0xFF3498DB)),
+          Icon(icon, size: 20, color: Color.fromARGB(255, 106, 196, 255)),
           SizedBox(width: 12),
           Text(
             text,
             style: TextStyle(
-              color: Colors.black87,
+              color: Colors.white,
               fontSize: 16,
             ),
           ),

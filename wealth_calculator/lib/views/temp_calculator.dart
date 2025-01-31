@@ -15,18 +15,71 @@ class CalculatorScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => TempInventoryBloc()..add(LoadInventoryData()),
       child: Scaffold(
+        backgroundColor: Color(0xFF2C3E50),
         appBar: AppBar(
-          title: Text("Varlık Hesaplama Makinesi"),
-          backgroundColor: Colors.blueGrey,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: Text(
+            "Varlık Hesaplama Makinesi",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-        backgroundColor: Colors.blueGrey,
+        floatingActionButton:
+            BlocBuilder<TempInventoryBloc, TempInventoryState>(
+          builder: (context, state) {
+            if (state is InventoryLoaded) {
+              return FloatingActionButton(
+                onPressed: () {
+                  ItemDialogs.showSelectItemDialog(
+                    context,
+                    state.goldPrices,
+                    state.currencyPrices,
+                    (wealth, amount) {
+                      ItemDialogs.showEditItemDialog(
+                        context,
+                        MapEntry(wealth, 0),
+                        (wealth, amount) {
+                          context
+                              .read<TempInventoryBloc>()
+                              .add(AddOrUpdateWealth(wealth, amount));
+                        },
+                      );
+                    },
+                    hiddenItems: [
+                      'Altın (ONS/\$)',
+                      'Altın (\$/kg)',
+                      'Altın (Euro/kg)',
+                      'Külçe Altın (\$)'
+                    ],
+                  );
+                },
+                backgroundColor: Color(0xFF3498DB),
+                child: Icon(Icons.add, size: 32),
+              );
+            }
+            return Container();
+          },
+        ),
         body: BlocConsumer<TempInventoryBloc, TempInventoryState>(
           listener: (context, state) {
             if (state is InventoryError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Hata: Veriler yüklenemedi'),
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.red.shade400,
+                  behavior: SnackBarBehavior.floating,
+                  margin: EdgeInsets.all(16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               );
             } else if (state is PricesLoaded) {
@@ -35,54 +88,53 @@ class CalculatorScreen extends StatelessWidget {
           },
           builder: (context, state) {
             if (state is InventoryLoading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
+                ),
+              );
             } else if (state is InventoryLoaded) {
-              return CustomScrollView(
-                slivers: [
-                  CustomSliverAppBar(
-                    expandedHeight: MediaQuery.of(context).size.height * 0.35,
-                    collapsedHeight: MediaQuery.of(context).size.height * 0.35,
-                    flexibleSpaceBackground: TotalPrice(
-                      totalPrice: state.totalPrice,
-                      segments: state.segments,
-                      colors: state.colors,
-                    ),
-                    onAddPressed: () {
-                      ItemDialogs.showSelectItemDialog(
-                        context,
-                        state.goldPrices,
-                        state.currencyPrices,
-                        (wealth, amount) {
-                          ItemDialogs.showEditItemDialog(
-                            context,
-                            MapEntry(wealth, 0),
-                            (wealth, amount) {
-                              context
-                                  .read<TempInventoryBloc>()
-                                  .add(AddOrUpdateWealth(wealth, amount));
-                            },
-                          );
-                        },
-                        hiddenItems: [
-                          'Altın (ONS/\$)',
-                          'Altın (\$/kg)',
-                          'Altın (Euro/kg)',
-                          'Külçe Altın (\$)'
-                        ],
-                      );
-                    },
-                    bloc: context.read<TempInventoryBloc>(),
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFF2C3E50),
+                      Color(0xFF3498DB),
+                    ],
                   ),
-                  SliverFillRemaining(
-                    child: TempInventoryListWidget(
-                      savedWealths: state.savedWealths,
-                      colors: state.colors,
+                ),
+                child: CustomScrollView(
+                  slivers: [
+                    CustomSliverAppBar(
+                      expandedHeight: MediaQuery.of(context).size.height * 0.35,
+                      collapsedHeight:
+                          MediaQuery.of(context).size.height * 0.35,
+                      flexibleSpaceBackground: TotalPrice(
+                        totalPrice: state.totalPrice,
+                        segments: state.segments,
+                        colors: state.colors,
+                      ),
+                      onAddPressed: () {},
+                      bloc: context.read<TempInventoryBloc>(),
                     ),
-                  ),
-                ],
+                    SliverFillRemaining(
+                      child: TempInventoryListWidget(
+                        savedWealths: state.savedWealths,
+                        colors: state.colors,
+                      ),
+                    ),
+                  ],
+                ),
               );
             } else {
-              return Center(child: Text('Veriler yüklenirken hata oldu'));
+              return Center(
+                child: Text(
+                  'Veriler yüklenirken hata oldu',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
             }
           },
         ),
