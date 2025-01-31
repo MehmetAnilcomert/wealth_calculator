@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 
+// Envanterdeki varlıkları saklamak için kullanılan tablonun veritabanı işlemlerini yapan sınıf
 class SavedWealthsdao {
   Future<List<SavedWealths>> getAllWealths() async {
     final db = await DbHelper.instance.inventoryDatabase;

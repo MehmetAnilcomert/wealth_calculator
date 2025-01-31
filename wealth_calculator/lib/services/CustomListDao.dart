@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 
+// Portföydeki fiyatları saklamak için kullanılan tablonun veritabanı işlemlerini yapan sınıf
 class CustomListDao {
   // WealthPrice nesnesini tabloya eklemek için fonksiyon
   Future<void> insertWealthPrice(WealthPrice wealthPrice) async {

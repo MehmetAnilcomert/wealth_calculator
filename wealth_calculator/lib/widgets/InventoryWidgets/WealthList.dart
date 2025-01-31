@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
-import 'package:wealth_calculator/services/Wealthsdao.dart';
 
 class WealthList extends StatelessWidget {
   final Map<SavedWealths, int> selectedItems;

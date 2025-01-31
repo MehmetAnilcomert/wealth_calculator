@@ -42,7 +42,7 @@ class CustomNavigationButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(text, style: stylishText ?? TextStyle(fontSize: 16.0)),
+            Text(text, style: stylishText),
             Icon(
               icon,
               color: iconColor ?? Colors.black,

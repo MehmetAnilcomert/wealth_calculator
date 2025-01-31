@@ -41,29 +41,17 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       AddOrUpdateWealth event, Emitter<InventoryState> emit) async {
     try {
       final wealthsDao = SavedWealthsdao();
-      final existingWealth =
-          await wealthsDao.getWealthByType(event.wealth.type);
 
-      if (existingWealth != null) {
-        final updatedWealth = SavedWealths(
-          id: existingWealth.id,
-          type: event.wealth.type,
-          amount: event.amount,
-        );
-        await wealthsDao.updateWealth(updatedWealth);
-      } else {
-        final newWealth = SavedWealths(
-          id: DateTime.now().millisecondsSinceEpoch,
-          type: event.wealth.type,
-          amount: event.amount,
-        );
-        await wealthsDao.insertWealth(newWealth);
-      }
+      final newWealth = SavedWealths(
+        id: event.wealth.id,
+        type: event.wealth.type,
+        amount: event.amount,
+      );
 
-      // Update the cached _savedWealths list
+      await wealthsDao.insertWealth(newWealth);
+
       _savedWealths = await wealthsDao.getAllWealths();
 
-      // Emit new state with updated data
       emit(_createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to edit wealth.'));
@@ -87,78 +75,10 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   }
 
   InventoryLoaded _createLoadedState() {
-    return InventoryLoaded(
-      totalPrice: _calculateTotalPrice(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
-      segments: _calculateSegments(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
-      colors: _calculateColors(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
-      goldPrices: _cachedGoldPrices,
-      currencyPrices: _cachedCurrencyPrices,
-      savedWealths: _savedWealths,
-    );
-  }
-
-  double _calculateTotalPrice(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
-    double total = 0;
-    for (var wealth in savedWealths) {
-      double price = 0.0;
-      for (var gold in goldPrices) {
-        if (gold.title == wealth.type) {
-          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
-          break;
-        }
-      }
-      if (price == 0.0) {
-        for (var currency in currencyPrices) {
-          if (currency.title == wealth.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
-            break;
-          }
-        }
-      }
-      total += price * wealth.amount;
-    }
-    return total;
-  }
-
-  List<double> _calculateSegments(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
+    double totalPrice = 0;
     List<double> segments = [];
-    double total = 0;
-    for (var wealth in savedWealths) {
-      double price = 0.0;
-      for (var gold in goldPrices) {
-        if (gold.title == wealth.type) {
-          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
-          break;
-        }
-      }
-      if (price == 0.0) {
-        for (var currency in currencyPrices) {
-          if (currency.title == wealth.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
-            break;
-          }
-        }
-      }
-      double value = price * wealth.amount;
-      total += value;
-      segments.add(value);
-    }
+    List<Color> colors = [];
 
-    if (total > 0) {
-      segments = segments.map((segment) => (segment / total) * 360).toList();
-    }
-    return segments;
-  }
-
-  List<Color> _calculateColors(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
     final colorMap = {
       'Altın (TL/GR)': Colors.yellow,
       'Cumhuriyet Altını': Colors.yellow,
@@ -170,8 +90,42 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       'TL': Colors.red,
     };
 
-    return [
-      for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey
-    ];
+    for (var wealth in _savedWealths) {
+      double price =
+          _findPrice(wealth.type, _cachedGoldPrices, _cachedCurrencyPrices);
+      double value = price * wealth.amount;
+      totalPrice += value;
+      segments.add(value);
+      colors.add(colorMap[wealth.type] ?? Colors.grey);
+    }
+
+    if (totalPrice > 0) {
+      segments =
+          segments.map((segment) => (segment / totalPrice) * 360).toList();
+    }
+
+    return InventoryLoaded(
+      totalPrice: totalPrice,
+      segments: segments,
+      colors: colors,
+      goldPrices: _cachedGoldPrices,
+      currencyPrices: _cachedCurrencyPrices,
+      savedWealths: _savedWealths,
+    );
+  }
+
+  double _findPrice(String type, List<WealthPrice> goldPrices,
+      List<WealthPrice> currencyPrices) {
+    for (var gold in goldPrices) {
+      if (gold.title == type) {
+        return double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
+      }
+    }
+    for (var currency in currencyPrices) {
+      if (currency.title == type) {
+        return double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+      }
+    }
+    return 0.0;
   }
 }

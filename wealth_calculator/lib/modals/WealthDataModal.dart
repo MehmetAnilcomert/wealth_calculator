@@ -1,5 +1,6 @@
 enum PriceType { gold, currency, equity, commodity }
 
+// Fiyatları gösterilen varlıkların bilgilerini tutan sınıf
 class WealthPrice {
   final String title;
   final String buyingPrice;
