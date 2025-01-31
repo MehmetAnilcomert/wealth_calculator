@@ -8,6 +8,9 @@ import 'package:wealth_calculator/services/DataScraping.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
+  final SavedWealthsdao _wealthsDao =
+      SavedWealthsdao(); // Burada tek bir instance oluşturduk
+
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];
@@ -18,18 +21,15 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     on<DeleteWealth>(_onDeleteWealth);
   }
 
+  // This method is used to load the inventory data from the database
   Future<void> _onLoadInventoryData(
       LoadInventoryData event, Emitter<InventoryState> emit) async {
     emit(InventoryLoading());
 
     try {
-      final wealthsDao = SavedWealthsdao();
-      _savedWealths = await wealthsDao.getAllWealths();
-
-      if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
-        _cachedGoldPrices = await fetchGoldPrices();
-        _cachedCurrencyPrices = await fetchCurrencyPrices();
-      }
+      _savedWealths = await _wealthsDao.getAllWealths();
+      _cachedGoldPrices = await fetchGoldPrices();
+      _cachedCurrencyPrices = await fetchCurrencyPrices();
 
       emit(_createLoadedState());
     } catch (e) {
@@ -37,43 +37,51 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     }
   }
 
+  // This method is used to add or update a wealth in the inventory database
   Future<void> _onEditWealth(
       AddOrUpdateWealth event, Emitter<InventoryState> emit) async {
     try {
-      final wealthsDao = SavedWealthsdao();
+      final existingWealth =
+          await _wealthsDao.getWealthByType(event.wealth.type);
 
-      final newWealth = SavedWealths(
-        id: event.wealth.id,
-        type: event.wealth.type,
-        amount: event.amount,
-      );
+      if (existingWealth != null) {
+        final updatedWealth = SavedWealths(
+          id: existingWealth.id,
+          type: event.wealth.type,
+          amount: event.amount,
+        );
+        await _wealthsDao.updateWealth(updatedWealth);
+      } else {
+        final newWealth = SavedWealths(
+          id: DateTime.now().millisecondsSinceEpoch,
+          type: event.wealth.type,
+          amount: event.amount,
+        );
+        await _wealthsDao.insertWealth(newWealth);
+      }
 
-      await wealthsDao.insertWealth(newWealth);
-
-      _savedWealths = await wealthsDao.getAllWealths();
-
+      _savedWealths = await _wealthsDao.getAllWealths();
       emit(_createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to edit wealth.'));
     }
   }
 
+  // This method is used to delete a wealth from the inventory database
   Future<void> _onDeleteWealth(
       DeleteWealth event, Emitter<InventoryState> emit) async {
     try {
-      final wealthsDao = SavedWealthsdao();
-      await wealthsDao.deleteWealth(event.id);
-
-      // Update the cached _savedWealths list
-      _savedWealths = await wealthsDao.getAllWealths();
-
-      // Emit new state with updated data
+      await _wealthsDao.deleteWealth(event.id);
+      _savedWealths = await _wealthsDao.getAllWealths();
       emit(_createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to delete wealth.'));
     }
   }
 
+  // This method is used to create the loaded state.
+  // Loaded state is used to display the inventory data.
+  // Loaded state contains the total price, segments, colors and saved wealths` list.
   InventoryLoaded _createLoadedState() {
     double totalPrice = 0;
     List<double> segments = [];
@@ -114,6 +122,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     );
   }
 
+  // This helper method is used to find the price of a wealth type.
   double _findPrice(String type, List<WealthPrice> goldPrices,
       List<WealthPrice> currencyPrices) {
     for (var gold in goldPrices) {
