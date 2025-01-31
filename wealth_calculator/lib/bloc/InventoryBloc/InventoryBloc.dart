@@ -6,6 +6,7 @@ import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/services/DataScraping.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
+import 'package:wealth_calculator/utils/inventory_utils.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   final SavedWealthsdao _wealthsDao =
@@ -87,30 +88,17 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     List<double> segments = [];
     List<Color> colors = [];
 
-    final colorMap = {
-      'Altın (TL/GR)': Colors.yellow,
-      'Cumhuriyet Altını': Colors.yellow,
-      'Yarım Altın': Colors.yellow,
-      'Çeyrek Altın': Colors.yellow,
-      'ABD Doları': Colors.green,
-      'Euro': Colors.blue[700],
-      'İngiliz Sterlini': Colors.purple,
-      'TL': Colors.red,
-    };
-
     for (var wealth in _savedWealths) {
-      double price =
-          _findPrice(wealth.type, _cachedGoldPrices, _cachedCurrencyPrices);
+      double price = InventoryUtils.findPrice(
+          wealth.type, _cachedGoldPrices, _cachedCurrencyPrices);
       double value = price * wealth.amount;
       totalPrice += value;
       segments.add(value);
-      colors.add(colorMap[wealth.type] ?? Colors.grey);
+      colors.add(InventoryUtils.colorMap[wealth.type] ?? Colors.grey);
     }
 
-    if (totalPrice > 0) {
-      segments =
-          segments.map((segment) => (segment / totalPrice) * 360).toList();
-    }
+    segments = InventoryUtils.calculateSegments(
+        _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices);
 
     return InventoryLoaded(
       totalPrice: totalPrice,
@@ -120,21 +108,5 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       currencyPrices: _cachedCurrencyPrices,
       savedWealths: _savedWealths,
     );
-  }
-
-  // This helper method is used to find the price of a wealth type.
-  double _findPrice(String type, List<WealthPrice> goldPrices,
-      List<WealthPrice> currencyPrices) {
-    for (var gold in goldPrices) {
-      if (gold.title == type) {
-        return double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
-      }
-    }
-    for (var currency in currencyPrices) {
-      if (currency.title == type) {
-        return double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
-      }
-    }
-    return 0.0;
   }
 }
