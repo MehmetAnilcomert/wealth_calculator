@@ -1,6 +1,7 @@
 enum PriceType { gold, currency, equity, commodity }
 
-// Fiyatları gösterilen varlıkların bilgilerini tutan sınıf
+// This modal is used to store the data of the prices of the wealth items
+// They are gold, currency, equity, and commodity prices fetched from the websites
 class WealthPrice {
   final String title;
   final String buyingPrice;
@@ -8,9 +9,11 @@ class WealthPrice {
   final String change;
   final String time;
   final PriceType type;
-  final String? currentPrice; // Nullable field
-  final String? volume; // Nullable field
-  final String? changeAmount; // Nullable field
+  final String? currentPrice;
+  final String? volume;
+  final String? changeAmount;
+  final String? lastUpdatedDate;
+  final String? lastUpdatedTime;
 
   WealthPrice({
     required this.title,
@@ -22,6 +25,8 @@ class WealthPrice {
     this.currentPrice,
     this.volume,
     this.changeAmount,
+    this.lastUpdatedDate,
+    this.lastUpdatedTime,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,14 +36,15 @@ class WealthPrice {
       'sellingPrice': sellingPrice,
       'change': change,
       'time': time,
-      'type': type.index, // Enum'u index olarak kaydediyoruz
+      'type': type.index,
       'currentPrice': currentPrice,
       'volume': volume,
       'changeAmount': changeAmount,
+      'lastUpdatedDate': lastUpdatedDate,
+      'lastUpdatedTime': lastUpdatedTime,
     };
   }
 
-  // Optional: fromMap methodu
   static WealthPrice fromMap(Map<String, dynamic> map) {
     return WealthPrice(
       title: map['title'],
@@ -50,9 +56,12 @@ class WealthPrice {
       currentPrice: map['currentPrice'],
       volume: map['volume'],
       changeAmount: map['changeAmount'],
+      lastUpdatedDate: map['lastUpdatedDate'],
+      lastUpdatedTime: map['lastUpdatedTime'],
     );
   }
 
+  // equals methods to compare the objects
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

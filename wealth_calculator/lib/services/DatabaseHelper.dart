@@ -17,7 +17,7 @@ class DbHelper {
     String dbPath = join(await getDatabasesPath(), 'app_database.db');
     return await openDatabase(
       dbPath,
-      version: 3, // Yeni tablo değişikliği için versiyonu artırdım
+      version: 3,
       onCreate: (db, version) async {
         await db.execute(_createFaturaTable);
         await db.execute(_createInventoryTable);
@@ -75,9 +75,9 @@ class DbHelper {
     CREATE TABLE cached_wealth_prices (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
-      buyingPrice REAL NOT NULL,
-      sellingPrice REAL NOT NULL,
-      change REAL NOT NULL,
+      buyingPrice TEXT NOT NULL,
+      sellingPrice TEXT NOT NULL,
+      change RETEXTAL NOT NULL,
       time TEXT NOT NULL,
       type INTEGER NOT NULL, 
       currentPrice TEXT, 
