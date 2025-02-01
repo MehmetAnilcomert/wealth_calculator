@@ -81,6 +81,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
   List<Invoice> _sortByMonthAndAmount(List<Invoice> invoices) {
     // Faturaları ay ve yıla göre gruplama
+    // Group invoices by month and year
     final groupedInvoices = <String, List<Invoice>>{};
 
     for (var invoice in invoices) {
@@ -93,15 +94,18 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     }
 
     // Her grubu miktara göre azalan sırada sırala
+    // Each group is sorted by amount in descending order
     groupedInvoices.forEach((key, group) {
       group.sort((a, b) => b.tutar.compareTo(a.tutar));
     });
 
     // Grupları (ayları) tarihe göre artan sırada sırala
+    // Sort groups (months) by date in ascending order
     final sortedKeys = groupedInvoices.keys.toList()
       ..sort((a, b) => a.compareTo(b));
 
     // Sıralanmış grupları düz bir listeye dönüştür
+    // Convert sorted groups to a flat list
     final sortedInvoices =
         sortedKeys.expand((key) => groupedInvoices[key]!).toList();
 
@@ -118,6 +122,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           maps.map((map) => Invoice.fromMap(map)).toList();
 
       // Faturaları ayırma ve sıralama işlemi
+      // Separation and sorting of invoices process
       final List<Invoice> odememisFaturalar = faturalar
           .where((f) => !f.odendiMi)
           .toList()
@@ -129,6 +134,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
 
       // Sıralanmış faturaları yüklüyoruz
+      // Loading sorted invoices
       emit(InvoiceLoaded(
         nonPaidInvoices: odememisFaturalar,
         paidInvoices: odenmisFaturalar,
@@ -199,6 +205,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     if (currentState is InvoiceLoaded) {
       try {
         // Bildirimi kaldır
+        // Cancel notification
         NotificationService.cancelNotification(event.id);
 
         final db = await _dbHelper.database;

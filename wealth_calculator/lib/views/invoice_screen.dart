@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_state.dart';
-import 'package:wealth_calculator/modals/InvoiceModal.dart';
 import 'package:wealth_calculator/utils/invoice_utils.dart';
-import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/views/invoice_adding.dart';
-import 'package:wealth_calculator/widgets/InvoiceWidgets/invoice_list.dart';
-import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
+import 'package:wealth_calculator/widgets/InvoiceWidgets/build_list.dart';
+import 'package:wealth_calculator/widgets/InvoiceWidgets/popup_item.dart';
 
 class InvoiceListScreen extends StatelessWidget {
   @override
@@ -95,13 +93,13 @@ class InvoiceListScreen extends StatelessWidget {
                           }
                         },
                         itemBuilder: (context) => [
-                          _buildPopupMenuItem(
+                          buildPopupMenuItem(
                               'importance', 'Önem Sırası', Icons.priority_high),
-                          _buildPopupMenuItem(
+                          buildPopupMenuItem(
                               'date', 'Tarih Sırası', Icons.date_range),
-                          _buildPopupMenuItem(
+                          buildPopupMenuItem(
                               'amount', 'Miktar Sırası', Icons.monetization_on),
-                          _buildPopupMenuItem(
+                          buildPopupMenuItem(
                               'amount_date', 'Miktar + Tarih', Icons.sort),
                         ],
                       ),
@@ -149,9 +147,9 @@ class InvoiceListScreen extends StatelessWidget {
                   ),
                   child: TabBarView(
                     children: [
-                      _buildInvoiceList(
+                      buildInvoiceList(
                           context, state.nonPaidInvoices, segments, colors),
-                      _buildInvoiceList(context, state.paidInvoices,
+                      buildInvoiceList(context, state.paidInvoices,
                           paidSegments, paidColors),
                     ],
                   ),
@@ -167,48 +165,6 @@ class InvoiceListScreen extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildInvoiceList(BuildContext context, List<Invoice> invoices,
-      List<MapEntry<OnemSeviyesi, double>> segments, List<Color> colors) {
-    return CustomScrollView(
-      slivers: [
-        CustomSliverAppBar(
-          expandedHeight: 220.0,
-          collapsedHeight: 280,
-          flexibleSpaceBackground: TotalPrice(
-            totalPrice: segments.fold(0, (sum, entry) => sum + entry.value),
-            segments: segments.map((entry) => entry.value).toList(),
-            colors: colors,
-          ),
-          onAddPressed: () {},
-          bloc: context.read<InvoiceBloc>(),
-        ),
-        SliverFillRemaining(
-          child: InvoiceListWidget(invoices: invoices),
-        ),
-      ],
-    );
-  }
-
-  PopupMenuItem<String> _buildPopupMenuItem(
-      String value, String text, IconData icon) {
-    return PopupMenuItem<String>(
-      value: value,
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: Color.fromARGB(255, 106, 196, 255)),
-          SizedBox(width: 12),
-          Text(
-            text,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-        ],
       ),
     );
   }

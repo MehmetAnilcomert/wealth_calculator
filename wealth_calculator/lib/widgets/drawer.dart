@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
+import 'package:wealth_calculator/views/profile.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -101,8 +103,10 @@ class AppDrawer extends StatelessWidget {
                       context,
                       icon: Icons.settings_outlined,
                       title: 'Ayarlar',
-                      onTap: () =>
-                          Navigator.pushReplacementNamed(context, '/settings'),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfileScreen())),
                     ),
                     _buildMenuItem(
                       context,
@@ -120,8 +124,7 @@ class AppDrawer extends StatelessWidget {
                       icon: Icons.logout,
                       title: 'Çıkış Yap',
                       isDestructive: true,
-                      onTap: () =>
-                          Navigator.pushReplacementNamed(context, '/login'),
+                      onTap: () => SystemNavigator.pop(),
                     ),
                   ],
                 ),
