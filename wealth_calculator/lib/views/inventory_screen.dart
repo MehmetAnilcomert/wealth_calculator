@@ -15,7 +15,7 @@ class InventoryScreen extends StatelessWidget {
     final inventoryBloc = BlocProvider.of<InventoryBloc>(context);
 
     return Scaffold(
-      backgroundColor: Color(0xFF2C3E50),
+      backgroundColor: const Color(0xFF2C3E50),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -29,7 +29,7 @@ class InventoryScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -61,8 +61,8 @@ class InventoryScreen extends StatelessWidget {
             );
           }
         },
-        backgroundColor: Color.fromARGB(255, 90, 189, 255),
-        child: Icon(Icons.add, size: 32, color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 90, 189, 255),
+        child: const Icon(Icons.add, size: 32, color: Colors.white),
       ),
       body: BlocConsumer<InventoryBloc, InventoryState>(
         bloc: inventoryBloc,
@@ -70,7 +70,7 @@ class InventoryScreen extends StatelessWidget {
           if (state is InventoryError || state is PricesError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Hata: Veriler yüklenemedi'),
+                content: const Text('Hata: Veriler yüklenemedi'),
                 backgroundColor: Colors.red.shade400,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
@@ -81,14 +81,14 @@ class InventoryScreen extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is InventoryLoading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
               ),
             );
           } else if (state is InventoryLoaded) {
             return Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -121,7 +121,7 @@ class InventoryScreen extends StatelessWidget {
               ),
             );
           } else {
-            return Center(
+            return const Center(
               child: Text(
                 'Veriler yüklenirken hata oldu',
                 style: TextStyle(color: Colors.white),

@@ -6,6 +6,7 @@ import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/services/CustomListDao.dart';
+import 'package:wealth_calculator/widgets/PricesWidgets/buildTab.dart';
 import 'package:wealth_calculator/widgets/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/widgets/custom_list.dart';
 import 'package:wealth_calculator/widgets/drawer.dart';
@@ -76,7 +77,6 @@ class _PricesScreenState extends State<PricesScreen>
   }
 
   void _onAddPressed() {
-    print((context.read<PricesBloc>().state as PricesLoaded).goldPrices.length);
     MultiItemDialogs.showMultiSelectItemDialog(
       context,
       context.read<PricesBloc>().state is PricesLoaded
@@ -102,7 +102,7 @@ class _PricesScreenState extends State<PricesScreen>
                 SnackBar(
                   content: Text('${wealthPrice.title} zaten listede mevcut.'),
                   backgroundColor: Colors.red,
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             }
@@ -129,7 +129,7 @@ class _PricesScreenState extends State<PricesScreen>
         }
       },
       child: Scaffold(
-        backgroundColor: Color(0xFFF5F7FA),
+        backgroundColor: const Color(0xFFF5F7FA),
         appBar: AppBar(
           elevation: 0,
           leading: Padding(
@@ -143,7 +143,7 @@ class _PricesScreenState extends State<PricesScreen>
             ),
           ),
           flexibleSpace: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -159,7 +159,7 @@ class _PricesScreenState extends State<PricesScreen>
             children: [
               Text(
                 _getAppBarTitle(_tabController.index),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -178,7 +178,7 @@ class _PricesScreenState extends State<PricesScreen>
             BlocBuilder<PricesBloc, PricesState>(
               builder: (context, state) {
                 if (state is PricesLoading) {
-                  return Center(
+                  return const Center(
                     child: SizedBox(
                       width: 20,
                       height: 20,
@@ -191,18 +191,18 @@ class _PricesScreenState extends State<PricesScreen>
                 }
                 return IconButton(
                   icon: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white.withOpacity(0.2),
                     ),
-                    child: Icon(Icons.menu, color: Colors.white),
+                    child: const Icon(Icons.menu, color: Colors.white),
                   ),
                   onPressed: () => Scaffold.of(context).openEndDrawer(),
                 );
               },
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
           ],
         ),
         endDrawer: const AppDrawer(),
@@ -210,7 +210,7 @@ class _PricesScreenState extends State<PricesScreen>
           children: [
             if (_tabController.index != 4)
               Container(
-                margin: EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -218,13 +218,13 @@ class _PricesScreenState extends State<PricesScreen>
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: TextField(
                   onChanged: _onSearchChanged,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Ara...',
                     hintStyle: TextStyle(color: Colors.grey),
                     prefixIcon: Icon(Icons.search, color: Color(0xFF3498DB)),
@@ -236,7 +236,7 @@ class _PricesScreenState extends State<PricesScreen>
               ),
             Expanded(
               child: TabBarView(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 controller: _tabController,
                 children: [
                   buildPricesSection(context, 'goldPrices', _searchQuery),
@@ -266,14 +266,14 @@ class _PricesScreenState extends State<PricesScreen>
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
                 blurRadius: 10,
-                offset: Offset(0, -4),
+                offset: const Offset(0, -4),
               ),
             ],
           ),
           child: SafeArea(
             child: TabBar(
               controller: _tabController,
-              indicator: BoxDecoration(
+              indicator: const BoxDecoration(
                 border: Border(
                   top: BorderSide(
                     color: Color(0xFF3498DB),
@@ -282,27 +282,17 @@ class _PricesScreenState extends State<PricesScreen>
                 ),
               ),
               tabs: [
-                _buildTab(Icons.monetization_on_outlined, 'Altın'),
-                _buildTab(Icons.currency_exchange, 'Döviz'),
-                _buildTab(Icons.show_chart, 'Hisse'),
-                _buildTab(Icons.diamond_outlined, 'Emtia'),
-                _buildTab(Icons.account_balance_wallet_outlined, 'Portföy'),
+                buildTab(Icons.monetization_on_outlined, 'Altın'),
+                buildTab(Icons.currency_exchange, 'Döviz'),
+                buildTab(Icons.show_chart, 'Hisse'),
+                buildTab(Icons.diamond_outlined, 'Emtia'),
+                buildTab(Icons.account_balance_wallet_outlined, 'Portföy'),
               ],
-              labelColor: Color(0xFF3498DB),
+              labelColor: const Color(0xFF3498DB),
               unselectedLabelColor: Colors.grey,
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTab(IconData icon, String label) {
-    return Tab(
-      icon: Icon(icon, size: 24),
-      child: Text(
-        label,
-        style: TextStyle(fontSize: 12),
       ),
     );
   }

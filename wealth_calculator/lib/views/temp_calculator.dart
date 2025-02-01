@@ -15,15 +15,15 @@ class CalculatorScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => TempInventoryBloc()..add(LoadInventoryData()),
       child: Scaffold(
-        backgroundColor: Color(0xFF2C3E50),
+        backgroundColor: const Color(0xFF2C3E50),
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: Text(
+          title: const Text(
             "Varlık Hesaplama Makinesi",
             style: TextStyle(
               color: Colors.white,
@@ -61,8 +61,8 @@ class CalculatorScreen extends StatelessWidget {
                     ],
                   );
                 },
-                backgroundColor: Color(0xFF3498DB),
-                child: Icon(Icons.add, size: 32),
+                backgroundColor: const Color(0xFF3498DB),
+                child: const Icon(Icons.add, size: 32),
               );
             }
             return Container();
@@ -73,10 +73,10 @@ class CalculatorScreen extends StatelessWidget {
             if (state is InventoryError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Hata: Veriler yüklenemedi'),
+                  content: const Text('Hata: Veriler yüklenemedi'),
                   backgroundColor: Colors.red.shade400,
                   behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsets.all(16),
+                  margin: const EdgeInsets.all(16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -88,14 +88,14 @@ class CalculatorScreen extends StatelessWidget {
           },
           builder: (context, state) {
             if (state is InventoryLoading) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
                 ),
               );
             } else if (state is InventoryLoaded) {
               return Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -129,7 +129,7 @@ class CalculatorScreen extends StatelessWidget {
                 ),
               );
             } else {
-              return Center(
+              return const Center(
                 child: Text(
                   'Veriler yüklenirken hata oldu',
                   style: TextStyle(color: Colors.white),

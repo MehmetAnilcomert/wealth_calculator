@@ -21,7 +21,7 @@ class InvoiceListScreen extends StatelessWidget {
                 content: Text(state.message),
                 backgroundColor: Colors.red.shade400,
                 behavior: SnackBarBehavior.floating,
-                margin: EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
@@ -44,15 +44,15 @@ class InvoiceListScreen extends StatelessWidget {
             return DefaultTabController(
               length: 2,
               child: Scaffold(
-                backgroundColor: Color(0xFF2C3E50),
+                backgroundColor: const Color(0xFF2C3E50),
                 appBar: AppBar(
                   elevation: 0,
                   backgroundColor: Colors.transparent,
                   leading: IconButton(
-                    icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  title: Text(
+                  title: const Text(
                     'Faturalar',
                     style: TextStyle(
                       color: Colors.white,
@@ -64,7 +64,7 @@ class InvoiceListScreen extends StatelessWidget {
                     Theme(
                       data: Theme.of(context).copyWith(
                         popupMenuTheme: PopupMenuThemeData(
-                          color: Color(
+                          color: const Color(
                               0xFF2C3E50), // Background color of popup menu items
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -72,7 +72,7 @@ class InvoiceListScreen extends StatelessWidget {
                         ),
                       ),
                       child: PopupMenuButton<String>(
-                        icon: Icon(Icons.sort, color: Colors.white),
+                        icon: const Icon(Icons.sort, color: Colors.white),
                         onSelected: (value) {
                           switch (value) {
                             case 'importance':
@@ -105,14 +105,14 @@ class InvoiceListScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                   ],
                   bottom: TabBar(
-                    indicatorColor: Color(0xFF3498DB),
+                    indicatorColor: const Color(0xFF3498DB),
                     indicatorWeight: 3,
                     labelColor: Colors.white,
                     unselectedLabelColor: Colors.white.withOpacity(0.6),
-                    tabs: [
+                    tabs: const [
                       Tab(text: 'Ödenmemiş Faturalar'),
                       Tab(text: 'Ödenmiş Faturalar'),
                     ],
@@ -132,11 +132,11 @@ class InvoiceListScreen extends StatelessWidget {
                       BlocProvider.of<InvoiceBloc>(context).add(LoadInvoices());
                     });
                   },
-                  backgroundColor: Color.fromARGB(255, 90, 189, 255),
-                  child: Icon(Icons.add, size: 32, color: Colors.white),
+                  backgroundColor: const Color.fromARGB(255, 90, 189, 255),
+                  child: const Icon(Icons.add, size: 32, color: Colors.white),
                 ),
                 body: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -158,7 +158,7 @@ class InvoiceListScreen extends StatelessWidget {
               ),
             );
           }
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
