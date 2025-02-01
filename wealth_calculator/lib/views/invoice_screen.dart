@@ -64,7 +64,8 @@ class InvoiceListScreen extends StatelessWidget {
                     Theme(
                       data: Theme.of(context).copyWith(
                         popupMenuTheme: PopupMenuThemeData(
-                          color: Colors.white,
+                          color: Color(
+                              0xFF2C3E50), // Background color of popup menu items
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
