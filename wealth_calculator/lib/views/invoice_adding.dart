@@ -36,12 +36,10 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
       _secilenOnemSeviyesi = widget.fatura!.onemSeviyesi;
       _odendiMi = widget.fatura!.odendiMi;
       _isNotificationEnabled = widget.fatura!.isNotificationEnabled;
-      // Bildirim durumu geçmiş tarihler için kapalı olabilir
       if (widget.fatura!.tarih.isBefore(DateTime.now()) || _odendiMi) {
         _isNotificationEnabled = false;
       }
     } else {
-      // Yeni fatura ekleme durumunda varsayılan tarih olarak bugünü ayarla
       _tarihController.text = DateFormat('dd.MM.yyyy').format(DateTime.now());
     }
   }
@@ -54,7 +52,6 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
       try {
         selectedDate = dateFormat.parse(_tarihController.text);
       } catch (e) {
-        // Tarih formatı hatası
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -96,7 +93,6 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
     if (picked != null) {
       setState(() {
         _tarihController.text = DateFormat('dd.MM.yyyy').format(picked);
-        // Tarih seçimi geçmiş tarihlerde ise bildirim seçeneğini kapalı yap
         if (picked.isBefore(DateTime.now())) {
           _isNotificationEnabled = false;
         }
@@ -107,180 +103,298 @@ class _InvoiceAddUpdateScreenState extends State<InvoiceAddUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 177, 210, 226),
+      backgroundColor: Color(0xFF2C3E50),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 177, 210, 226),
-        title: Text(widget.fatura == null ? 'Fatura Ekle' : 'Fatura Güncelle'),
+        backgroundColor: Color(0xFF34495E),
+        elevation: 0,
+        title: Text(
+          widget.fatura == null ? 'Fatura Ekle' : 'Fatura Güncelle',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Lottie.asset("images/bill.json"),
-            Padding(
-              padding: const EdgeInsets.all(13.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextField(
-                      controller: _tarihController,
-                      readOnly: true,
-                      onTap: () => _selectDate(context),
-                      decoration: InputDecoration(
-                        labelText: 'Son Ödeme Tarihi',
+            Container(
+              height: 200,
+              child: Lottie.asset(
+                "images/bill.json",
+                fit: BoxFit.contain,
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTextField(
+                        controller: _tarihController,
+                        label: 'Son Ödeme Tarihi',
+                        icon: Icons.calendar_today,
+                        onTap: () => _selectDate(context),
+                        readOnly: true,
                       ),
-                    ),
-                    TextFormField(
-                      controller: _tutarController,
-                      decoration: InputDecoration(labelText: 'Tutar'),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Lütfen tutarı giriniz';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _aciklamaController,
-                      decoration: InputDecoration(labelText: 'Açıklama'),
-                    ),
-                    DropdownButtonFormField<OnemSeviyesi>(
-                      value: _secilenOnemSeviyesi,
-                      onChanged: (OnemSeviyesi? newValue) {
-                        setState(() {
-                          _secilenOnemSeviyesi = newValue!;
-                        });
-                      },
-                      items:
-                          OnemSeviyesi.values.map((OnemSeviyesi onemSeviyesi) {
-                        return DropdownMenuItem<OnemSeviyesi>(
-                          value: onemSeviyesi,
-                          child: Text(onemSeviyesi
-                              .toString()
-                              .split('.')
-                              .last
-                              .toUpperCase()),
-                        );
-                      }).toList(),
-                      decoration: InputDecoration(labelText: 'Önem Seviyesi'),
-                    ),
-                    SwitchListTile(
-                      title: Text('Ödendi Mi?'),
-                      value: _odendiMi,
-                      onChanged: (bool value) {
-                        setState(() {
-                          _odendiMi = value;
-                          if (_odendiMi) {
-                            _isNotificationEnabled = false;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Fatura ödendi, bildirim gönderimi kapalı.'),
-                              ),
-                            );
+                      SizedBox(height: 20),
+                      _buildTextField(
+                        controller: _tutarController,
+                        label: 'Tutar',
+                        icon: Icons.attach_money,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Lütfen tutarı giriniz';
                           }
-                        });
-                      },
-                    ),
-                    SwitchListTile(
-                      title: Text('Hatırlatma bildirimi gönderilsin mi?'),
-                      value: _isNotificationEnabled,
-                      onChanged: _odendiMi ||
-                              DateFormat('dd.MM.yyyy')
-                                  .parse(_tarihController.text)
-                                  .isBefore(DateTime.now())
-                          ? null // Ödenmişse veya tarih geçmişse değiştirilemez
-                          : (bool value) async {
-                              setState(() {
-                                _isNotificationEnabled = value;
-                              });
-
-                              if (_isNotificationEnabled) {
-                                final notificationId = widget.fatura?.id ?? 0;
-                                DateTime scheduledDate =
-                                    DateFormat('dd.MM.yyyy')
-                                        .parse(_tarihController.text);
-                                scheduledDate = DateTime(
-                                    scheduledDate.year,
-                                    scheduledDate.month,
-                                    scheduledDate.day,
-                                    9,
-                                    30);
-                                try {
-                                  await NotificationService
-                                      .scheduleNotification(
-                                    context,
-                                    notificationId,
-                                    "Hatırlatma!",
-                                    "${_tutarController.text} TL tutarında olan ${_aciklamaController.text} faturanızı ödemiş miydiniz?",
-                                    scheduledDate,
-                                  );
-                                } catch (error) {
-                                  // Hata durumunda Switch'i kapalı duruma getir
-                                  setState(() {
-                                    _isNotificationEnabled = false;
-                                  });
-
-                                  // Hata mesajını kullanıcıya göster
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Bildirim planlanırken hata oluştu: $error'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                }
-                              } else {
-                                try {
-                                  final notificationId = widget.fatura?.id ?? 0;
-
-                                  // Bildirimi iptal et
-                                  await NotificationService.cancelNotification(
-                                      notificationId);
-
-                                  // Başarılı bildirim iptali mesajı göster
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content:
-                                            Text('Bildirim iptal edildi.')),
-                                  );
-                                } catch (error) {
-                                  // Hata durumunda Switch'i kapalı duruma getir
-                                  setState(() {
-                                    _isNotificationEnabled =
-                                        true; // Switch durumu açık bırakılabilir
-                                  });
-
-                                  // Hata mesajını kullanıcıya göster
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Bildirim iptal edilirken hata oluştu: $error'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                    ),
-                    ElevatedButton(
-                      onPressed: () => _faturaEkleGuncelle(context),
-                      child: Text(widget.fatura == null
-                          ? 'Faturayı Kaydet'
-                          : 'Faturayı Güncelle'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueGrey,
-                        foregroundColor: Colors.white,
+                          return null;
+                        },
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 20),
+                      _buildTextField(
+                        controller: _aciklamaController,
+                        label: 'Açıklama',
+                        icon: Icons.description,
+                      ),
+                      SizedBox(height: 20),
+                      _buildDropdown(),
+                      SizedBox(height: 20),
+                      _buildSwitchTile(
+                        title: 'Ödendi Mi?',
+                        value: _odendiMi,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _odendiMi = value;
+                            if (_odendiMi) {
+                              _isNotificationEnabled = false;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Fatura ödendi, bildirim gönderimi kapalı.',
+                                  ),
+                                  backgroundColor: Color(0xFF34495E),
+                                ),
+                              );
+                            }
+                          });
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      _buildSwitchTile(
+                        title: 'Hatırlatma bildirimi gönderilsin mi?',
+                        value: _isNotificationEnabled,
+                        onChanged: _odendiMi ||
+                                DateFormat('dd.MM.yyyy')
+                                    .parse(_tarihController.text)
+                                    .isBefore(DateTime.now())
+                            ? null
+                            : (bool value) async {
+                                setState(() {
+                                  _isNotificationEnabled = value;
+                                });
+
+                                if (_isNotificationEnabled) {
+                                  final notificationId = widget.fatura?.id ?? 0;
+                                  DateTime scheduledDate =
+                                      DateFormat('dd.MM.yyyy')
+                                          .parse(_tarihController.text);
+                                  scheduledDate = DateTime(
+                                      scheduledDate.year,
+                                      scheduledDate.month,
+                                      scheduledDate.day,
+                                      9,
+                                      30);
+                                  try {
+                                    await NotificationService
+                                        .scheduleNotification(
+                                      context,
+                                      notificationId,
+                                      "Hatırlatma!",
+                                      "${_tutarController.text} TL tutarında olan ${_aciklamaController.text} faturanızı ödemiş miydiniz?",
+                                      scheduledDate,
+                                    );
+                                  } catch (error) {
+                                    setState(() {
+                                      _isNotificationEnabled = false;
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'Bildirim planlanırken hata oluştu: $error'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  try {
+                                    final notificationId =
+                                        widget.fatura?.id ?? 0;
+                                    await NotificationService
+                                        .cancelNotification(notificationId);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text('Bildirim iptal edildi.')),
+                                    );
+                                  } catch (error) {
+                                    setState(() {
+                                      _isNotificationEnabled = true;
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'Bildirim iptal edilirken hata oluştu: $error'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                      ),
+                      SizedBox(height: 30),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () => _faturaEkleGuncelle(context),
+                          child: Text(
+                            widget.fatura == null
+                                ? 'Faturayı Kaydet'
+                                : 'Faturayı Güncelle',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF3498DB),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool readOnly = false,
+    VoidCallback? onTap,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Color(0xFF3498DB)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Color(0xFF3498DB)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Color(0xFF3498DB), width: 2),
+        ),
+      ),
+      readOnly: readOnly,
+      onTap: onTap,
+      keyboardType: keyboardType,
+      validator: validator,
+    );
+  }
+
+  Widget _buildDropdown() {
+    return DropdownButtonFormField<OnemSeviyesi>(
+      value: _secilenOnemSeviyesi,
+      onChanged: (OnemSeviyesi? newValue) {
+        setState(() {
+          _secilenOnemSeviyesi = newValue!;
+        });
+      },
+      items: OnemSeviyesi.values.map((OnemSeviyesi onemSeviyesi) {
+        IconData icon;
+        Color color;
+        switch (onemSeviyesi) {
+          case OnemSeviyesi.dusuk:
+            icon = Icons.arrow_downward;
+            color = Colors.green;
+            break;
+          case OnemSeviyesi.orta:
+            icon = Icons.remove;
+            color = Colors.orange;
+            break;
+          case OnemSeviyesi.yuksek:
+            icon = Icons.arrow_upward;
+            color = Colors.red;
+            break;
+        }
+        return DropdownMenuItem<OnemSeviyesi>(
+          value: onemSeviyesi,
+          child: Row(
+            children: [
+              Icon(icon, color: color, size: 20),
+              SizedBox(width: 10),
+              Text(
+                onemSeviyesi.toString().split('.').last.toUpperCase(),
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        labelText: 'Önem Seviyesi',
+        prefixIcon: Icon(Icons.priority_high, color: Color(0xFF3498DB)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Color(0xFF3498DB)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Color(0xFF3498DB), width: 2),
+        ),
+      ),
+      icon: Icon(Icons.arrow_drop_down, color: Color(0xFF3498DB)),
+      dropdownColor: Colors.white,
+      style: TextStyle(color: Color(0xFF2C3E50), fontSize: 16),
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required String title,
+    required bool value,
+    required void Function(bool)? onChanged,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Color(0xFF3498DB)),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: SwitchListTile(
+        title: Text(title, style: TextStyle(fontSize: 16)),
+        value: value,
+        onChanged: onChanged,
+        activeColor: Color(0xFF3498DB),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16),
       ),
     );
   }
