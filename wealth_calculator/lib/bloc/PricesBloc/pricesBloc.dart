@@ -18,7 +18,7 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
 
     try {
       final allPrices = await _priceFetcher.fetchPrices();
-      print(allPrices);
+
       emit(PricesLoaded(
         commodityPrices: allPrices[3],
         goldPrices: allPrices[0],

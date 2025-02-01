@@ -3,6 +3,7 @@ import 'package:wealth_calculator/services/DatabaseHelper.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 
 // Envanterdeki varlıkları saklamak için kullanılan tablonun veritabanı işlemlerini yapan sınıf
+// This class is responsible for database operations of the table used to store wealth items in the inventory
 class SavedWealthsdao {
   Future<List<SavedWealths>> getAllWealths() async {
     final db = await DbHelper.instance.database;

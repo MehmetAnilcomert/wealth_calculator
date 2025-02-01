@@ -2,11 +2,12 @@ import 'package:sqflite/sqflite.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 
+// This class is responsible for database operations of the table used to store prices of wealth items fetched from the internet
 class WealthPricesDao {
   Future<List<WealthPrice>> getAllPrices() async {
     final db = await DbHelper.instance.database;
     List<Map<String, dynamic>> maps = await db.query('cached_wealth_prices');
-    print("Veritabanından gelen: $maps");
+
     return List.generate(maps.length, (i) {
       return WealthPrice.fromMap(maps[i]);
     });

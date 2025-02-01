@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+// This class is responsible for essential database operations
 class DbHelper {
   DbHelper._privateConstructor();
   static final DbHelper instance = DbHelper._privateConstructor();
