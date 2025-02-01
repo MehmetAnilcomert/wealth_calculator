@@ -15,14 +15,17 @@ class MultiItemDialogs {
     showDialog(
       context: context,
       builder: (context) {
-        return MultiSelectItemDialog(
-          futureGoldPrices: futureGoldPrices,
-          futureCurrencyPrices: futureCurrencyPrices,
-          futureEquityPrices: futureEquityPrices,
-          futureCommodityPrices: futureCommodityPrices,
-          onItemsSelected: onItemsSelected,
-          disabledItems: disabledItems,
-          hiddenItems: hiddenItems,
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: MultiSelectItemDialog(
+            futureGoldPrices: futureGoldPrices,
+            futureCurrencyPrices: futureCurrencyPrices,
+            futureEquityPrices: futureEquityPrices,
+            futureCommodityPrices: futureCommodityPrices,
+            onItemsSelected: onItemsSelected,
+            disabledItems: disabledItems,
+            hiddenItems: hiddenItems,
+          ),
         );
       },
     );
@@ -53,112 +56,213 @@ class MultiSelectItemDialog extends StatefulWidget {
 }
 
 class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
-  List<WealthPrice> _selectedItems = [];
+  Map<String, List<WealthPrice>> _selectedItemsByCategory = {
+    'Altın Seç': [],
+    'Döviz Seç': [],
+    'Hisse Senetleri Seç': [],
+    'Emtia Seç': [],
+  };
   String _selectedOption = 'Altın Seç';
+
+  List<WealthPrice> getSelectedList() {
+    switch (_selectedOption) {
+      case 'Döviz Seç':
+        return widget.futureCurrencyPrices;
+      case 'Hisse Senetleri Seç':
+        return widget.futureEquityPrices;
+      case 'Emtia Seç':
+        return widget.futureCommodityPrices;
+      case 'Altın Seç':
+      default:
+        return widget.futureGoldPrices;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Seçilen seçeneğe göre gösterilecek listeyi belirle
-    List<WealthPrice> getSelectedList() {
-      switch (_selectedOption) {
-        case 'Döviz Seç':
-          return widget.futureCurrencyPrices;
-        case 'Hisse Senetleri Seç':
-          return widget.futureEquityPrices;
-        case 'Emtia Seç':
-          return widget.futureCommodityPrices;
-        case 'Altın Seç':
-        default:
-          return widget.futureGoldPrices;
-      }
-    }
-
-    // Filtrelenmiş listeyi elde et
     final allItems = getSelectedList()
         .where((item) => !widget.hiddenItems.contains(item.title))
         .toList();
 
-    return AlertDialog(
-      title: Text('Seçim Yapın'),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          PopupMenuButton<String>(
-            icon: ElevatedButton(
-              onPressed: null,
-              child: Text('$_selectedOption'),
-            ),
-            onSelected: (String result) {
-              setState(() {
-                _selectedOption = result;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'Döviz Seç',
-                child: Text('Döviz'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Altın Seç',
-                child: Text('Altın'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Hisse Senetleri Seç',
-                child: Text('Hisse Senetleri'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Emtia Seç',
-                child: Text('Emtia'),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF2C3E50),
+            Color(0xFF3498DB),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, 5),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  for (var price in allItems)
-                    ListTile(
-                      title: Text(price.title),
-                      enabled: !widget.disabledItems.contains(price.title),
-                      textColor: widget.disabledItems.contains(price.title)
-                          ? Colors.grey
-                          : null,
-                      onTap: widget.disabledItems.contains(price.title)
-                          ? null
-                          : () {
-                              setState(() {
-                                if (_selectedItems.contains(price)) {
-                                  _selectedItems.remove(price);
-                                } else {
-                                  _selectedItems.add(price);
-                                }
-                              });
-                            },
-                      trailing: _selectedItems.contains(price)
-                          ? Icon(Icons.check)
-                          : null,
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Seçim Yapın',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                PopupMenuButton<String>(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _selectedOption,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: Colors.white),
+                      ],
+                    ),
+                  ),
+                  onSelected: (String result) {
+                    setState(() {
+                      _selectedOption = result;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    _buildPopupMenuItem('Altın Seç', Icons.monetization_on),
+                    _buildPopupMenuItem('Döviz Seç', Icons.currency_exchange),
+                    _buildPopupMenuItem(
+                        'Hisse Senetleri Seç', Icons.show_chart),
+                    _buildPopupMenuItem('Emtia Seç', Icons.diamond),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.5,
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  children: allItems
+                      .map((price) => _buildListItem(
+                            price,
+                            _selectedItemsByCategory[_selectedOption]
+                                    ?.contains(price) ??
+                                false,
+                          ))
+                      .toList(),
+                ),
               ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    'İptal',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ),
+                SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    List<WealthPrice> allSelectedItems =
+                        _selectedItemsByCategory.values
+                            .expand((items) => items)
+                            .toList();
+                    widget.onItemsSelected(allSelectedItems);
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Color(0xFF3498DB),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text('Tamam'),
+                ),
+              ],
             ),
           ),
         ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            widget.onItemsSelected(_selectedItems);
-            Navigator.of(context).pop();
-          },
-          child: Text('Tamam'),
+    );
+  }
+
+  PopupMenuItem<String> _buildPopupMenuItem(String value, IconData icon) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: Color(0xFF3498DB)),
+          SizedBox(width: 12),
+          Text(value),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListItem(WealthPrice price, bool isSelected) {
+    final isDisabled = widget.disabledItems.contains(price.title);
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(isDisabled ? 0.05 : 0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ListTile(
+        title: Text(
+          price.title,
+          style: TextStyle(
+            color: isDisabled ? Colors.white38 : Colors.white,
+            fontSize: 16,
+          ),
         ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('İptal'),
-        ),
-      ],
+        enabled: !isDisabled,
+        onTap: isDisabled
+            ? null
+            : () {
+                setState(() {
+                  if (isSelected) {
+                    _selectedItemsByCategory[_selectedOption]?.remove(price);
+                  } else {
+                    _selectedItemsByCategory[_selectedOption]?.add(price);
+                  }
+                });
+              },
+        trailing: isSelected
+            ? Icon(Icons.check_circle, color: Colors.green)
+            : Icon(Icons.circle_outlined, color: Colors.white70),
+      ),
     );
   }
 }

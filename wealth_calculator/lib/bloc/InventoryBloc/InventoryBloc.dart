@@ -4,13 +4,17 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
-import 'package:wealth_calculator/services/DataScraping.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
+import 'package:wealth_calculator/utils/inventory_utils.dart';
+import 'package:wealth_calculator/utils/price_utils.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
+  final SavedWealthsdao _wealthsDao = SavedWealthsdao();
+
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];
+  final PriceFetcher _priceFetcher = PriceFetcher();
 
   InventoryBloc() : super(InventoryInitial()) {
     on<LoadInventoryData>(_onLoadInventoryData);
@@ -18,18 +22,16 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     on<DeleteWealth>(_onDeleteWealth);
   }
 
+  // This method is used to load the inventory data from the database
   Future<void> _onLoadInventoryData(
       LoadInventoryData event, Emitter<InventoryState> emit) async {
     emit(InventoryLoading());
 
     try {
-      final wealthsDao = SavedWealthsdao();
-      _savedWealths = await wealthsDao.getAllWealths();
-
-      if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
-        _cachedGoldPrices = await fetchGoldPrices();
-        _cachedCurrencyPrices = await fetchCurrencyPrices();
-      }
+      _savedWealths = await _wealthsDao.getAllWealths();
+      final allPrices = await _priceFetcher.fetchPrices();
+      _cachedGoldPrices = allPrices[0];
+      _cachedCurrencyPrices = allPrices[1];
 
       emit(_createLoadedState());
     } catch (e) {
@@ -37,12 +39,12 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     }
   }
 
+  // This method is used to add or update a wealth in the inventory database
   Future<void> _onEditWealth(
       AddOrUpdateWealth event, Emitter<InventoryState> emit) async {
     try {
-      final wealthsDao = SavedWealthsdao();
       final existingWealth =
-          await wealthsDao.getWealthByType(event.wealth.type);
+          await _wealthsDao.getWealthByType(event.wealth.type);
 
       if (existingWealth != null) {
         final updatedWealth = SavedWealths(
@@ -50,128 +52,62 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
           type: event.wealth.type,
           amount: event.amount,
         );
-        await wealthsDao.updateWealth(updatedWealth);
+        await _wealthsDao.updateWealth(updatedWealth);
       } else {
         final newWealth = SavedWealths(
           id: DateTime.now().millisecondsSinceEpoch,
           type: event.wealth.type,
           amount: event.amount,
         );
-        await wealthsDao.insertWealth(newWealth);
+        await _wealthsDao.insertWealth(newWealth);
       }
 
-      // Update the cached _savedWealths list
-      _savedWealths = await wealthsDao.getAllWealths();
-
-      // Emit new state with updated data
+      _savedWealths = await _wealthsDao.getAllWealths();
       emit(_createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to edit wealth.'));
     }
   }
 
+  // This method is used to delete a wealth from the inventory database
   Future<void> _onDeleteWealth(
       DeleteWealth event, Emitter<InventoryState> emit) async {
     try {
-      final wealthsDao = SavedWealthsdao();
-      await wealthsDao.deleteWealth(event.id);
-
-      // Update the cached _savedWealths list
-      _savedWealths = await wealthsDao.getAllWealths();
-
-      // Emit new state with updated data
+      await _wealthsDao.deleteWealth(event.id);
+      _savedWealths = await _wealthsDao.getAllWealths();
       emit(_createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to delete wealth.'));
     }
   }
 
+  // This method is used to create the loaded state.
+  // Loaded state is used to display the inventory data.
+  // Loaded state contains the total price, segments, colors and saved wealths` list.
   InventoryLoaded _createLoadedState() {
+    double totalPrice = 0;
+    List<double> segments = [];
+    List<Color> colors = [];
+
+    for (var wealth in _savedWealths) {
+      double price = InventoryUtils.findPrice(
+          wealth.type, _cachedGoldPrices, _cachedCurrencyPrices);
+      double value = price * wealth.amount;
+      totalPrice += value;
+      segments.add(value);
+      colors.add(InventoryUtils.colorMap[wealth.type] ?? Colors.grey);
+    }
+
+    segments = InventoryUtils.calculateSegments(
+        _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices);
+
     return InventoryLoaded(
-      totalPrice: _calculateTotalPrice(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
-      segments: _calculateSegments(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
-      colors: _calculateColors(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+      totalPrice: totalPrice,
+      segments: segments,
+      colors: colors,
       goldPrices: _cachedGoldPrices,
       currencyPrices: _cachedCurrencyPrices,
       savedWealths: _savedWealths,
     );
-  }
-
-  double _calculateTotalPrice(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
-    double total = 0;
-    for (var wealth in savedWealths) {
-      double price = 0.0;
-      for (var gold in goldPrices) {
-        if (gold.title == wealth.type) {
-          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
-          break;
-        }
-      }
-      if (price == 0.0) {
-        for (var currency in currencyPrices) {
-          if (currency.title == wealth.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
-            break;
-          }
-        }
-      }
-      total += price * wealth.amount;
-    }
-    return total;
-  }
-
-  List<double> _calculateSegments(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
-    List<double> segments = [];
-    double total = 0;
-    for (var wealth in savedWealths) {
-      double price = 0.0;
-      for (var gold in goldPrices) {
-        if (gold.title == wealth.type) {
-          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
-          break;
-        }
-      }
-      if (price == 0.0) {
-        for (var currency in currencyPrices) {
-          if (currency.title == wealth.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
-            break;
-          }
-        }
-      }
-      double value = price * wealth.amount;
-      total += value;
-      segments.add(value);
-    }
-
-    if (total > 0) {
-      segments = segments.map((segment) => (segment / total) * 360).toList();
-    }
-    return segments;
-  }
-
-  List<Color> _calculateColors(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
-    final colorMap = {
-      'Altın (TL/GR)': Colors.yellow,
-      'Cumhuriyet Altını': Colors.yellow,
-      'Yarım Altın': Colors.yellow,
-      'Çeyrek Altın': Colors.yellow,
-      'ABD Doları': Colors.green,
-      'Euro': Colors.blue[700],
-      'İngiliz Sterlini': Colors.purple,
-      'TL': Colors.red,
-    };
-
-    return [
-      for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey
-    ];
   }
 }

@@ -2,17 +2,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_state.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
-import 'package:wealth_calculator/services/DatabaseHelper.dart';
+import 'package:wealth_calculator/services/InvoiceDao.dart';
 import 'package:wealth_calculator/services/Notification.dart';
 
 class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
-  final DbHelper _dbHelper = DbHelper.instance;
+  final InvoiceDao _invoiceDao = InvoiceDao();
 
   InvoiceBloc() : super(InvoiceInitial()) {
-    on<LoadInvoices>(_onLoadFaturalar);
-    on<AddInvoice>(_onAddFatura);
-    on<UpdateInvoice>(_onUpdateFatura);
-    on<DeleteInvoice>(_onDeleteFatura);
+    on<LoadInvoices>(_onLoadInvoices);
+    on<AddInvoice>(_onAddInvoice);
+    on<UpdateInvoice>(_onUpdateInvoice);
+    on<DeleteInvoice>(_onDeleteInvoice);
     on<SortByImportance>(_onSortByImportance);
     on<SortByDate>(_onSortByDate);
     on<SortByAmount>(_onSortByAmount);
@@ -81,6 +81,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
   List<Invoice> _sortByMonthAndAmount(List<Invoice> invoices) {
     // Faturaları ay ve yıla göre gruplama
+    // Group invoices by month and year
     final groupedInvoices = <String, List<Invoice>>{};
 
     for (var invoice in invoices) {
@@ -93,125 +94,69 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     }
 
     // Her grubu miktara göre azalan sırada sırala
+    // Each group is sorted by amount in descending order
     groupedInvoices.forEach((key, group) {
       group.sort((a, b) => b.tutar.compareTo(a.tutar));
     });
 
     // Grupları (ayları) tarihe göre artan sırada sırala
+    // Sort groups (months) by date in ascending order
     final sortedKeys = groupedInvoices.keys.toList()
       ..sort((a, b) => a.compareTo(b));
 
     // Sıralanmış grupları düz bir listeye dönüştür
+    // Convert sorted groups to a flat list
     final sortedInvoices =
         sortedKeys.expand((key) => groupedInvoices[key]!).toList();
 
     return sortedInvoices;
   }
 
-  Future<void> _onLoadFaturalar(
+  Future<void> _onLoadInvoices(
       LoadInvoices event, Emitter<InvoiceState> emit) async {
     emit(InvoiceLoading());
     try {
-      final db = await _dbHelper.faturaDatabase;
-      final List<Map<String, dynamic>> maps = await db.query('fatura');
-      final List<Invoice> faturalar =
-          maps.map((map) => Invoice.fromMap(map)).toList();
+      final invoices = await _invoiceDao.getAllInvoices();
+      final nonPaidInvoices = invoices.where((f) => !f.odendiMi).toList();
+      final paidInvoices = invoices.where((f) => f.odendiMi).toList();
 
-      // Faturaları ayırma ve sıralama işlemi
-      final List<Invoice> odememisFaturalar = faturalar
-          .where((f) => !f.odendiMi)
-          .toList()
-        ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
-
-      final List<Invoice> odenmisFaturalar = faturalar
-          .where((f) => f.odendiMi)
-          .toList()
-        ..sort((a, b) => a.onemSeviyesi.index.compareTo(b.onemSeviyesi.index));
-
-      // Sıralanmış faturaları yüklüyoruz
       emit(InvoiceLoaded(
-        nonPaidInvoices: odememisFaturalar,
-        paidInvoices: odenmisFaturalar,
+        nonPaidInvoices: nonPaidInvoices,
+        paidInvoices: paidInvoices,
       ));
     } catch (e) {
-      emit(InvoiceError('Faturalar yüklenirken bir hata oluştu: $e'));
+      emit(InvoiceError('Faturalar yüklenirken hata oluştu: $e'));
     }
   }
 
-  Future<void> _onAddFatura(
+  Future<void> _onAddInvoice(
       AddInvoice event, Emitter<InvoiceState> emit) async {
     try {
-      final db = await _dbHelper.faturaDatabase;
-      await db.insert('fatura', event.fatura.toMap());
-      print('Invoice added successfully'); // Debug print
+      await _invoiceDao.addInvoice(event.fatura);
       add(LoadInvoices());
     } catch (e) {
-      print('Error adding invoice: $e'); // Debug print
-      emit(InvoiceError('Fatura eklenirken bir hata oluştu: $e'));
+      emit(InvoiceError('Fatura eklenirken hata oluştu: $e'));
     }
   }
 
-  Future<void> _onUpdateFatura(
+  Future<void> _onUpdateInvoice(
       UpdateInvoice event, Emitter<InvoiceState> emit) async {
-    final currentState = state;
-    if (currentState is InvoiceLoaded) {
-      try {
-        final db = await _dbHelper.faturaDatabase;
-        int updatedRows = await db.update(
-          'fatura',
-          event.fatura.toMap(),
-          where: 'id = ?',
-          whereArgs: [event.fatura.id],
-        );
-
-        if (updatedRows == 0) {
-          throw Exception('Fatura güncellenemedi. ID: ${event.fatura.id}');
-        }
-
-        List<Invoice> updatedOdememisFaturalar =
-            List.from(currentState.nonPaidInvoices);
-        List<Invoice> updatedOdenmisFaturalar =
-            List.from(currentState.paidInvoices);
-
-        updatedOdememisFaturalar.removeWhere((f) => f.id == event.fatura.id);
-        updatedOdenmisFaturalar.removeWhere((f) => f.id == event.fatura.id);
-
-        if (event.fatura.odendiMi) {
-          updatedOdenmisFaturalar.add(event.fatura);
-        } else {
-          updatedOdememisFaturalar.add(event.fatura);
-        }
-
-        emit(InvoiceLoaded(
-          nonPaidInvoices: updatedOdememisFaturalar,
-          paidInvoices: updatedOdenmisFaturalar,
-        ));
-      } catch (e) {
-        emit(InvoiceError('Fatura güncellenirken bir hata oluştu: $e'));
-      }
-    } else {
-      emit(InvoiceError('Geçersiz durum. Faturalar yüklenemedi.'));
+    try {
+      await _invoiceDao.updateInvoice(event.fatura);
+      add(LoadInvoices());
+    } catch (e) {
+      emit(InvoiceError('Fatura güncellenirken hata oluştu: $e'));
     }
   }
 
-  Future<void> _onDeleteFatura(
+  Future<void> _onDeleteInvoice(
       DeleteInvoice event, Emitter<InvoiceState> emit) async {
-    final currentState = state;
-    if (currentState is InvoiceLoaded) {
-      try {
-        // Bildirimi kaldır
-        NotificationService.cancelNotification(event.id);
-
-        final db = await _dbHelper.faturaDatabase;
-        await db.delete(
-          'fatura',
-          where: 'id = ?',
-          whereArgs: [event.id],
-        );
-        add(LoadInvoices());
-      } catch (e) {
-        emit(InvoiceError('Fatura silinirken bir hata oluştu: $e'));
-      }
+    try {
+      NotificationService.cancelNotification(event.id);
+      await _invoiceDao.deleteInvoice(event.id);
+      add(LoadInvoices());
+    } catch (e) {
+      emit(InvoiceError('Fatura silinirken hata oluştu: $e'));
     }
   }
 }

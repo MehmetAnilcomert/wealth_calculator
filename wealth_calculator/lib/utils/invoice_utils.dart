@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 
-abstract class InvoiceService {
+abstract class InvoiceUtils {
   static List<MapEntry<OnemSeviyesi, double>> calculateSegments(
       List<Invoice> invoices) {
     final Map<OnemSeviyesi, double> groupedSegments = {};

@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
-import 'package:wealth_calculator/modals/EquityModal.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 Future<List<WealthPrice>> fetchGoldPrices() async {
@@ -191,14 +190,14 @@ Future<List<WealthPrice>> fetchEquityData() async {
       final date = row.querySelector('td:nth-child(8) time')?.text.trim() ?? '';
 
       // Create Equity instance
-      final equity = Equity(
+      final equity = WealthPrice(
         title: name,
         buyingPrice: price2,
         sellingPrice: price3,
         change: changePercent,
         changeAmount: change,
         time: date,
-        type: PriceType.equity, // Assuming all rows are of type 'equity'
+        type: PriceType.equity,
         currentPrice: price1,
         volume: volume,
       );

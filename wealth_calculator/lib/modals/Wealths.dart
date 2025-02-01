@@ -1,3 +1,4 @@
+// Envantere eklenen varlıkların bilgilerini tutan sınıf
 class SavedWealths {
   final int id;
   final String type;
