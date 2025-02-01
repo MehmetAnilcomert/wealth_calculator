@@ -61,8 +61,8 @@ class InventoryScreen extends StatelessWidget {
             );
           }
         },
-        backgroundColor: Color(0xFF3498DB),
-        child: Icon(Icons.add, size: 32),
+        backgroundColor: Color.fromARGB(255, 90, 189, 255),
+        child: Icon(Icons.add, size: 32, color: Colors.white),
       ),
       body: BlocConsumer<InventoryBloc, InventoryState>(
         bloc: inventoryBloc,

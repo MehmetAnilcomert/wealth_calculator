@@ -133,8 +133,8 @@ class InvoiceListScreen extends StatelessWidget {
                       BlocProvider.of<InvoiceBloc>(context).add(LoadInvoices());
                     });
                   },
-                  backgroundColor: Color(0xFF3498DB),
-                  child: Icon(Icons.add, size: 32),
+                  backgroundColor: Color.fromARGB(255, 90, 189, 255),
+                  child: Icon(Icons.add, size: 32, color: Colors.white),
                 ),
                 body: Container(
                   decoration: BoxDecoration(
