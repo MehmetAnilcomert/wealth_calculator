@@ -10,7 +10,6 @@ import 'package:wealth_calculator/widgets/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/widgets/custom_list.dart';
 import 'package:wealth_calculator/widgets/drawer.dart';
 import 'package:wealth_calculator/widgets/multi_item.dart';
-import 'package:collection/collection.dart';
 
 class PricesScreen extends StatefulWidget {
   @override
@@ -27,70 +26,20 @@ class _PricesScreenState extends State<PricesScreen>
   @override
   void initState() {
     super.initState();
-    _loadCustomPrices().then((_) {
-      _updateCustomPricesWithLatest(); // Custom prices listesini güncelle
-    });
+    _loadCustomPrices(); // Load custom prices on init
     _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(_handleTabChange);
   }
 
   Future<void> _loadCustomPrices() async {
     try {
-      final prices = await _customListDao.getWealthPrices();
+      // Directly fetch selected prices from the database
+      final prices = await _customListDao.getSelectedWealthPrices();
       setState(() {
         _customPrices = prices;
       });
     } catch (e) {
       print('Error loading custom prices: $e');
-    }
-  }
-
-  Future<void> _updateCustomPricesWithLatest() async {
-    try {
-      // Veritabanındaki customPrices listesini al
-      final prices = await _customListDao.getWealthPrices();
-      if (context.read<PricesBloc>().state is PricesLoaded) {
-        final pricesState = context.read<PricesBloc>().state as PricesLoaded;
-
-        // Güncel fiyatları al
-        final List<WealthPrice> updatedCustomPrices = [];
-
-        for (WealthPrice wealthPrice in prices) {
-          // Altın fiyatlarını eşleştir
-          WealthPrice? updatedPrice = pricesState.goldPrices
-              .firstWhereOrNull((price) => price.title == wealthPrice.title);
-
-          // Eğer altın fiyatları arasında yoksa döviz fiyatlarını kontrol et
-          if (updatedPrice == null) {
-            updatedPrice = pricesState.currencyPrices
-                .firstWhereOrNull((price) => price.title == wealthPrice.title);
-          }
-
-          // Eğer döviz fiyatları arasında yoksa borsa fiyatlarını kontrol et
-          if (updatedPrice == null) {
-            updatedPrice = pricesState.equityPrices
-                .firstWhereOrNull((price) => price.title == wealthPrice.title);
-          }
-
-          // Eğer döviz fiyatları arasında yoksa borsa fiyatlarını kontrol et
-          if (updatedPrice == null) {
-            updatedPrice = pricesState.commodityPrices
-                .firstWhereOrNull((price) => price.title == wealthPrice.title);
-          }
-          // Eşleşen fiyat varsa listeye ekle, yoksa eski fiyatla devam et
-          updatedCustomPrices.add(updatedPrice ?? wealthPrice);
-        }
-
-        // Güncellenen listeyi state'e ve veritabanına kaydet
-        setState(() {
-          _customPrices = updatedCustomPrices;
-        });
-
-        // Veritabanını güncelle
-        await _customListDao.updateWealthPrices(updatedCustomPrices);
-      }
-    } catch (e) {
-      print('Error updating custom prices: $e');
     }
   }
 

@@ -21,7 +21,6 @@ class DbHelper {
       onCreate: (db, version) async {
         await db.execute(_createFaturaTable);
         await db.execute(_createInventoryTable);
-        await db.execute(_createWealthPricesTable);
         await db.execute(_createCachedWealthPricesTable);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
@@ -56,21 +55,6 @@ class DbHelper {
     )
   ''';
 
-  static const String _createWealthPricesTable = '''
-    CREATE TABLE wealth_prices (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      buyingPrice REAL NOT NULL,
-      sellingPrice REAL NOT NULL,
-      change REAL NOT NULL,
-      time TEXT NOT NULL,
-      type INTEGER NOT NULL, 
-      currentPrice TEXT, 
-      volume TEXT, 
-      changeAmount TEXT
-    )
-  ''';
-
   static const String _createCachedWealthPricesTable = '''
     CREATE TABLE cached_wealth_prices (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -83,8 +67,9 @@ class DbHelper {
       currentPrice TEXT, 
       volume TEXT, 
       changeAmount TEXT,
-      lastUpdatedDate TEXT NOT NULL,
-      lastUpdatedTime TEXT NOT NULL
+      lastUpdatedDate TEXT,
+      lastUpdatedTime TEXT,
+      isSelected INTEGER DEFAULT 0
     )
   ''';
 

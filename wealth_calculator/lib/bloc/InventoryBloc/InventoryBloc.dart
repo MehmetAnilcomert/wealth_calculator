@@ -4,9 +4,9 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
-import 'package:wealth_calculator/services/DataScraping.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
 import 'package:wealth_calculator/utils/inventory_utils.dart';
+import 'package:wealth_calculator/utils/price_utils.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   final SavedWealthsdao _wealthsDao = SavedWealthsdao();
@@ -14,6 +14,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];
+  final PriceFetcher _priceFetcher = PriceFetcher();
 
   InventoryBloc() : super(InventoryInitial()) {
     on<LoadInventoryData>(_onLoadInventoryData);
@@ -28,8 +29,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
     try {
       _savedWealths = await _wealthsDao.getAllWealths();
-      _cachedGoldPrices = await fetchGoldPrices();
-      _cachedCurrencyPrices = await fetchCurrencyPrices();
+      final allPrices = await _priceFetcher.fetchPrices();
+      _cachedGoldPrices = allPrices[0];
+      _cachedCurrencyPrices = allPrices[1];
 
       emit(_createLoadedState());
     } catch (e) {
