@@ -70,7 +70,8 @@ class DbHelper {
       changeAmount TEXT,
       lastUpdatedDate TEXT,
       lastUpdatedTime TEXT,
-      isSelected INTEGER DEFAULT 0
+      isSelected INTEGER DEFAULT 0,
+      UNIQUE(title, type)
     )
   ''';
 

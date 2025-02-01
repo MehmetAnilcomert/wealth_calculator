@@ -56,7 +56,12 @@ class MultiSelectItemDialog extends StatefulWidget {
 }
 
 class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
-  List<WealthPrice> _selectedItems = [];
+  Map<String, List<WealthPrice>> _selectedItemsByCategory = {
+    'Altın Seç': [],
+    'Döviz Seç': [],
+    'Hisse Senetleri Seç': [],
+    'Emtia Seç': [],
+  };
   String _selectedOption = 'Altın Seç';
 
   List<WealthPrice> getSelectedList() {
@@ -161,8 +166,14 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Column(
-                  children:
-                      allItems.map((price) => _buildListItem(price)).toList(),
+                  children: allItems
+                      .map((price) => _buildListItem(
+                            price,
+                            _selectedItemsByCategory[_selectedOption]
+                                    ?.contains(price) ??
+                                false,
+                          ))
+                      .toList(),
                 ),
               ),
             ),
@@ -182,7 +193,11 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                 SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {
-                    widget.onItemsSelected(_selectedItems);
+                    List<WealthPrice> allSelectedItems =
+                        _selectedItemsByCategory.values
+                            .expand((items) => items)
+                            .toList();
+                    widget.onItemsSelected(allSelectedItems);
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
@@ -215,9 +230,8 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
     );
   }
 
-  Widget _buildListItem(WealthPrice price) {
+  Widget _buildListItem(WealthPrice price, bool isSelected) {
     final isDisabled = widget.disabledItems.contains(price.title);
-    final isSelected = _selectedItems.contains(price);
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -239,9 +253,9 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
             : () {
                 setState(() {
                   if (isSelected) {
-                    _selectedItems.remove(price);
+                    _selectedItemsByCategory[_selectedOption]?.remove(price);
                   } else {
-                    _selectedItems.add(price);
+                    _selectedItemsByCategory[_selectedOption]?.add(price);
                   }
                 });
               },

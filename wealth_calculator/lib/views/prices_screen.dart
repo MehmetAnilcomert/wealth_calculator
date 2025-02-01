@@ -76,6 +76,7 @@ class _PricesScreenState extends State<PricesScreen>
   }
 
   void _onAddPressed() {
+    print((context.read<PricesBloc>().state as PricesLoaded).goldPrices.length);
     MultiItemDialogs.showMultiSelectItemDialog(
       context,
       context.read<PricesBloc>().state is PricesLoaded
@@ -123,6 +124,8 @@ class _PricesScreenState extends State<PricesScreen>
       listener: (context, state) {
         if (state is PricesLoaded) {
           context.read<InventoryBloc>().add(LoadInventoryData());
+        } else if (state is PricesError) {
+          Text(state.message);
         }
       },
       child: Scaffold(
