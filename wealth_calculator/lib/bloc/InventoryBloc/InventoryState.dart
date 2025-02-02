@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
+import 'package:wealth_calculator/modals/WealthHistory.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 
 abstract class InventoryState extends Equatable {
@@ -19,6 +20,7 @@ class InventoryLoaded extends InventoryState {
   final double totalPrice;
   final List<double> segments;
   final List<Color> colors;
+  final List<WealthHistory> pricesHistory;
 
   InventoryLoaded({
     required this.savedWealths,
@@ -27,6 +29,7 @@ class InventoryLoaded extends InventoryState {
     required this.totalPrice,
     required this.segments,
     required this.colors,
+    required this.pricesHistory,
   });
 
   @override
@@ -37,6 +40,7 @@ class InventoryLoaded extends InventoryState {
         totalPrice,
         segments,
         colors,
+        pricesHistory,
       ];
 }
 

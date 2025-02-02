@@ -29,6 +29,7 @@ class DbHelper {
         await db.execute(_createInventoryTable);
         await db.execute(_createCachedWealthPricesTable);
         await db.execute(_createCustomWealthPricesTable);
+        await db.execute(_createWealthPricesHistoryTable);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -39,8 +40,11 @@ class DbHelper {
           await db.execute(_createCachedWealthPricesTable);
         }
         if (oldVersion < 4) {
-          print('Upgrading database to version 4');
           await db.execute(_createCustomWealthPricesTable);
+        }
+        if (oldVersion < 5) {
+          print('Upgrading database to version 5');
+          await db.execute(_createWealthPricesHistoryTable);
         }
       },
     );
@@ -91,6 +95,14 @@ class DbHelper {
         title TEXT NOT NULL,
         type INTEGER NOT NULL,
         UNIQUE(title, type)
+      )
+  ''';
+
+  static const _createWealthPricesHistoryTable = '''
+    CREATE TABLE wealth_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        totalPrice REAL NOT NULL
       )
   ''';
 
