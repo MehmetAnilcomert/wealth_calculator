@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 abstract class PricesEvent extends Equatable {
   @override
@@ -14,4 +15,22 @@ class SearchPrices extends PricesEvent {
 
   @override
   List<Object?> get props => [query];
+}
+
+class AddCustomPrice extends PricesEvent {
+  final List<WealthPrice> wealthPrices;
+
+  AddCustomPrice(this.wealthPrices);
+
+  @override
+  List<Object?> get props => [wealthPrices];
+}
+
+class DeleteCustomPrice extends PricesEvent {
+  final WealthPrice wealthPrice;
+
+  DeleteCustomPrice(this.wealthPrice);
+
+  @override
+  List<Object?> get props => [wealthPrice];
 }

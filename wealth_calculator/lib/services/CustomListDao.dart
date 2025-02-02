@@ -6,14 +6,18 @@ import 'package:wealth_calculator/services/DatabaseHelper.dart';
 //This class is responsible for database operations of the table used to store prices in the portfolio
 class CustomListDao {
   Future<void> insertWealthPrice(WealthPrice wealthPrice) async {
-    final db = await DbHelper.instance.database;
+    try {
+      final db = await DbHelper.instance.database;
 
-    // Set isSelected to 1 when inserting or updating
-    await db.insert(
-      'cached_wealth_prices',
-      wealthPrice.toMap()..['isSelected'] = 1, // Set isSelected to 1
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+      // Set isSelected to 1 when inserting or updating
+      await db.insert(
+        'cached_wealth_prices',
+        wealthPrice.toMap()..['isSelected'] = 1, // Set isSelected to 1
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      print('Error occurred while inserting: $e');
+    }
   }
 
   // Tüm portfölyo WealthPrice nesnelerini almak için fonksiyon
@@ -26,7 +30,7 @@ class CustomListDao {
       where: 'isSelected = ?',
       whereArgs: [1],
     );
-
+    print(maps);
     return List.generate(maps.length, (i) {
       return WealthPrice(
         title: maps[i]['title'],
@@ -45,14 +49,18 @@ class CustomListDao {
   // WealthPrice nesnesini silmek için fonksiyon
   // Function to delete a WealthPrice object
   Future<void> deleteWealthPrice(String title) async {
-    final db = await DbHelper.instance.database;
+    try {
+      final db = await DbHelper.instance.database;
 
-    // Set isSelected to 0 when deleting
-    await db.update(
-      'cached_wealth_prices',
-      {'isSelected': 0}, // Set isSelected to 0
-      where: 'title = ?',
-      whereArgs: [title],
-    );
+      // Set isSelected to 0 when deleting
+      await db.update(
+        'cached_wealth_prices',
+        {'isSelected': 0}, // Set isSelected to 0
+        where: 'title = ?',
+        whereArgs: [title],
+      );
+    } catch (e) {
+      print('Error occurred while deleting: $e');
+    }
   }
 }

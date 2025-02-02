@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
+import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
-import 'package:wealth_calculator/services/CustomListDao.dart';
+import 'package:wealth_calculator/utils/prices_screen_utils.dart';
 import 'package:wealth_calculator/widgets/PricesWidgets/buildTab.dart';
 import 'package:wealth_calculator/widgets/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/widgets/custom_list.dart';
 import 'package:wealth_calculator/widgets/drawer.dart';
-import 'package:wealth_calculator/widgets/multi_item.dart';
 
 class PricesScreen extends StatefulWidget {
   @override
@@ -21,27 +21,14 @@ class _PricesScreenState extends State<PricesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _searchQuery = '';
-  List<WealthPrice> _customPrices = [];
-  final CustomListDao _customListDao = CustomListDao();
 
   @override
   void initState() {
     super.initState();
-    _loadCustomPrices(); // Load custom prices on init
+    // Bloc üzerinden tüm fiyatları (web ve custom) yükle
+    context.read<PricesBloc>().add(LoadPrices());
     _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(_handleTabChange);
-  }
-
-  Future<void> _loadCustomPrices() async {
-    try {
-      // Directly fetch selected prices from the database
-      final prices = await _customListDao.getSelectedWealthPrices();
-      setState(() {
-        _customPrices = prices;
-      });
-    } catch (e) {
-      print('Error loading custom prices: $e');
-    }
   }
 
   @override
@@ -54,68 +41,9 @@ class _PricesScreenState extends State<PricesScreen>
   void _handleTabChange() {
     if (_tabController.indexIsChanging) {
       setState(() {
-        // Trigger a rebuild to update the AppBar title
+        // AppBar başlığını güncellemek için yeniden çizdiriyoruz
       });
     }
-  }
-
-  String _getAppBarTitle(int index) {
-    final titles = [
-      'Altın Fiyatları',
-      'Döviz Fiyatları',
-      'Bist100 Endeksi',
-      'Emtia',
-      'Kişisel Portföy',
-    ];
-    return titles[index.clamp(0, 6)];
-  }
-
-  void _onSearchChanged(String query) {
-    setState(() {
-      _searchQuery = query;
-    });
-  }
-
-  void _onAddPressed() {
-    MultiItemDialogs.showMultiSelectItemDialog(
-      context,
-      context.read<PricesBloc>().state is PricesLoaded
-          ? (context.read<PricesBloc>().state as PricesLoaded).goldPrices
-          : [],
-      context.read<PricesBloc>().state is PricesLoaded
-          ? (context.read<PricesBloc>().state as PricesLoaded).currencyPrices
-          : [],
-      context.read<PricesBloc>().state is PricesLoaded
-          ? (context.read<PricesBloc>().state as PricesLoaded).equityPrices
-          : [],
-      context.read<PricesBloc>().state is PricesLoaded
-          ? (context.read<PricesBloc>().state as PricesLoaded).commodityPrices
-          : [],
-      (List<WealthPrice> selectedWealths) {
-        setState(() {
-          for (WealthPrice wealthPrice in selectedWealths) {
-            if (!_customPrices.contains(wealthPrice)) {
-              _customPrices.add(wealthPrice);
-              _customListDao.insertWealthPrice(wealthPrice);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${wealthPrice.title} zaten listede mevcut.'),
-                  backgroundColor: Colors.red,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            }
-          }
-        });
-      },
-      hiddenItems: [
-        'Altın (ONS/\$)',
-        'Altın (\$/kg)',
-        'Altın (Euro/kg)',
-        'Külçe Altın (\$)',
-      ],
-    );
   }
 
   @override
@@ -125,7 +53,22 @@ class _PricesScreenState extends State<PricesScreen>
         if (state is PricesLoaded) {
           context.read<InventoryBloc>().add(LoadInventoryData());
         } else if (state is PricesError) {
-          Text(state.message);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        } else if (state is CustomPriceDuplicateError) {
+          // If there is already that price in the list, shows a snackbar to warn the user
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
+            ),
+          );
         }
       },
       child: Scaffold(
@@ -158,7 +101,7 @@ class _PricesScreenState extends State<PricesScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _getAppBarTitle(_tabController.index),
+                PricesScreenUtils.getAppBarTitle(_tabController.index),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -223,7 +166,11 @@ class _PricesScreenState extends State<PricesScreen>
                   ],
                 ),
                 child: TextField(
-                  onChanged: _onSearchChanged,
+                  onChanged: (query) {
+                    setState(() {
+                      _searchQuery = query;
+                    });
+                  },
                   decoration: const InputDecoration(
                     hintText: 'Ara...',
                     hintStyle: TextStyle(color: Colors.grey),
@@ -243,15 +190,22 @@ class _PricesScreenState extends State<PricesScreen>
                   buildPricesSection(context, 'currencyPrices', _searchQuery),
                   buildPricesSection(context, 'equityPrices', _searchQuery),
                   buildPricesSection(context, 'commodityPrices', _searchQuery),
-                  CustomPricesWidget(
-                    customPrices: _customPrices,
-                    onAddPressed: _onAddPressed,
-                    query: _searchQuery,
-                    onDeletePrice: (WealthPrice wealthPrice) {
-                      setState(() {
-                        _customPrices.remove(wealthPrice);
-                        _customListDao.deleteWealthPrice(wealthPrice.title);
-                      });
+                  BlocBuilder<PricesBloc, PricesState>(
+                    builder: (context, state) {
+                      if (state is PricesLoaded) {
+                        return CustomPricesWidget(
+                          customPrices: state.customPrices,
+                          onAddPressed: () =>
+                              PricesScreenUtils.onAddPressed(context),
+                          query: _searchQuery,
+                          onDeletePrice: (WealthPrice wealthPrice) {
+                            context
+                                .read<PricesBloc>()
+                                .add(DeleteCustomPrice(wealthPrice));
+                          },
+                        );
+                      }
+                      return const Center(child: CircularProgressIndicator());
                     },
                   ),
                 ],
