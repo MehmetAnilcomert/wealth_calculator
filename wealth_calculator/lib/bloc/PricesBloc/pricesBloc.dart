@@ -20,8 +20,8 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
     emit(PricesLoading());
 
     try {
-      final customPrices = await _customListDao.getSelectedWealthPrices();
       final allPrices = await _priceFetcher.fetchPrices();
+      final customPrices = await _customListDao.getSelectedWealthPrices();
       print('Custom prices in bloc: $customPrices');
 
       emit(PricesLoaded(
@@ -71,7 +71,7 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
     if (state is PricesLoaded) {
       final currentState = state as PricesLoaded;
 
-      await _customListDao.deleteWealthPrice(event.wealthPrice.title);
+      await _customListDao.deleteWealthPrice(event.wealthPrice);
 
       final updatedCustomPrices =
           List<WealthPrice>.from(currentState.customPrices)
