@@ -36,9 +36,8 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       final allPrices = await _priceFetcher.fetchPrices();
       _cachedGoldPrices = allPrices[0];
       _cachedCurrencyPrices = allPrices[1];
-      _pricesHistory = await _priceHistoryDao.getAllWealthHistory();
 
-      emit(_createLoadedState());
+      emit(await _createLoadedState());
     } catch (e) {
       print(e.toString());
       emit(InventoryError(e.toString()));
@@ -69,7 +68,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       }
 
       _savedWealths = await _wealthsDao.getAllWealths();
-      emit(_createLoadedState());
+      emit(await _createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to edit wealth.'));
     }
@@ -81,7 +80,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     try {
       await _wealthsDao.deleteWealth(event.id);
       _savedWealths = await _wealthsDao.getAllWealths();
-      emit(_createLoadedState());
+      emit(await _createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to delete wealth.'));
     }
@@ -90,7 +89,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   // This method is used to create the loaded state.
   // Loaded state is used to display the inventory data.
   // Loaded state contains the total price, segments, colors and saved wealths` list.
-  InventoryLoaded _createLoadedState() {
+  Future<InventoryLoaded> _createLoadedState() async {
     double totalPrice = 0;
     List<double> segments = [];
     List<Color> colors = [];
@@ -107,7 +106,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     segments = InventoryUtils.calculateSegments(
         _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices);
 
-    // _priceHistoryDao.insertTotalPriceHistory(totalPrice);
+    _priceHistoryDao.insertTotalPriceHistory(totalPrice);
+
+    _pricesHistory = await _priceHistoryDao.getAllWealthHistory();
     return InventoryLoaded(
       totalPrice: totalPrice,
       segments: segments,

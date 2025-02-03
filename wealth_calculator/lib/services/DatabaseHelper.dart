@@ -23,7 +23,7 @@ class DbHelper {
     String dbPath = join(await getDatabasesPath(), 'app_database.db');
     return await openDatabase(
       dbPath,
-      version: 4,
+      version: 5,
       onCreate: (db, version) async {
         await db.execute(_createFaturaTable);
         await db.execute(_createInventoryTable);
@@ -42,7 +42,7 @@ class DbHelper {
         if (oldVersion < 4) {
           await db.execute(_createCustomWealthPricesTable);
         }
-        if (oldVersion < 5) {
+        if (oldVersion < 6) {
           print('Upgrading database to version 5');
           await db.execute(_createWealthPricesHistoryTable);
         }
@@ -102,7 +102,8 @@ class DbHelper {
     CREATE TABLE wealth_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT NOT NULL,
-        totalPrice REAL NOT NULL
+        totalPrice REAL NOT NULL,
+        UNIQUE(date)
       )
   ''';
 
