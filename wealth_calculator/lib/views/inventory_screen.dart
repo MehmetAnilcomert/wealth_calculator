@@ -6,7 +6,6 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
-import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/list_widget.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/price_history_chart.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/swipable_appbar.dart';
