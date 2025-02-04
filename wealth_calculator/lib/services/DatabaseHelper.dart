@@ -14,15 +14,22 @@ class DbHelper {
     return _database!;
   }
 
+  // Initializes the database for first time
+  // Creates tables for fatura, inventory, cached_wealth_prices, and custom_wealth_assets
+  // Also, it upgrades the database if the version is less than 4 by adding custom_wealth_assets table
+  // and if the version is less than 3 by adding cached_wealth_prices table
+  // This ensures that the users' data is not lost when the app is updated to a new version with new features or changes in the database
   Future<Database> _initDatabase() async {
     String dbPath = join(await getDatabasesPath(), 'app_database.db');
     return await openDatabase(
       dbPath,
-      version: 3,
+      version: 5,
       onCreate: (db, version) async {
         await db.execute(_createFaturaTable);
         await db.execute(_createInventoryTable);
         await db.execute(_createCachedWealthPricesTable);
+        await db.execute(_createCustomWealthPricesTable);
+        await db.execute(_createWealthPricesHistoryTable);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -31,6 +38,13 @@ class DbHelper {
         }
         if (oldVersion < 3) {
           await db.execute(_createCachedWealthPricesTable);
+        }
+        if (oldVersion < 4) {
+          await db.execute(_createCustomWealthPricesTable);
+        }
+        if (oldVersion < 6) {
+          print('Upgrading database to version 5');
+          await db.execute(_createWealthPricesHistoryTable);
         }
       },
     );
@@ -73,6 +87,24 @@ class DbHelper {
       isSelected INTEGER DEFAULT 0,
       UNIQUE(title, type)
     )
+  ''';
+
+  static const _createCustomWealthPricesTable = '''
+    CREATE TABLE custom_wealth_assets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        type INTEGER NOT NULL,
+        UNIQUE(title, type)
+      )
+  ''';
+
+  static const _createWealthPricesHistoryTable = '''
+    CREATE TABLE wealth_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        totalPrice REAL NOT NULL,
+        UNIQUE(date)
+      )
   ''';
 
   Future<void> closeDatabase() async {

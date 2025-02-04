@@ -46,6 +46,8 @@ dependencies:
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.4
   shared_preferences: ^2.2.3
+  fl_chart: ^0.70.0
+  
 
 flutter_native_splash: 
   color: "#2196F3"

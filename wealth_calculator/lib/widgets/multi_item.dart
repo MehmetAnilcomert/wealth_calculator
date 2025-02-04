@@ -57,22 +57,22 @@ class MultiSelectItemDialog extends StatefulWidget {
 
 class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
   Map<String, List<WealthPrice>> _selectedItemsByCategory = {
-    'Altın Seç': [],
-    'Döviz Seç': [],
-    'Hisse Senetleri Seç': [],
-    'Emtia Seç': [],
+    'Altın': [],
+    'Döviz': [],
+    'Hisse Senetleri': [],
+    'Emtia': [],
   };
-  String _selectedOption = 'Altın Seç';
+  String _selectedOption = 'Altın';
 
   List<WealthPrice> getSelectedList() {
     switch (_selectedOption) {
-      case 'Döviz Seç':
+      case 'Döviz':
         return widget.futureCurrencyPrices;
-      case 'Hisse Senetleri Seç':
+      case 'Hisse Senetleri':
         return widget.futureEquityPrices;
-      case 'Emtia Seç':
+      case 'Emtia':
         return widget.futureCommodityPrices;
-      case 'Altın Seç':
+      case 'Altın':
       default:
         return widget.futureGoldPrices;
     }
@@ -148,11 +148,10 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                   },
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    _buildPopupMenuItem('Altın Seç', Icons.monetization_on),
-                    _buildPopupMenuItem('Döviz Seç', Icons.currency_exchange),
-                    _buildPopupMenuItem(
-                        'Hisse Senetleri Seç', Icons.show_chart),
-                    _buildPopupMenuItem('Emtia Seç', Icons.diamond),
+                    _buildPopupMenuItem('Altın', Icons.monetization_on),
+                    _buildPopupMenuItem('Döviz', Icons.currency_exchange),
+                    _buildPopupMenuItem('Hisse Senetleri', Icons.show_chart),
+                    _buildPopupMenuItem('Emtia', Icons.diamond),
                   ],
                 ),
               ],

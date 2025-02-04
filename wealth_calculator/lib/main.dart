@@ -5,6 +5,7 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
+import 'package:wealth_calculator/bloc/PricesScreenCubit.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 import 'package:wealth_calculator/services/Notification.dart';
 import 'package:wealth_calculator/views/prices_screen.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => PricesScreenCubit()),
         BlocProvider(
           create: (context) => PricesBloc()..add(LoadPrices()),
           child: PricesScreen(),

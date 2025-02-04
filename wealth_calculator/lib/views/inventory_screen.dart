@@ -6,8 +6,9 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
-import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/list_widget.dart';
+import 'package:wealth_calculator/widgets/InventoryWidgets/price_history_chart.dart';
+import 'package:wealth_calculator/widgets/InventoryWidgets/swipable_appbar.dart';
 
 class InventoryScreen extends StatelessWidget {
   @override
@@ -100,16 +101,21 @@ class InventoryScreen extends StatelessWidget {
               ),
               child: CustomScrollView(
                 slivers: [
-                  CustomSliverAppBar(
+                  SwipableAppBar(
                     expandedHeight: MediaQuery.of(context).size.height * 0.4,
                     collapsedHeight: MediaQuery.of(context).size.height * 0.4,
-                    flexibleSpaceBackground: TotalPrice(
-                      totalPrice: state.totalPrice,
-                      segments: state.segments,
-                      colors: state.colors,
-                    ),
                     onAddPressed: () {},
                     bloc: inventoryBloc,
+                    pages: [
+                      // TotalPrice widget to show total price of all wealths in inventory at that moment,
+                      TotalPrice(
+                        totalPrice: state.totalPrice,
+                        segments: state.segments,
+                        colors: state.colors,
+                      ),
+                      // PriceHistoryChart widget to show wealth price history,
+                      PriceHistoryChart(pricesHistory: state.pricesHistory),
+                    ],
                   ),
                   SliverFillRemaining(
                     child: InventoryListWidget(

@@ -3,17 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
+import 'package:wealth_calculator/modals/WealthHistory.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
+import 'package:wealth_calculator/services/PriceHistoryDao.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
 import 'package:wealth_calculator/utils/inventory_utils.dart';
 import 'package:wealth_calculator/utils/price_utils.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   final SavedWealthsdao _wealthsDao = SavedWealthsdao();
+  final PriceHistoryDao _priceHistoryDao = PriceHistoryDao();
 
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];
+  List<WealthHistory> _pricesHistory = [];
   final PriceFetcher _priceFetcher = PriceFetcher();
 
   InventoryBloc() : super(InventoryInitial()) {
@@ -33,8 +37,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       _cachedGoldPrices = allPrices[0];
       _cachedCurrencyPrices = allPrices[1];
 
-      emit(_createLoadedState());
+      emit(await _createLoadedState());
     } catch (e) {
+      print(e.toString());
       emit(InventoryError(e.toString()));
     }
   }
@@ -63,7 +68,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       }
 
       _savedWealths = await _wealthsDao.getAllWealths();
-      emit(_createLoadedState());
+      emit(await _createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to edit wealth.'));
     }
@@ -75,7 +80,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     try {
       await _wealthsDao.deleteWealth(event.id);
       _savedWealths = await _wealthsDao.getAllWealths();
-      emit(_createLoadedState());
+      emit(await _createLoadedState());
     } catch (e) {
       emit(InventoryError('Failed to delete wealth.'));
     }
@@ -84,7 +89,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   // This method is used to create the loaded state.
   // Loaded state is used to display the inventory data.
   // Loaded state contains the total price, segments, colors and saved wealths` list.
-  InventoryLoaded _createLoadedState() {
+  Future<InventoryLoaded> _createLoadedState() async {
     double totalPrice = 0;
     List<double> segments = [];
     List<Color> colors = [];
@@ -101,6 +106,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     segments = InventoryUtils.calculateSegments(
         _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices);
 
+    _priceHistoryDao.insertTotalPriceHistory(totalPrice);
+
+    _pricesHistory = await _priceHistoryDao.getAllWealthHistory();
     return InventoryLoaded(
       totalPrice: totalPrice,
       segments: segments,
@@ -108,6 +116,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       goldPrices: _cachedGoldPrices,
       currencyPrices: _cachedCurrencyPrices,
       savedWealths: _savedWealths,
+      pricesHistory: _pricesHistory,
     );
   }
 }
