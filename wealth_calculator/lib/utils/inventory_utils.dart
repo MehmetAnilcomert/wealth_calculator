@@ -3,7 +3,7 @@ import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 
 class InventoryUtils {
-  // Renkleri tanımlayan statik harita
+  // Renkleri tanımlayan statik map
   static final Map<String, Color> colorMap = {
     'Altın (TL/GR)': Colors.yellow,
     'Cumhuriyet Altını': Colors.yellow,

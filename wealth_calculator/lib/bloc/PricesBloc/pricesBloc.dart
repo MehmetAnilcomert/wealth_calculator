@@ -22,7 +22,6 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
     try {
       final allPrices = await _priceFetcher.fetchPrices();
       final customPrices = await _customListDao.getSelectedWealthPrices();
-      print('Custom prices in bloc: $customPrices');
 
       emit(PricesLoaded(
         commodityPrices: allPrices[3],

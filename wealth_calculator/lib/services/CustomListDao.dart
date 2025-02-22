@@ -9,7 +9,6 @@ class CustomListDao {
   Future<void> insertWealthPrice(WealthPrice wealthPrice) async {
     try {
       final db = await DbHelper.instance.database;
-      print('Inserting into custom_wealth_assets: ${wealthPrice.title}');
       await db.insert(
         'custom_wealth_assets',
         {
