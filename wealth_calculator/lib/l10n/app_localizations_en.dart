@@ -194,4 +194,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assetDistribution => 'Asset Distribution';
+
+  @override
+  String get goldPrices => 'Gold Prices';
+
+  @override
+  String get currencyPrices => 'Currency Prices';
+
+  @override
+  String get stocksBist => 'BIST 100 Index';
+
+  @override
+  String get commoditiesPrices => 'Commodities Prices';
+
+  @override
+  String get portfolioIndividual => 'Personal Portfolio';
+
+  @override
+  String get swipe => 'Swipe';
+
+  @override
+  String get milyar => 'B';
+
+  @override
+  String get milyon => 'M';
+
+  @override
+  String get bin => 'K';
 }

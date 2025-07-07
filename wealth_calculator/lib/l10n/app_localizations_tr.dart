@@ -194,4 +194,31 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get assetDistribution => 'Varlık Dağılımı';
+
+  @override
+  String get goldPrices => 'Altın Fiyatları';
+
+  @override
+  String get currencyPrices => 'Döviz Fiyatları';
+
+  @override
+  String get stocksBist => 'BIST 100 Endeksi';
+
+  @override
+  String get commoditiesPrices => 'Emtia Fiyatları';
+
+  @override
+  String get portfolioIndividual => 'Kişisel Portföy';
+
+  @override
+  String get swipe => 'Kaydır';
+
+  @override
+  String get milyar => 'Milyar';
+
+  @override
+  String get milyon => 'Milyon';
+
+  @override
+  String get bin => 'BİN';
 }

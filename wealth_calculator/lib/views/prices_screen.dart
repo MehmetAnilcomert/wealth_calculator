@@ -89,7 +89,7 @@ class _PricesScreenState extends State<PricesScreen>
                 children: [
                   Text(
                     PricesScreenUtils.getAppBarTitle(
-                        screenState.currentTabIndex),
+                        screenState.currentTabIndex, l10n),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -233,12 +233,13 @@ class _PricesScreenState extends State<PricesScreen>
                     ),
                   ),
                   tabs: [
-                    buildTab(Icons.monetization_on_outlined, l10n.gold),
-                    buildTab(Icons.currency_exchange, l10n.currency),
-                    buildTab(Icons.show_chart, l10n.stocks),
-                    buildTab(Icons.diamond_outlined, l10n.commodities),
                     buildTab(
-                        Icons.account_balance_wallet_outlined, l10n.portfolio),
+                        Icons.monetization_on_outlined, l10n.gold, context),
+                    buildTab(Icons.currency_exchange, l10n.currency, context),
+                    buildTab(Icons.show_chart, l10n.stocks, context),
+                    buildTab(Icons.diamond_outlined, l10n.commodities, context),
+                    buildTab(Icons.account_balance_wallet_outlined,
+                        l10n.portfolio, context),
                   ],
                   labelColor: const Color(0xFF3498DB),
                   unselectedLabelColor: Colors.grey,

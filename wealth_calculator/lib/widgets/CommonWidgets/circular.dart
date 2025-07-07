@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/circular_painter.dart';
 import 'package:intl/intl.dart';
 
@@ -17,16 +18,16 @@ class CircularMoneyState extends StatelessWidget {
     this.gapPercentage = 0.03,
   }) : super(key: key);
 
-  String _formatAmount(double amount) {
+  String _formatAmount(double amount, AppLocalizations l10n) {
     if (amount >= 1000000000) {
       // Milyar
-      return '${(amount / 1000000000).toStringAsFixed(2)}Milyar TL';
+      return '${(amount / 1000000000).toStringAsFixed(2)} ${l10n.milyar} TL';
     } else if (amount >= 1000000) {
       // Milyon
-      return '${(amount / 1000000).toStringAsFixed(2)}Milyon TL';
+      return '${(amount / 1000000).toStringAsFixed(2)}${l10n.milyon} TL';
     } else if (amount >= 1000) {
       // Bin
-      return '${(amount / 1000).toStringAsFixed(2)}Bin TL';
+      return '${(amount / 1000).toStringAsFixed(2)}${l10n.bin} TL';
     } else {
       return '${amount.toStringAsFixed(2)} TL';
     }
@@ -42,7 +43,8 @@ class CircularMoneyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedAmount = _formatAmount(totalAmount);
+    final l10n = AppLocalizations.of(context)!;
+    final formattedAmount = _formatAmount(totalAmount, l10n);
     final numberFormat = NumberFormat('#,##0.00', 'tr_TR');
     final detailedAmount = numberFormat.format(totalAmount);
 
@@ -84,7 +86,7 @@ class CircularMoneyState extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Toplam:',
+                    '${l10n.total}:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,

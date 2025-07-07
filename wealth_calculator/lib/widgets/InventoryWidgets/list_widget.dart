@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
 
@@ -15,6 +16,8 @@ class InventoryListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ListView.builder(
       padding: EdgeInsets.all(16),
       itemCount: savedWealths.length,
@@ -105,7 +108,7 @@ class InventoryListWidget extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                'Miktar: ${wealth.amount}',
+                                '${l10n.amount}: ${wealth.amount}',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.8),
                                   fontSize: 16,

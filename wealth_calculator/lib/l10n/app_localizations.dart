@@ -472,6 +472,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Asset Distribution'**
   String get assetDistribution;
+
+  /// No description provided for @goldPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold Prices'**
+  String get goldPrices;
+
+  /// No description provided for @currencyPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency Prices'**
+  String get currencyPrices;
+
+  /// No description provided for @stocksBist.
+  ///
+  /// In en, this message translates to:
+  /// **'BIST 100 Index'**
+  String get stocksBist;
+
+  /// No description provided for @commoditiesPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Commodities Prices'**
+  String get commoditiesPrices;
+
+  /// No description provided for @portfolioIndividual.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Portfolio'**
+  String get portfolioIndividual;
+
+  /// No description provided for @swipe.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe'**
+  String get swipe;
+
+  /// No description provided for @milyar.
+  ///
+  /// In en, this message translates to:
+  /// **'B'**
+  String get milyar;
+
+  /// No description provided for @milyon.
+  ///
+  /// In en, this message translates to:
+  /// **'M'**
+  String get milyon;
+
+  /// No description provided for @bin.
+  ///
+  /// In en, this message translates to:
+  /// **'K'**
+  String get bin;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

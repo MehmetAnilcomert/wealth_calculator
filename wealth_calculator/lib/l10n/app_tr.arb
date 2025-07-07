@@ -61,5 +61,14 @@
     "addAsset": "Varlık Ekle",
     "totalAssets": "Toplam Varlıklar",
     "assetHistory": "Varlık Geçmişi",
-    "assetDistribution": "Varlık Dağılımı"
+    "assetDistribution": "Varlık Dağılımı",
+    "goldPrices": "Altın Fiyatları",
+    "currencyPrices": "Döviz Fiyatları",
+    "stocksBist": "BIST 100 Endeksi",
+    "commoditiesPrices": "Emtia Fiyatları",
+    "portfolioIndividual": "Kişisel Portföy",
+    "swipe": "Kaydır",
+    "milyar": "Milyar",
+    "milyon": "Milyon",
+    "bin": "BİN"
 }

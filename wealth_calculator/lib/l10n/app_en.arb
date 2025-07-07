@@ -61,5 +61,14 @@
     "addAsset": "Add Asset",
     "totalAssets": "Total Assets",
     "assetHistory": "Asset History",
-    "assetDistribution": "Asset Distribution"
+    "assetDistribution": "Asset Distribution",
+    "goldPrices": "Gold Prices",
+    "currencyPrices": "Currency Prices",
+    "stocksBist": "BIST 100 Index",
+    "commoditiesPrices": "Commodities Prices",
+    "portfolioIndividual": "Personal Portfolio",
+    "swipe": "Swipe",
+    "milyar": "B",
+    "milyon": "M",
+    "bin": "K"
 }

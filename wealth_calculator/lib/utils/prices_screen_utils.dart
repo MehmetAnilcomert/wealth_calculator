@@ -3,17 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/widgets/multi_item.dart';
 
 abstract class PricesScreenUtils {
-  static String getAppBarTitle(int index) {
+  static String getAppBarTitle(int index, AppLocalizations l10n) {
     final titles = [
-      'Altın Fiyatları',
-      'Döviz Fiyatları',
-      'Bist100 Endeksi',
-      'Emtia',
-      'Kişisel Portföy',
+      l10n.goldPrices,
+      l10n.currencyPrices,
+      l10n.stocksBist,
+      l10n.commoditiesPrices,
+      l10n.portfolioIndividual,
     ];
     return titles[index.clamp(0, 6)];
   }
