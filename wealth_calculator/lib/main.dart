@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
 import 'package:wealth_calculator/bloc/PricesScreenCubit.dart';
+import 'package:wealth_calculator/bloc/LocalizationCubit/localization_cubit.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 import 'package:wealth_calculator/services/Notification.dart';
-import 'package:wealth_calculator/views/prices_screen.dart';
 import 'package:wealth_calculator/views/splash_screen.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService.init();
   tz.initializeTimeZones();
 
-  // ignore: unused_local_variable
   final databaseHelper = DbHelper.instance;
   runApp(MyApp());
 }
@@ -27,10 +28,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => LocalizationCubit()),
         BlocProvider(create: (context) => PricesScreenCubit()),
         BlocProvider(
           create: (context) => PricesBloc()..add(LoadPrices()),
-          child: PricesScreen(),
         ),
         BlocProvider(
           create: (context) => InventoryBloc()..add(LoadInventoryData()),
@@ -39,12 +40,27 @@ class MyApp extends StatelessWidget {
           create: (context) => InvoiceBloc(),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: SplashScreen(),
+      child: BlocBuilder<LocalizationCubit, Locale>(
+        builder: (context, locale) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            locale: locale,
+            supportedLocales: const [
+              Locale('en'),
+              Locale('tr'),
+            ],
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home: SplashScreen(),
+          );
+        },
       ),
     );
   }

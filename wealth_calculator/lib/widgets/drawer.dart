@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
 import 'package:wealth_calculator/views/profile.dart';
+import 'package:wealth_calculator/views/settings_screen.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -10,6 +12,8 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Drawer(
       child: Container(
         decoration: BoxDecoration(
@@ -48,18 +52,11 @@ class AppDrawer extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    "Kullanıcı",
+                    l10n.profile,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    "kullanıcı@gmail.com",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
-                      fontSize: 14,
                     ),
                   ),
                 ],
@@ -80,19 +77,19 @@ class AppDrawer extends StatelessWidget {
                     _buildMenuItem(
                       context,
                       icon: Icons.receipt_outlined,
-                      title: 'Faturalar',
+                      title: l10n.invoice,
                       onTap: () => _navigateTo(context, InvoiceListScreen()),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.inventory_2_outlined,
-                      title: 'Envanter',
+                      title: l10n.inventory,
                       onTap: () => _navigateTo(context, InventoryScreen()),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.calculate_outlined,
-                      title: 'Varlık Hesaplayıcı',
+                      title: l10n.totalWealth,
                       onTap: () => _navigateTo(context, CalculatorScreen()),
                     ),
                     Padding(
@@ -102,18 +99,8 @@ class AppDrawer extends StatelessWidget {
                     _buildMenuItem(
                       context,
                       icon: Icons.settings_outlined,
-                      title: 'Ayarlar',
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProfileScreen())),
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.help_outline,
-                      title: 'Yardım',
-                      onTap: () =>
-                          Navigator.pushReplacementNamed(context, '/help'),
+                      title: l10n.settings,
+                      onTap: () => _navigateTo(context, SettingsScreen()),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -122,7 +109,7 @@ class AppDrawer extends StatelessWidget {
                     _buildMenuItem(
                       context,
                       icon: Icons.logout,
-                      title: 'Çıkış Yap',
+                      title: 'Logout',
                       isDestructive: true,
                       onTap: () => SystemNavigator.pop(),
                     ),
