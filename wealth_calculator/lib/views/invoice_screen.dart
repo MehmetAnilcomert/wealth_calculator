@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_state.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/utils/invoice_utils.dart';
 import 'package:wealth_calculator/views/invoice_adding.dart';
 import 'package:wealth_calculator/widgets/InvoiceWidgets/build_list.dart';
@@ -11,6 +12,8 @@ import 'package:wealth_calculator/widgets/InvoiceWidgets/popup_item.dart';
 class InvoiceListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocProvider(
       create: (context) => InvoiceBloc()..add(LoadInvoices()),
       child: BlocConsumer<InvoiceBloc, InvoiceState>(
@@ -18,7 +21,7 @@ class InvoiceListScreen extends StatelessWidget {
           if (state is InvoiceError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text('${l10n.error}: ${state.message}'),
                 backgroundColor: Colors.red.shade400,
                 behavior: SnackBarBehavior.floating,
                 margin: const EdgeInsets.all(16),
@@ -52,8 +55,8 @@ class InvoiceListScreen extends StatelessWidget {
                     icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  title: const Text(
-                    'Faturalar',
+                  title: Text(
+                    l10n.invoice,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -64,8 +67,7 @@ class InvoiceListScreen extends StatelessWidget {
                     Theme(
                       data: Theme.of(context).copyWith(
                         popupMenuTheme: PopupMenuThemeData(
-                          color: const Color(
-                              0xFF2C3E50), // Background color of popup menu items
+                          color: const Color(0xFF2C3E50),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -94,14 +96,14 @@ class InvoiceListScreen extends StatelessWidget {
                           }
                         },
                         itemBuilder: (context) => [
+                          buildPopupMenuItem('importance', l10n.priorities,
+                              Icons.priority_high),
                           buildPopupMenuItem(
-                              'importance', 'Önem Sırası', Icons.priority_high),
-                          buildPopupMenuItem(
-                              'date', 'Tarih Sırası', Icons.date_range),
-                          buildPopupMenuItem(
-                              'amount', 'Miktar Sırası', Icons.monetization_on),
-                          buildPopupMenuItem(
-                              'amount_date', 'Miktar + Tarih', Icons.sort),
+                              'date', l10n.sortByDate, Icons.date_range),
+                          buildPopupMenuItem('amount', l10n.sortByAmount,
+                              Icons.monetization_on),
+                          buildPopupMenuItem('amount_date',
+                              '${l10n.amount} + ${l10n.date}', Icons.sort),
                         ],
                       ),
                     ),
@@ -112,9 +114,9 @@ class InvoiceListScreen extends StatelessWidget {
                     indicatorWeight: 3,
                     labelColor: Colors.white,
                     unselectedLabelColor: Colors.white.withOpacity(0.6),
-                    tabs: const [
-                      Tab(text: 'Ödenmemiş Faturalar'),
-                      Tab(text: 'Ödenmiş Faturalar'),
+                    tabs: [
+                      Tab(text: l10n.unpaidInvoices),
+                      Tab(text: l10n.paidInvoices),
                     ],
                   ),
                 ),
@@ -158,7 +160,7 @@ class InvoiceListScreen extends StatelessWidget {
               ),
             );
           }
-          return const Scaffold(
+          return Scaffold(
             body: Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),

@@ -6,6 +6,7 @@ import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/pricesBloc.dart';
 import 'package:wealth_calculator/bloc/PricesScreenCubit.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/utils/prices_screen_utils.dart';
 import 'package:wealth_calculator/widgets/PricesWidgets/buildTab.dart';
@@ -13,7 +14,6 @@ import 'package:wealth_calculator/widgets/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/widgets/custom_list.dart';
 import 'package:wealth_calculator/widgets/drawer.dart';
 
-// prices_screen.dart
 class PricesScreen extends StatefulWidget {
   @override
   _PricesScreenState createState() => _PricesScreenState();
@@ -30,6 +30,8 @@ class _PricesScreenState extends State<PricesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocListener<PricesBloc, PricesState>(
       listener: (context, state) {
         if (state is PricesLoaded) {
@@ -37,7 +39,7 @@ class _PricesScreenState extends State<PricesScreen>
         } else if (state is PricesError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text('${l10n.error}: ${state.message}'),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 2),
             ),
@@ -45,7 +47,7 @@ class _PricesScreenState extends State<PricesScreen>
         } else if (state is CustomPriceDuplicateError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text('${l10n.error}: ${state.message}'),
               backgroundColor: Colors.red,
               duration: Duration(seconds: 2),
             ),
@@ -95,7 +97,7 @@ class _PricesScreenState extends State<PricesScreen>
                     ),
                   ),
                   Text(
-                    'Güncel Piyasa Verileri',
+                    l10n.marketData,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 12,
@@ -156,8 +158,8 @@ class _PricesScreenState extends State<PricesScreen>
                       onChanged: (query) {
                         cubit.updateSearchQuery(query);
                       },
-                      decoration: const InputDecoration(
-                        hintText: 'Ara...',
+                      decoration: InputDecoration(
+                        hintText: l10n.search,
                         hintStyle: TextStyle(color: Colors.grey),
                         prefixIcon:
                             Icon(Icons.search, color: Color(0xFF3498DB)),
@@ -195,8 +197,12 @@ class _PricesScreenState extends State<PricesScreen>
                               },
                             );
                           }
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF3498DB)),
+                            ),
+                          );
                         },
                       ),
                     ],
@@ -227,11 +233,12 @@ class _PricesScreenState extends State<PricesScreen>
                     ),
                   ),
                   tabs: [
-                    buildTab(Icons.monetization_on_outlined, 'Altın'),
-                    buildTab(Icons.currency_exchange, 'Döviz'),
-                    buildTab(Icons.show_chart, 'Hisse'),
-                    buildTab(Icons.diamond_outlined, 'Emtia'),
-                    buildTab(Icons.account_balance_wallet_outlined, 'Portföy'),
+                    buildTab(Icons.monetization_on_outlined, l10n.gold),
+                    buildTab(Icons.currency_exchange, l10n.currency),
+                    buildTab(Icons.show_chart, l10n.stocks),
+                    buildTab(Icons.diamond_outlined, l10n.commodities),
+                    buildTab(
+                        Icons.account_balance_wallet_outlined, l10n.portfolio),
                   ],
                   labelColor: const Color(0xFF3498DB),
                   unselectedLabelColor: Colors.grey,

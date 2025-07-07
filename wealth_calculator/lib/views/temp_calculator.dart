@@ -4,6 +4,7 @@ import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
 import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempBloc.dart';
 import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempEvent.dart';
 import 'package:wealth_calculator/bloc/TempCalculatorBloc/tempState.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/custom_sliver_appbar.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
@@ -12,6 +13,8 @@ import 'package:wealth_calculator/widgets/calculator_list.dart';
 class CalculatorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return BlocProvider(
       create: (context) => TempInventoryBloc()..add(LoadInventoryData()),
       child: Scaffold(
@@ -23,8 +26,8 @@ class CalculatorScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: const Text(
-            "Varlık Hesaplama Makinesi",
+          title: Text(
+            l10n.wealthCalculator,
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -73,7 +76,7 @@ class CalculatorScreen extends StatelessWidget {
             if (state is InventoryError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Hata: Veriler yüklenemedi'),
+                  content: Text('${l10n.error}: ${l10n.noDataAvailable}'),
                   backgroundColor: Colors.red.shade400,
                   behavior: SnackBarBehavior.floating,
                   margin: const EdgeInsets.all(16),
@@ -88,7 +91,7 @@ class CalculatorScreen extends StatelessWidget {
           },
           builder: (context, state) {
             if (state is InventoryLoading) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
                 ),
@@ -129,9 +132,9 @@ class CalculatorScreen extends StatelessWidget {
                 ),
               );
             } else {
-              return const Center(
+              return Center(
                 child: Text(
-                  'Veriler yüklenirken hata oldu',
+                  l10n.error,
                   style: TextStyle(color: Colors.white),
                 ),
               );

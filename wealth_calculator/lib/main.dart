@@ -8,11 +8,11 @@ import 'package:wealth_calculator/bloc/PricesBloc/PricesEvent.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
 import 'package:wealth_calculator/bloc/PricesScreenCubit.dart';
 import 'package:wealth_calculator/bloc/LocalizationCubit/localization_cubit.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/services/DatabaseHelper.dart';
 import 'package:wealth_calculator/services/Notification.dart';
 import 'package:wealth_calculator/views/splash_screen.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

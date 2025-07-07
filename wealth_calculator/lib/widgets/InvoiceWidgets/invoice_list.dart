@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_bloc.dart';
 import 'package:wealth_calculator/bloc/InvoiceBloc/invoice_event.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/modals/InvoiceModal.dart';
 import 'package:wealth_calculator/views/invoice_adding.dart';
 
@@ -19,6 +20,7 @@ class InvoiceListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView.builder(
       padding: EdgeInsets.all(16),
       itemCount: invoices.length,
@@ -115,7 +117,7 @@ class InvoiceListWidget extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                "${fatura.tutar} TL",
+                                "${fatura.tutar} ${l10n.currency}",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -124,7 +126,7 @@ class InvoiceListWidget extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                "Son Ödeme: ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
+                                "${l10n.date}: ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.white.withOpacity(0.8),

@@ -4,6 +4,7 @@ import 'package:wealth_calculator/bloc/InventoryBloc/InventoryBloc.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryEvent.dart';
 import 'package:wealth_calculator/bloc/InventoryBloc/InventoryState.dart';
 import 'package:wealth_calculator/bloc/PricesBloc/PricesState.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/ItemDialogs.dart';
 import 'package:wealth_calculator/widgets/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/widgets/InventoryWidgets/list_widget.dart';
@@ -13,6 +14,7 @@ import 'package:wealth_calculator/widgets/InventoryWidgets/swipable_appbar.dart'
 class InventoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final inventoryBloc = BlocProvider.of<InventoryBloc>(context);
 
     return Scaffold(
@@ -20,8 +22,8 @@ class InventoryScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        title: const Text(
-          'Varlıklar',
+        title: Text(
+          l10n.assets,
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -71,7 +73,7 @@ class InventoryScreen extends StatelessWidget {
           if (state is InventoryError || state is PricesError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Text('Hata: Veriler yüklenemedi'),
+                content: Text('${l10n.error}: ${l10n.noDataAvailable}'),
                 backgroundColor: Colors.red.shade400,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
@@ -82,7 +84,7 @@ class InventoryScreen extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is InventoryLoading) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
               ),
@@ -107,13 +109,11 @@ class InventoryScreen extends StatelessWidget {
                     onAddPressed: () {},
                     bloc: inventoryBloc,
                     pages: [
-                      // TotalPrice widget to show total price of all wealths in inventory at that moment,
                       TotalPrice(
                         totalPrice: state.totalPrice,
                         segments: state.segments,
                         colors: state.colors,
                       ),
-                      // PriceHistoryChart widget to show wealth price history,
                       PriceHistoryChart(pricesHistory: state.pricesHistory),
                     ],
                   ),
@@ -127,9 +127,9 @@ class InventoryScreen extends StatelessWidget {
               ),
             );
           } else {
-            return const Center(
+            return Center(
               child: Text(
-                'Veriler yüklenirken hata oldu',
+                l10n.error,
                 style: TextStyle(color: Colors.white),
               ),
             );

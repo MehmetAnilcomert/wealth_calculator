@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 class WealthPriceCard extends StatefulWidget {
@@ -41,6 +42,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isNegativeChange = widget.equity.change.startsWith('-');
     final changeColor = isNegativeChange ? Colors.red : Colors.green;
     final icon = isNegativeChange ? Icons.trending_down : Icons.trending_up;
@@ -122,20 +124,20 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                       if (widget.equity.type == PriceType.equity ||
                           widget.equity.type == PriceType.commodity)
                         _buildMainPriceRow(
-                            'Anlık fiyat:', widget.equity.currentPrice!)
+                            l10n.currentPrice, widget.equity.currentPrice!)
                       else
                         _buildMainPriceRow(
-                            'Anlık fiyat:', widget.equity.buyingPrice),
+                            l10n.currentPrice, widget.equity.buyingPrice),
                       AnimatedCrossFade(
                         firstChild: const SizedBox.shrink(),
                         secondChild: Column(
                           children: [
                             _buildInfoRow(
-                                'En yüksek:', widget.equity.buyingPrice),
+                                l10n.highest, widget.equity.buyingPrice),
                             _buildInfoRow(
-                                'En düşük:', widget.equity.sellingPrice),
+                                l10n.lowest, widget.equity.sellingPrice),
                             if (widget.equity.volume != null)
-                              _buildInfoRow('Volume:', widget.equity.volume!),
+                              _buildInfoRow(l10n.volume, widget.equity.volume!),
                           ],
                         ),
                         crossFadeState: _isExpanded
@@ -145,7 +147,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${widget.equity.type == PriceType.commodity || widget.equity.type == PriceType.equity ? 'Tarih' : 'Saat'}: ${widget.equity.time}',
+                        '${widget.equity.type == PriceType.commodity || widget.equity.type == PriceType.equity ? l10n.date : l10n.time}: ${widget.equity.time}',
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],

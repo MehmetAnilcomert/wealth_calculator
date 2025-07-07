@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 import 'package:wealth_calculator/views/invoice_screen.dart';
-import 'package:wealth_calculator/views/profile.dart';
 import 'package:wealth_calculator/views/settings_screen.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
 

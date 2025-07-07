@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 import 'package:wealth_calculator/modals/Wealths.dart';
 import 'package:wealth_calculator/services/Wealthsdao.dart';
@@ -34,6 +35,7 @@ class ItemDialogs {
     MapEntry<SavedWealths, int> entry,
     Function(SavedWealths, int) onSave,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     TextEditingController controller = TextEditingController(
       text: entry.value.toString(),
     );
@@ -67,7 +69,7 @@ class ItemDialogs {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Miktarı Giriniz',
+                  l10n.enterAmount,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -80,7 +82,7 @@ class ItemDialogs {
                   keyboardType: TextInputType.number,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    labelText: 'Miktar',
+                    labelText: l10n.amount,
                     labelStyle: TextStyle(color: Colors.white70),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -99,7 +101,7 @@ class ItemDialogs {
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
-                        'İptal',
+                        l10n.cancel,
                         style: TextStyle(color: Colors.white70),
                       ),
                     ),
@@ -117,7 +119,7 @@ class ItemDialogs {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text('Kaydet'),
+                      child: Text(l10n.save),
                     ),
                   ],
                 ),
@@ -150,7 +152,7 @@ class SelectItemDialog extends StatefulWidget {
 }
 
 class _SelectItemDialogState extends State<SelectItemDialog> {
-  String selectedOption = 'Altın Seç';
+  String selectedOption = 'selectGold';
   List<WealthPrice> goldPrices = [];
   List<WealthPrice> currencyPrices = [];
 
@@ -167,6 +169,8 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -199,7 +203,9 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  selectedOption,
+                  selectedOption == 'selectGold'
+                      ? l10n.selectGold
+                      : l10n.selectCurrency,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -215,8 +221,10 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                   },
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    _buildPopupMenuItem('Döviz Seç', Icons.currency_exchange),
-                    _buildPopupMenuItem('Altın Seç', Icons.monetization_on),
+                    _buildPopupMenuItem('selectCurrency',
+                        Icons.currency_exchange, l10n.selectCurrency),
+                    _buildPopupMenuItem(
+                        'selectGold', Icons.monetization_on, l10n.selectGold),
                   ],
                 ),
               ],
@@ -231,7 +239,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Column(
                   children: [
-                    ...(selectedOption == 'Altın Seç'
+                    ...(selectedOption == 'selectGold'
                             ? goldPrices
                             : currencyPrices)
                         .map((price) => _buildListItem(price, context)),
@@ -245,14 +253,15 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
     );
   }
 
-  PopupMenuItem<String> _buildPopupMenuItem(String value, IconData icon) {
+  PopupMenuItem<String> _buildPopupMenuItem(
+      String value, IconData icon, String text) {
     return PopupMenuItem<String>(
       value: value,
       child: Row(
         children: [
           Icon(icon, size: 20, color: Color(0xFF3498DB)),
           SizedBox(width: 12),
-          Text(value),
+          Text(text),
         ],
       ),
     );
