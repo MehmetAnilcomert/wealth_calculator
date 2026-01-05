@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
-import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_screen_cubit.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_bloc.dart';
-import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_event.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
 import 'package:wealth_calculator/feature/splash/viewmodel/splash_cubit.dart';
 
@@ -22,12 +20,8 @@ final class StateInitialize extends StatelessWidget {
         // Feature states
         BlocProvider(create: (context) => SplashCubit()),
         BlocProvider(create: (context) => PricesScreenCubit()),
-        BlocProvider(
-          create: (context) => PricesBloc()..add(LoadPrices()),
-        ),
-        BlocProvider(
-          create: (context) => InventoryBloc()..add(LoadInventoryData()),
-        ),
+        BlocProvider(create: (context) => PricesBloc()),
+        BlocProvider(create: (context) => InventoryBloc()),
         BlocProvider(
           create: (context) => InvoiceBloc(),
         ),

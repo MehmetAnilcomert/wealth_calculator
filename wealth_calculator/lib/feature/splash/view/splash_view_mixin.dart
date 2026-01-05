@@ -7,7 +7,6 @@ mixin SplashViewMixin on State<SplashView> {
   }
 
   void handleSplashComplete() {
-    context.read<InventoryBloc>().add(LoadInventoryData());
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const PricesView()),
@@ -23,6 +22,8 @@ mixin SplashViewMixin on State<SplashView> {
   void listenToPricesState(BuildContext context, PricesState state) {
     if (state is PricesLoaded) {
       context.read<SplashCubit>().onDataLoaded();
+      // Load inventory data in background for daily logging
+      context.read<InventoryBloc>().add(const LoadInventoryData());
     }
   }
 }
