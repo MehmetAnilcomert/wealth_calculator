@@ -88,7 +88,7 @@ class NotificationService {
     } catch (e) {
       print('Error scheduling notification: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
               "Bildirim planlanırken hata oluştu: Geçmiş tarih için oluşturulamaz"),
           backgroundColor: Colors.red,

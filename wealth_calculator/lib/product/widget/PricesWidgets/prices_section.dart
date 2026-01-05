@@ -16,7 +16,7 @@ Widget buildPricesSection(BuildContext context, String type, String query) {
   return BlocBuilder<PricesBloc, PricesState>(
     builder: (context, state) {
       if (state is PricesLoading) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else if (state is PricesError) {
         return Center(
           child: Text('${LocaleKeys.error.tr()}: ${state.message}'),

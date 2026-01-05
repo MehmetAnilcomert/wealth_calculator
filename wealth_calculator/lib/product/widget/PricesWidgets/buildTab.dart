@@ -8,7 +8,7 @@ Widget buildTab(IconData icon, String label, BuildContext context) {
       style: TextTheme.of(context)
               .labelSmall
               ?.copyWith(fontSize: 10, fontWeight: FontWeight.w500) ??
-          TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+          const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
     ),
   );
 }

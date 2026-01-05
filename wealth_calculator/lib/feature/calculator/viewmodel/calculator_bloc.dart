@@ -38,8 +38,9 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
   Future<void> _onAddOrUpdateWealth(
       AddOrUpdateCalculatorWealth event, Emitter<CalculatorState> emit) async {
     try {
-      final existingWealthIndex = _savedWealths
-          .indexWhere((wealth) => wealth.type == event.wealth.type);
+      final existingWealthIndex = _savedWealths.indexWhere(
+        (wealth) => wealth.type == event.wealth.type,
+      );
 
       if (existingWealthIndex != -1) {
         _savedWealths[existingWealthIndex] = SavedWealths(
@@ -75,19 +76,31 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
   CalculatorLoaded _createLoadedState() {
     return CalculatorLoaded(
       totalPrice: _calculateTotalPrice(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+        _savedWealths,
+        _cachedGoldPrices,
+        _cachedCurrencyPrices,
+      ),
       segments: _calculateSegments(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+        _savedWealths,
+        _cachedGoldPrices,
+        _cachedCurrencyPrices,
+      ),
       colors: _calculateColors(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+        _savedWealths,
+        _cachedGoldPrices,
+        _cachedCurrencyPrices,
+      ),
       goldPrices: _cachedGoldPrices,
       currencyPrices: _cachedCurrencyPrices,
       savedWealths: _savedWealths,
     );
   }
 
-  double _calculateTotalPrice(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
+  double _calculateTotalPrice(
+    List<SavedWealths> savedWealths,
+    List<WealthPrice> goldPrices,
+    List<WealthPrice> currencyPrices,
+  ) {
     double total = 0;
     for (var wealth in savedWealths) {
       double price = 0.0;
@@ -100,8 +113,9 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       if (price == 0.0) {
         for (var currency in currencyPrices) {
           if (currency.title == wealth.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+            price = double.parse(
+              currency.buyingPrice.replaceAll(',', '.').trim(),
+            );
             break;
           }
         }
@@ -111,8 +125,11 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     return total;
   }
 
-  List<double> _calculateSegments(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
+  List<double> _calculateSegments(
+    List<SavedWealths> savedWealths,
+    List<WealthPrice> goldPrices,
+    List<WealthPrice> currencyPrices,
+  ) {
     List<double> segments = [];
     double total = 0;
     for (var wealth in savedWealths) {
@@ -126,8 +143,9 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       if (price == 0.0) {
         for (var currency in currencyPrices) {
           if (currency.title == wealth.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+            price = double.parse(
+              currency.buyingPrice.replaceAll(',', '.').trim(),
+            );
             break;
           }
         }
@@ -143,8 +161,11 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     return segments;
   }
 
-  List<Color> _calculateColors(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
+  List<Color> _calculateColors(
+    List<SavedWealths> savedWealths,
+    List<WealthPrice> goldPrices,
+    List<WealthPrice> currencyPrices,
+  ) {
     final colorMap = {
       'Altın (TL/GR)': Colors.yellow,
       'Cumhuriyet Altını': Colors.yellow,
@@ -157,7 +178,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     };
 
     return [
-      for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey
+      for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey,
     ];
   }
 }

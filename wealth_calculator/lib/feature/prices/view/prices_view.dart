@@ -45,7 +45,7 @@ class _PricesViewState extends State<PricesView>
             SnackBar(
               content: Text('${LocaleKeys.error.tr()}: ${state.message}'),
               backgroundColor: Colors.red,
-              duration: Duration(seconds: 2),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -158,10 +158,10 @@ class _PricesViewState extends State<PricesView>
                         hintText: LocaleKeys.search.tr(),
                         hintStyle: TextStyle(color: Colors.grey),
                         prefixIcon:
-                            Icon(Icons.search, color: Color(0xFF3498DB)),
+                            const Icon(Icons.search, color: Color(0xFF3498DB)),
                         border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                       ),
                     ),
                   ),
@@ -193,7 +193,7 @@ class _PricesViewState extends State<PricesView>
                               },
                             );
                           }
-                          return Center(
+                          return const Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
                                   Color(0xFF3498DB)),

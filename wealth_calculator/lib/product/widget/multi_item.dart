@@ -41,7 +41,8 @@ class MultiSelectItemDialog extends StatefulWidget {
   final List<String> disabledItems;
   final List<String> hiddenItems;
 
-  MultiSelectItemDialog({
+  const MultiSelectItemDialog({
+    super.key,
     required this.futureGoldPrices,
     required this.futureCurrencyPrices,
     required this.futureEquityPrices,
@@ -56,7 +57,7 @@ class MultiSelectItemDialog extends StatefulWidget {
 }
 
 class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
-  Map<String, List<WealthPrice>> _selectedItemsByCategory = {
+  final Map<String, List<WealthPrice>> _selectedItemsByCategory = {
     'Altın': [],
     'Döviz': [],
     'Hisse Senetleri': [],
@@ -86,7 +87,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
 
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -95,7 +96,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 10,
@@ -107,15 +108,16 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Seçim Yapın',
                   style: TextStyle(
                     color: Colors.white,
@@ -125,7 +127,8 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                 ),
                 PopupMenuButton<String>(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
@@ -135,9 +138,9 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                       children: [
                         Text(
                           _selectedOption,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
-                        Icon(Icons.arrow_drop_down, color: Colors.white),
+                        const Icon(Icons.arrow_drop_down, color: Colors.white),
                       ],
                     ),
                   ),
@@ -163,7 +166,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
             ),
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Column(
                   children: allItems
                       .map((price) => _buildListItem(
@@ -178,18 +181,18 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text(
+                  child: const Text(
                     'İptal',
                     style: TextStyle(color: Colors.white70),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {
                     List<WealthPrice> allSelectedItems =
@@ -201,12 +204,12 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Color(0xFF3498DB),
+                    backgroundColor: const Color(0xFF3498DB),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: Text('Tamam'),
+                  child: const Text('Tamam'),
                 ),
               ],
             ),
@@ -221,8 +224,8 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
       value: value,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Color(0xFF3498DB)),
-          SizedBox(width: 12),
+          Icon(icon, size: 20, color: const Color(0xFF3498DB)),
+          const SizedBox(width: 12),
           Text(value),
         ],
       ),
@@ -233,7 +236,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
     final isDisabled = widget.disabledItems.contains(price.title);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(isDisabled ? 0.05 : 0.1),
         borderRadius: BorderRadius.circular(10),
@@ -259,8 +262,8 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                 });
               },
         trailing: isSelected
-            ? Icon(Icons.check_circle, color: Colors.green)
-            : Icon(Icons.circle_outlined, color: Colors.white70),
+            ? const Icon(Icons.check_circle, color: Colors.green)
+            : const Icon(Icons.circle_outlined, color: Colors.white70),
       ),
     );
   }

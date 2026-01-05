@@ -8,12 +8,11 @@ class CustomPricesWidget extends StatelessWidget {
   final String query;
   final Function(WealthPrice) onDeletePrice;
   const CustomPricesWidget(
-      {Key? key,
+      {super.key,
       required this.customPrices,
       required this.onAddPressed,
       required this.query,
-      required this.onDeletePrice})
-      : super(key: key);
+      required this.onDeletePrice});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +20,10 @@ class CustomPricesWidget extends StatelessWidget {
       children: [
         Column(
           children: [
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Expanded(
               child: customPrices.isEmpty
-                  ? Center(child: Text('Henüz bir seçim yapılmadı.'))
+                  ? const Center(child: Text('Henüz bir seçim yapılmadı.'))
                   : buildCustomPrices(customPrices, query),
             ),
           ],
@@ -34,16 +33,16 @@ class CustomPricesWidget extends StatelessWidget {
           bottom: 16,
           child: IconButton(
             onPressed: onAddPressed,
-            icon: Icon(Icons.add, color: Colors.white),
+            icon: const Icon(Icons.add, color: Colors.white),
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.blueGrey),
-              elevation: MaterialStateProperty.all(4),
-              shape: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(Colors.blueGrey),
+              elevation: WidgetStateProperty.all(4),
+              shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              padding: MaterialStateProperty.all(EdgeInsets.all(12)),
+              padding: WidgetStateProperty.all(const EdgeInsets.all(12)),
             ),
           ),
         ),

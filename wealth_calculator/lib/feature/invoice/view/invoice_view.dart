@@ -165,7 +165,7 @@ class InvoiceView extends StatelessWidget {
               ),
             );
           }
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),

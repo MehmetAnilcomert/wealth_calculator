@@ -4,8 +4,6 @@ import 'package:wealth_calculator/product/product.dart';
 
 /// Application entry point
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
   // Initialize all required services
   await ApplicationInitialize().startApplication();
 

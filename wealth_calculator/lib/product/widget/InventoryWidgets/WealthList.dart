@@ -6,7 +6,8 @@ class WealthList extends StatelessWidget {
   final Function onDelete;
   final Function onEdit;
 
-  WealthList({
+  const WealthList({
+    super.key,
     required this.selectedItems,
     required this.onDelete,
     required this.onEdit,
@@ -19,16 +20,16 @@ class WealthList extends StatelessWidget {
         return ListTile(
           title: Text(
             entry.key.type,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           subtitle: Text(
             'Miktar: ${entry.value}',
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           tileColor: Colors.blueGrey,
           onTap: () => onEdit(entry),
           trailing: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.delete,
               color: Colors.black87,
             ),

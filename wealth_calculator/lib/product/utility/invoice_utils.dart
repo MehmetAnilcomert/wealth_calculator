@@ -23,9 +23,9 @@ abstract class InvoiceUtils {
   static Color getImportanceColor(OnemSeviyesi onemSeviyesi) {
     switch (onemSeviyesi) {
       case OnemSeviyesi.yuksek:
-        return Color.fromARGB(255, 165, 38, 9);
+        return const Color.fromARGB(255, 165, 38, 9);
       case OnemSeviyesi.orta:
-        return Color(0xFFFF7E00);
+        return const Color(0xFFFF7E00);
       case OnemSeviyesi.dusuk:
         return Color(0xFFFFF103);
     }

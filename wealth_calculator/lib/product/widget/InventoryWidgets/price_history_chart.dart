@@ -6,9 +6,9 @@ class PriceHistoryChart extends StatelessWidget {
   final List<WealthHistory> pricesHistory;
 
   const PriceHistoryChart({
-    Key? key,
+    super.key,
     required this.pricesHistory,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +68,10 @@ class PriceHistoryChart extends StatelessWidget {
                     },
                   ),
                 ),
-                rightTitles: AxisTitles(
+                rightTitles: const AxisTitles(
                   sideTitles: SideTitles(showTitles: false),
                 ),
-                topTitles: AxisTitles(
+                topTitles: const AxisTitles(
                   sideTitles: SideTitles(showTitles: false),
                 ),
                 bottomTitles: AxisTitles(

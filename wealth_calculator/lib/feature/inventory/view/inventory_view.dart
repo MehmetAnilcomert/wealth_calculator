@@ -87,7 +87,7 @@ class InventoryView extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is InventoryLoading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
               ),

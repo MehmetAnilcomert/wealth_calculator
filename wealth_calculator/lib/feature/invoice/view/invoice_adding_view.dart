@@ -53,7 +53,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
         selectedDate = dateFormat.parse(_tarihController.text);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
                 'Tarih formatı hatalı. Lütfen doğru formatta bir tarih girin.'),
             backgroundColor: Colors.red,
@@ -103,19 +103,20 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2C3E50),
+      backgroundColor: const Color(0xFF2C3E50),
       appBar: AppBar(
-        backgroundColor: Color(0xFF34495E),
+        backgroundColor: const Color(0xFF34495E),
         elevation: 0,
         title: Text(
           widget.fatura == null ? 'Fatura Ekle' : 'Fatura Güncelle',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: 200,
               child: Lottie.asset(
                 "images/bill.json",
@@ -123,7 +124,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
               ),
             ),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
@@ -144,7 +145,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                         onTap: () => _selectDate(context),
                         readOnly: true,
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _buildTextField(
                         controller: _tutarController,
                         label: 'Tutar',
@@ -157,15 +158,15 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                           return null;
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _buildTextField(
                         controller: _aciklamaController,
                         label: 'Açıklama',
                         icon: Icons.description,
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _buildDropdown(),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _buildSwitchTile(
                         title: 'Ödendi Mi?',
                         value: _odendiMi,
@@ -175,7 +176,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                             if (_odendiMi) {
                               _isNotificationEnabled = false;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text(
                                     'Fatura ödendi, bildirim gönderimi kapalı.',
                                   ),
@@ -186,7 +187,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                           });
                         },
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       _buildSwitchTile(
                         title: 'Hatırlatma bildirimi gönderilsin mi?',
                         value: _isNotificationEnabled,
@@ -239,7 +240,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                                     await NotificationService
                                         .cancelNotification(notificationId);
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                      const SnackBar(
                                           content:
                                               Text('Bildirim iptal edildi.')),
                                     );
@@ -258,23 +259,23 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                                 }
                               },
                       ),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       Center(
                         child: ElevatedButton(
                           onPressed: () => _faturaEkleGuncelle(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF3498DB),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
                           child: Text(
                             widget.fatura == null
                                 ? 'Faturayı Kaydet'
                                 : 'Faturayı Güncelle',
                             style: TextStyle(fontSize: 16),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF3498DB),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
                           ),
                         ),
                       ),
@@ -302,14 +303,14 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Color(0xFF3498DB)),
+        prefixIcon: Icon(icon, color: const Color(0xFF3498DB)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Color(0xFF3498DB)),
+          borderSide: const BorderSide(color: Color(0xFF3498DB)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Color(0xFF3498DB), width: 2),
+          borderSide: const BorderSide(color: Color(0xFF3498DB), width: 2),
         ),
       ),
       readOnly: readOnly,
@@ -321,7 +322,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
 
   Widget _buildDropdown() {
     return DropdownButtonFormField<OnemSeviyesi>(
-      value: _secilenOnemSeviyesi,
+      initialValue: _secilenOnemSeviyesi,
       onChanged: (OnemSeviyesi? newValue) {
         setState(() {
           _secilenOnemSeviyesi = newValue!;
@@ -349,7 +350,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
           child: Row(
             children: [
               Icon(icon, color: color, size: 20),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
                 onemSeviyesi.toString().split('.').last.toUpperCase(),
                 style: TextStyle(
@@ -363,19 +364,19 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
       }).toList(),
       decoration: InputDecoration(
         labelText: 'Önem Seviyesi',
-        prefixIcon: Icon(Icons.priority_high, color: Color(0xFF3498DB)),
+        prefixIcon: const Icon(Icons.priority_high, color: Color(0xFF3498DB)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Color(0xFF3498DB)),
+          borderSide: const BorderSide(color: Color(0xFF3498DB)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Color(0xFF3498DB), width: 2),
+          borderSide: const BorderSide(color: Color(0xFF3498DB), width: 2),
         ),
       ),
-      icon: Icon(Icons.arrow_drop_down, color: Color(0xFF3498DB)),
+      icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF3498DB)),
       dropdownColor: Colors.white,
-      style: TextStyle(color: Color(0xFF2C3E50), fontSize: 16),
+      style: const TextStyle(color: Color(0xFF2C3E50), fontSize: 16),
     );
   }
 
@@ -386,15 +387,15 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFF3498DB)),
+        border: Border.all(color: const Color(0xFF3498DB)),
         borderRadius: BorderRadius.circular(15),
       ),
       child: SwitchListTile(
-        title: Text(title, style: TextStyle(fontSize: 16)),
+        title: Text(title, style: const TextStyle(fontSize: 16)),
         value: value,
         onChanged: onChanged,
-        activeColor: Color(0xFF3498DB),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+        activeThumbColor: const Color(0xFF3498DB),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
     );
   }
