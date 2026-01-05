@@ -8,6 +8,7 @@ import 'package:wealth_calculator/product/widget/CommonWidgets/total_price.dart'
 import 'package:wealth_calculator/product/widget/InventoryWidgets/ItemDialogs.dart';
 import 'package:wealth_calculator/product/widget/calculator_list.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class CalculatorScreen extends StatelessWidget {
   @override
@@ -24,7 +25,7 @@ class CalculatorScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'wealthCalculator'.tr(),
+            LocaleKeys.wealthCalculator.tr(),
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -73,7 +74,8 @@ class CalculatorScreen extends StatelessWidget {
             if (state is InventoryError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${'error'.tr()}: ${'noDataAvailable'.tr()}'),
+                  content: Text(
+                      '${LocaleKeys.error.tr()}: ${LocaleKeys.noDataAvailable.tr()}'),
                   backgroundColor: Colors.red.shade400,
                   behavior: SnackBarBehavior.floating,
                   margin: const EdgeInsets.all(16),
@@ -131,7 +133,7 @@ class CalculatorScreen extends StatelessWidget {
             } else {
               return Center(
                 child: Text(
-                  'error'.tr(),
+                  LocaleKeys.error.tr(),
                   style: TextStyle(color: Colors.white),
                 ),
               );

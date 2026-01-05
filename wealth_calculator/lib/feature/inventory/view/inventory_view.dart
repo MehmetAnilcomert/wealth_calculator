@@ -10,6 +10,7 @@ import 'package:wealth_calculator/product/widget/InventoryWidgets/list_widget.da
 import 'package:wealth_calculator/product/widget/InventoryWidgets/price_history_chart.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/swipable_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class InventoryView extends StatelessWidget {
   const InventoryView({super.key});
@@ -24,7 +25,7 @@ class InventoryView extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'assets'.tr(),
+          LocaleKeys.assets.tr(),
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -74,7 +75,8 @@ class InventoryView extends StatelessWidget {
           if (state is InventoryError || state is PricesError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('${'error'.tr()}: ${'noDataAvailable'.tr()}'),
+                content: Text(
+                    '${LocaleKeys.error.tr()}: ${LocaleKeys.noDataAvailable.tr()}'),
                 backgroundColor: Colors.red.shade400,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
@@ -130,7 +132,7 @@ class InventoryView extends StatelessWidget {
           } else {
             return Center(
               child: Text(
-                'error'.tr(),
+                LocaleKeys.error.tr(),
                 style: TextStyle(color: Colors.white),
               ),
             );

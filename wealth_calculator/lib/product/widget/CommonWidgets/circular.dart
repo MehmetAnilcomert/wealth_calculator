@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/circular_painter.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class CircularMoneyState extends StatelessWidget {
   final double totalAmount;
@@ -21,13 +22,13 @@ class CircularMoneyState extends StatelessWidget {
   String _formatAmount(double amount) {
     if (amount >= 1000000000) {
       // Milyar
-      return '${(amount / 1000000000).toStringAsFixed(2)} ${'milyar'.tr()} TL';
+      return '${(amount / 1000000000).toStringAsFixed(2)} ${LocaleKeys.milyar.tr()} TL';
     } else if (amount >= 1000000) {
       // Milyon
-      return '${(amount / 1000000).toStringAsFixed(2)}${'milyon'.tr()} TL';
+      return '${(amount / 1000000).toStringAsFixed(2)}${LocaleKeys.milyon.tr()} TL';
     } else if (amount >= 1000) {
       // Bin
-      return '${(amount / 1000).toStringAsFixed(2)}${'bin'.tr()} TL';
+      return '${(amount / 1000).toStringAsFixed(2)}${LocaleKeys.bin.tr()} TL';
     } else {
       return '${amount.toStringAsFixed(2)} TL';
     }
@@ -85,7 +86,7 @@ class CircularMoneyState extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${'total'.tr()}:',
+                    '${LocaleKeys.total.tr()}:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,

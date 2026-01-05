@@ -13,6 +13,7 @@ import 'package:wealth_calculator/product/widget/PricesWidgets/prices_section.da
 import 'package:wealth_calculator/product/widget/custom_list.dart';
 import 'package:wealth_calculator/product/widget/drawer.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class PricesView extends StatefulWidget {
   const PricesView({super.key});
@@ -39,7 +40,7 @@ class _PricesViewState extends State<PricesView>
         } else if (state is PricesError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${'error'.tr()}: ${state.message}'),
+              content: Text('${LocaleKeys.error.tr()}: ${state.message}'),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 2),
             ),
@@ -47,7 +48,7 @@ class _PricesViewState extends State<PricesView>
         } else if (state is CustomPriceDuplicateError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${'error'.tr()}: ${state.message}'),
+              content: Text('${LocaleKeys.error.tr()}: ${state.message}'),
               backgroundColor: Colors.red,
               duration: Duration(seconds: 2),
             ),
@@ -97,7 +98,7 @@ class _PricesViewState extends State<PricesView>
                     ),
                   ),
                   Text(
-                    'marketData'.tr(),
+                    LocaleKeys.marketData.tr(),
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 12,
@@ -159,7 +160,7 @@ class _PricesViewState extends State<PricesView>
                         cubit.updateSearchQuery(query);
                       },
                       decoration: InputDecoration(
-                        hintText: 'search'.tr(),
+                        hintText: LocaleKeys.search.tr(),
                         hintStyle: TextStyle(color: Colors.grey),
                         prefixIcon:
                             Icon(Icons.search, color: Color(0xFF3498DB)),
@@ -233,14 +234,15 @@ class _PricesViewState extends State<PricesView>
                     ),
                   ),
                   tabs: [
-                    buildTab(
-                        Icons.monetization_on_outlined, 'gold'.tr(), context),
-                    buildTab(Icons.currency_exchange, 'currency'.tr(), context),
-                    buildTab(Icons.show_chart, 'stocks'.tr(), context),
-                    buildTab(
-                        Icons.diamond_outlined, 'commodities'.tr(), context),
+                    buildTab(Icons.monetization_on_outlined,
+                        LocaleKeys.gold.tr(), context),
+                    buildTab(Icons.currency_exchange, LocaleKeys.currency.tr(),
+                        context),
+                    buildTab(Icons.show_chart, LocaleKeys.stocks.tr(), context),
+                    buildTab(Icons.diamond_outlined,
+                        LocaleKeys.commodities.tr(), context),
                     buildTab(Icons.account_balance_wallet_outlined,
-                        'portfolio'.tr(), context),
+                        LocaleKeys.portfolio.tr(), context),
                   ],
                   labelColor: const Color(0xFF3498DB),
                   unselectedLabelColor: Colors.grey,

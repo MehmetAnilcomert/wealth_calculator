@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
@@ -10,11 +11,11 @@ import 'package:wealth_calculator/product/widget/multi_item.dart';
 abstract class PricesScreenUtils {
   static String getAppBarTitle(int index) {
     final titles = [
-      'goldPrices'.tr(),
-      'currencyPrices'.tr(),
-      'stocksBist'.tr(),
-      'commoditiesPrices'.tr(),
-      'portfolioIndividual'.tr(),
+      LocaleKeys.goldPrices.tr(),
+      LocaleKeys.currencyPrices.tr(),
+      LocaleKeys.stocksBist.tr(),
+      LocaleKeys.commoditiesPrices.tr(),
+      LocaleKeys.portfolioIndividual.tr(),
     ];
     return titles[index.clamp(0, 6)];
   }

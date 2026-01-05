@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class SwipableAppBar extends StatefulWidget {
   final double expandedHeight;
@@ -148,7 +149,7 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                 child: Row(
                   children: [
                     Text(
-                      'swipe'.tr(),
+                      LocaleKeys.swipe.tr(),
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.8),
                         fontSize: 14,

@@ -8,6 +8,7 @@ import 'package:wealth_calculator/product/utility/invoice_utils.dart';
 import 'package:wealth_calculator/product/widget/InvoiceWidgets/build_list.dart';
 import 'package:wealth_calculator/product/widget/InvoiceWidgets/popup_item.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class InvoiceView extends StatelessWidget {
   const InvoiceView({super.key});
@@ -21,7 +22,7 @@ class InvoiceView extends StatelessWidget {
           if (state is InvoiceError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('${'error'.tr()}: ${state.message}'),
+                content: Text('${LocaleKeys.error.tr()}: ${state.message}'),
                 backgroundColor: Colors.red.shade400,
                 behavior: SnackBarBehavior.floating,
                 margin: const EdgeInsets.all(16),
@@ -56,7 +57,7 @@ class InvoiceView extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   title: Text(
-                    'invoice'.tr(),
+                    LocaleKeys.invoice.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -96,14 +97,18 @@ class InvoiceView extends StatelessWidget {
                           }
                         },
                         itemBuilder: (context) => [
-                          buildPopupMenuItem('importance', 'priorities'.tr(),
-                              Icons.priority_high),
+                          buildPopupMenuItem('importance',
+                              LocaleKeys.priorities.tr(), Icons.priority_high),
+                          buildPopupMenuItem('date', LocaleKeys.sortByDate.tr(),
+                              Icons.date_range),
                           buildPopupMenuItem(
-                              'date', 'sortByDate'.tr(), Icons.date_range),
-                          buildPopupMenuItem('amount', 'sortByAmount'.tr(),
+                              'amount',
+                              LocaleKeys.sortByAmount.tr(),
                               Icons.monetization_on),
-                          buildPopupMenuItem('amount_date',
-                              '${'amount'.tr()} + ${'date'.tr()}', Icons.sort),
+                          buildPopupMenuItem(
+                              'amount_date',
+                              '${LocaleKeys.amount.tr()} + ${LocaleKeys.date.tr()}',
+                              Icons.sort),
                         ],
                       ),
                     ),
@@ -115,8 +120,8 @@ class InvoiceView extends StatelessWidget {
                     labelColor: Colors.white,
                     unselectedLabelColor: Colors.white.withOpacity(0.6),
                     tabs: [
-                      Tab(text: 'unpaidInvoices'.tr()),
-                      Tab(text: 'paidInvoices'.tr()),
+                      Tab(text: LocaleKeys.unpaidInvoices.tr()),
+                      Tab(text: LocaleKeys.paidInvoices.tr()),
                     ],
                   ),
                 ),

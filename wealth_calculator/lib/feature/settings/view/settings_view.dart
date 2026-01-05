@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -8,12 +9,12 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('settings'.tr()),
+        title: Text(LocaleKeys.settings.tr()),
       ),
       body: ListView(
         children: [
           ListTile(
-            title: Text('language'.tr()),
+            title: Text(LocaleKeys.language.tr()),
             trailing: DropdownButton<String>(
               value: context.locale.languageCode,
               items: const [

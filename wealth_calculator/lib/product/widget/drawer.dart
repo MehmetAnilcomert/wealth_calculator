@@ -5,6 +5,7 @@ import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
 import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
 import 'package:wealth_calculator/feature/settings/view/temp_calculator_view.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -49,7 +50,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    'profile'.tr(),
+                    LocaleKeys.profile.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -74,19 +75,19 @@ class AppDrawer extends StatelessWidget {
                     _buildMenuItem(
                       context,
                       icon: Icons.receipt_outlined,
-                      title: 'invoice'.tr(),
+                      title: LocaleKeys.invoice.tr(),
                       onTap: () => _navigateTo(context, InvoiceView()),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.inventory_2_outlined,
-                      title: 'inventory'.tr(),
+                      title: LocaleKeys.inventory.tr(),
                       onTap: () => _navigateTo(context, InventoryView()),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.calculate_outlined,
-                      title: 'totalWealth'.tr(),
+                      title: LocaleKeys.wealthCalculator.tr(),
                       onTap: () => _navigateTo(context, CalculatorScreen()),
                     ),
                     Padding(
@@ -96,7 +97,7 @@ class AppDrawer extends StatelessWidget {
                     _buildMenuItem(
                       context,
                       icon: Icons.settings_outlined,
-                      title: 'settings'.tr(),
+                      title: LocaleKeys.settings.tr(),
                       onTap: () => _navigateTo(context, SettingsView()),
                     ),
                     Padding(

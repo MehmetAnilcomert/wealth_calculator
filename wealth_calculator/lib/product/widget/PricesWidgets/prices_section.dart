@@ -6,6 +6,7 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/widget/wealth_card.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 Widget buildPricesSection(BuildContext context, String type, String query) {
   dynamic noop(WealthPrice price) {
@@ -18,7 +19,7 @@ Widget buildPricesSection(BuildContext context, String type, String query) {
         return Center(child: CircularProgressIndicator());
       } else if (state is PricesError) {
         return Center(
-          child: Text('${'error'.tr()}: ${state.message}'),
+          child: Text('${LocaleKeys.error.tr()}: ${state.message}'),
         );
       } else if (state is PricesLoaded) {
         List<WealthPrice> prices = [];
@@ -38,12 +39,12 @@ Widget buildPricesSection(BuildContext context, String type, String query) {
             .toList();
 
         if (prices.isEmpty) {
-          return Center(child: Text('noDataAvailable'.tr()));
+          return Center(child: Text(LocaleKeys.noDataAvailable.tr()));
         }
 
         return buildEquityPricesTab(prices, noop);
       } else {
-        return Center(child: Text('noDataAvailable'.tr()));
+        return Center(child: Text(LocaleKeys.noDataAvailable.tr()));
       }
     },
   );

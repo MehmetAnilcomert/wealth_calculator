@@ -3,6 +3,7 @@ import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/product/service/Wealthsdao.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class ItemDialogs {
   static void showSelectItemDialog(
@@ -68,7 +69,7 @@ class ItemDialogs {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'enterAmount'.tr(),
+                  LocaleKeys.enterAmount.tr(),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -81,7 +82,7 @@ class ItemDialogs {
                   keyboardType: TextInputType.number,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    labelText: 'amount'.tr(),
+                    labelText: LocaleKeys.amount.tr(),
                     labelStyle: TextStyle(color: Colors.white70),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -100,7 +101,7 @@ class ItemDialogs {
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
-                        'cancel'.tr(),
+                        LocaleKeys.cancel.tr(),
                         style: TextStyle(color: Colors.white70),
                       ),
                     ),
@@ -118,7 +119,7 @@ class ItemDialogs {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text('save'.tr()),
+                      child: Text(LocaleKeys.save.tr()),
                     ),
                   ],
                 ),
@@ -201,8 +202,8 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
               children: [
                 Text(
                   selectedOption == 'selectGold'
-                      ? 'selectGold'.tr()
-                      : 'selectCurrency'.tr(),
+                      ? LocaleKeys.selectGold.tr()
+                      : LocaleKeys.selectCurrency.tr(),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -218,10 +219,12 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                   },
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    _buildPopupMenuItem('selectCurrency',
-                        Icons.currency_exchange, 'selectCurrency'.tr()),
                     _buildPopupMenuItem(
-                        'selectGold', Icons.monetization_on, 'selectGold'.tr()),
+                        'selectCurrency',
+                        Icons.currency_exchange,
+                        LocaleKeys.selectCurrency.tr()),
+                    _buildPopupMenuItem('selectGold', Icons.monetization_on,
+                        LocaleKeys.selectGold.tr()),
                   ],
                 ),
               ],

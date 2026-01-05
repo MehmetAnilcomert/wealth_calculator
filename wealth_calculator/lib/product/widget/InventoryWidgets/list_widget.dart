@@ -7,6 +7,7 @@ import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_event.da
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/ItemDialogs.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class InventoryListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
@@ -106,7 +107,7 @@ class InventoryListWidget extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                '${'amount'.tr()}: ${wealth.amount}',
+                                '${LocaleKeys.amount.tr()}: ${wealth.amount}',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.8),
                                   fontSize: 16,
