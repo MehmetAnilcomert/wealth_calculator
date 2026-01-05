@@ -1,0 +1,79 @@
+// DO NOT EDIT. This is code generated via package:easy_localization/generate.dart
+
+// ignore_for_file: constant_identifier_names
+
+abstract class  LocaleKeys {
+  static const appTitle = 'appTitle';
+  static const inventory = 'inventory';
+  static const prices = 'prices';
+  static const invoice = 'invoice';
+  static const profile = 'profile';
+  static const totalWealth = 'totalWealth';
+  static const currency = 'currency';
+  static const gold = 'gold';
+  static const commodities = 'commodities';
+  static const stocks = 'stocks';
+  static const settings = 'settings';
+  static const language = 'language';
+  static const theme = 'theme';
+  static const notifications = 'notifications';
+  static const addNewItem = 'addNewItem';
+  static const save = 'save';
+  static const cancel = 'cancel';
+  static const delete = 'delete';
+  static const edit = 'edit';
+  static const amount = 'amount';
+  static const price = 'price';
+  static const date = 'date';
+  static const total = 'total';
+  static const welcome = 'welcome';
+  static const currentPrice = 'currentPrice';
+  static const highest = 'highest';
+  static const lowest = 'lowest';
+  static const volume = 'volume';
+  static const time = 'time';
+  static const selectGold = 'selectGold';
+  static const selectCurrency = 'selectCurrency';
+  static const enterAmount = 'enterAmount';
+  static const logout = 'logout';
+  static const noDataAvailable = 'noDataAvailable';
+  static const error = 'error';
+  static const loading = 'loading';
+  static const today = 'today';
+  static const yes = 'yes';
+  static const no = 'no';
+  static const priorities = 'priorities';
+  static const sortByDate = 'sortByDate';
+  static const sortByAmount = 'sortByAmount';
+  static const unpaidInvoices = 'unpaidInvoices';
+  static const paidInvoices = 'paidInvoices';
+  static const assets = 'assets';
+  static const marketData = 'marketData';
+  static const calculator = 'calculator';
+  static const wealthCalculator = 'wealthCalculator';
+  static const search = 'search';
+  static const portfolio = 'portfolio';
+  static const invoiceTitle = 'invoiceTitle';
+  static const unpaid = 'unpaid';
+  static const paid = 'paid';
+  static const dueDate = 'dueDate';
+  static const importance = 'importance';
+  static const description = 'description';
+  static const high = 'high';
+  static const medium = 'medium';
+  static const low = 'low';
+  static const addAsset = 'addAsset';
+  static const totalAssets = 'totalAssets';
+  static const assetHistory = 'assetHistory';
+  static const assetDistribution = 'assetDistribution';
+  static const goldPrices = 'goldPrices';
+  static const currencyPrices = 'currencyPrices';
+  static const stocksBist = 'stocksBist';
+  static const commoditiesPrices = 'commoditiesPrices';
+  static const portfolioIndividual = 'portfolioIndividual';
+  static const swipe = 'swipe';
+  static const milyar = 'milyar';
+  static const milyon = 'milyon';
+  static const bin = 'bin';
+
+}

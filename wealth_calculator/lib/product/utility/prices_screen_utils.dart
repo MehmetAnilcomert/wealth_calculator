@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/widget/multi_item.dart';
 
 abstract class PricesScreenUtils {
-  static String getAppBarTitle(int index, AppLocalizations l10n) {
+  static String getAppBarTitle(int index) {
     final titles = [
-      l10n.goldPrices,
-      l10n.currencyPrices,
-      l10n.stocksBist,
-      l10n.commoditiesPrices,
-      l10n.portfolioIndividual,
+      'goldPrices'.tr(),
+      'currencyPrices'.tr(),
+      'stocksBist'.tr(),
+      'commoditiesPrices'.tr(),
+      'portfolioIndividual'.tr(),
     ];
     return titles[index.clamp(0, 6)];
   }

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_bloc.dart';
 import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_event.dart';
-import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_state.dart';
 
 class TempInventoryListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;

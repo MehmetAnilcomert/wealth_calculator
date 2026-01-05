@@ -9,8 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
+  easy_localization: ^3.0.7
   http: ^0.13.4
   html: ^0.15.0
   path: ^1.9.0
@@ -21,11 +20,12 @@ dependencies:
   cupertino_icons: ^1.0.6
   lottie: ^3.0.0
   flutter_native_splash: ^2.4.0
-  intl: ^0.19.0
+  intl: ^0.20.2
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.4
   shared_preferences: ^2.2.3
   fl_chart: ^0.70.0
+  logger: ^2.6.2
 
 flutter_native_splash:
   color: "#2196F3"
@@ -42,10 +42,10 @@ flutter_launcher_icons:
   image_path: "images/logo.png"
 
 flutter:
-  generate: true
   uses-material-design: true
 
   assets:
+    - assets/translations/
     - images/lira.png
     - images/logo.json
     - images/isim.json

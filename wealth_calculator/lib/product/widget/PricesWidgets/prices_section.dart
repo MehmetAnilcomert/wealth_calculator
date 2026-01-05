@@ -3,13 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
 
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/widget/wealth_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Widget buildPricesSection(BuildContext context, String type, String query) {
-  final l10n = AppLocalizations.of(context)!;
-
   dynamic noop(WealthPrice price) {
     return 0;
   }
@@ -20,7 +18,7 @@ Widget buildPricesSection(BuildContext context, String type, String query) {
         return Center(child: CircularProgressIndicator());
       } else if (state is PricesError) {
         return Center(
-          child: Text('${l10n.error}: ${state.message}'),
+          child: Text('${'error'.tr()}: ${state.message}'),
         );
       } else if (state is PricesLoaded) {
         List<WealthPrice> prices = [];
@@ -40,12 +38,12 @@ Widget buildPricesSection(BuildContext context, String type, String query) {
             .toList();
 
         if (prices.isEmpty) {
-          return Center(child: Text(l10n.noDataAvailable));
+          return Center(child: Text('noDataAvailable'.tr()));
         }
 
         return buildEquityPricesTab(prices, noop);
       } else {
-        return Center(child: Text(l10n.noDataAvailable));
+        return Center(child: Text('noDataAvailable'.tr()));
       }
     },
   );

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/product.dart';
 
 /// Application entry point
 Future<void> main() async {
-  // Initialize all required services
-  await ApplicationInitialize.init();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+  // Initialize all required services
+  await ApplicationInitialize().startApplication();
+
+  runApp(ProductLocalization(child: const MyApp()));
 }
 
 /// Root application widget with clean architecture
@@ -19,32 +19,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StateInitialize(
-      child: BlocBuilder<LocalizationCubit, Locale>(
-        builder: (context, locale) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
 
-            // Localization
-            locale: locale,
-            supportedLocales: AppConstants.supportedLocales,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+        // Localization
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
 
-            // Theme
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              useMaterial3: true,
-            ),
+        // Theme
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          useMaterial3: true,
+        ),
 
-            // Navigation
-            initialRoute: AppRouter.initialRoute,
-            onGenerateRoute: AppRouter.onGenerateRoute,
-          );
-        },
+        // Navigation
+        initialRoute: AppRouter.initialRoute,
+        onGenerateRoute: AppRouter.onGenerateRoute,
       ),
     );
   }

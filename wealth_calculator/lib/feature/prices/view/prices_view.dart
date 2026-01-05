@@ -6,13 +6,13 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_screen_cubit.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/utility/prices_screen_utils.dart';
 import 'package:wealth_calculator/product/widget/PricesWidgets/buildTab.dart';
 import 'package:wealth_calculator/product/widget/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/product/widget/custom_list.dart';
 import 'package:wealth_calculator/product/widget/drawer.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PricesView extends StatefulWidget {
   const PricesView({super.key});
@@ -32,8 +32,6 @@ class _PricesViewState extends State<PricesView>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return BlocListener<PricesBloc, PricesState>(
       listener: (context, state) {
         if (state is PricesLoaded) {
@@ -41,7 +39,7 @@ class _PricesViewState extends State<PricesView>
         } else if (state is PricesError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${l10n.error}: ${state.message}'),
+              content: Text('${'error'.tr()}: ${state.message}'),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 2),
             ),
@@ -49,7 +47,7 @@ class _PricesViewState extends State<PricesView>
         } else if (state is CustomPriceDuplicateError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${l10n.error}: ${state.message}'),
+              content: Text('${'error'.tr()}: ${state.message}'),
               backgroundColor: Colors.red,
               duration: Duration(seconds: 2),
             ),
@@ -91,7 +89,7 @@ class _PricesViewState extends State<PricesView>
                 children: [
                   Text(
                     PricesScreenUtils.getAppBarTitle(
-                        screenState.currentTabIndex, l10n),
+                        screenState.currentTabIndex),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -99,7 +97,7 @@ class _PricesViewState extends State<PricesView>
                     ),
                   ),
                   Text(
-                    l10n.marketData,
+                    'marketData'.tr(),
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 12,
@@ -161,7 +159,7 @@ class _PricesViewState extends State<PricesView>
                         cubit.updateSearchQuery(query);
                       },
                       decoration: InputDecoration(
-                        hintText: l10n.search,
+                        hintText: 'search'.tr(),
                         hintStyle: TextStyle(color: Colors.grey),
                         prefixIcon:
                             Icon(Icons.search, color: Color(0xFF3498DB)),
@@ -236,12 +234,13 @@ class _PricesViewState extends State<PricesView>
                   ),
                   tabs: [
                     buildTab(
-                        Icons.monetization_on_outlined, l10n.gold, context),
-                    buildTab(Icons.currency_exchange, l10n.currency, context),
-                    buildTab(Icons.show_chart, l10n.stocks, context),
-                    buildTab(Icons.diamond_outlined, l10n.commodities, context),
+                        Icons.monetization_on_outlined, 'gold'.tr(), context),
+                    buildTab(Icons.currency_exchange, 'currency'.tr(), context),
+                    buildTab(Icons.show_chart, 'stocks'.tr(), context),
+                    buildTab(
+                        Icons.diamond_outlined, 'commodities'.tr(), context),
                     buildTab(Icons.account_balance_wallet_outlined,
-                        l10n.portfolio, context),
+                        'portfolio'.tr(), context),
                   ],
                   labelColor: const Color(0xFF3498DB),
                   unselectedLabelColor: Colors.grey,

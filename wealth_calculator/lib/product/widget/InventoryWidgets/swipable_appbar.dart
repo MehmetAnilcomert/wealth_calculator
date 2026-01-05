@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SwipableAppBar extends StatefulWidget {
   final double expandedHeight;
@@ -39,7 +39,6 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return SliverAppBar(
       automaticallyImplyLeading: false,
       expandedHeight: widget.expandedHeight,
@@ -149,7 +148,7 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                 child: Row(
                   children: [
                     Text(
-                      l10n.swipe,
+                      'swipe'.tr(),
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.8),
                         fontSize: 14,

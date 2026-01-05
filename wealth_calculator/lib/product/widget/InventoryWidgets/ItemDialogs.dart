@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/product/service/Wealthsdao.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ItemDialogs {
   static void showSelectItemDialog(
@@ -35,7 +35,6 @@ class ItemDialogs {
     MapEntry<SavedWealths, int> entry,
     Function(SavedWealths, int) onSave,
   ) {
-    final l10n = AppLocalizations.of(context)!;
     TextEditingController controller = TextEditingController(
       text: entry.value.toString(),
     );
@@ -69,7 +68,7 @@ class ItemDialogs {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  l10n.enterAmount,
+                  'enterAmount'.tr(),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -82,7 +81,7 @@ class ItemDialogs {
                   keyboardType: TextInputType.number,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    labelText: l10n.amount,
+                    labelText: 'amount'.tr(),
                     labelStyle: TextStyle(color: Colors.white70),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -101,7 +100,7 @@ class ItemDialogs {
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
-                        l10n.cancel,
+                        'cancel'.tr(),
                         style: TextStyle(color: Colors.white70),
                       ),
                     ),
@@ -119,7 +118,7 @@ class ItemDialogs {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text(l10n.save),
+                      child: Text('save'.tr()),
                     ),
                   ],
                 ),
@@ -169,8 +168,6 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -204,8 +201,8 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
               children: [
                 Text(
                   selectedOption == 'selectGold'
-                      ? l10n.selectGold
-                      : l10n.selectCurrency,
+                      ? 'selectGold'.tr()
+                      : 'selectCurrency'.tr(),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -222,9 +219,9 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
                     _buildPopupMenuItem('selectCurrency',
-                        Icons.currency_exchange, l10n.selectCurrency),
+                        Icons.currency_exchange, 'selectCurrency'.tr()),
                     _buildPopupMenuItem(
-                        'selectGold', Icons.monetization_on, l10n.selectGold),
+                        'selectGold', Icons.monetization_on, 'selectGold'.tr()),
                   ],
                 ),
               ],

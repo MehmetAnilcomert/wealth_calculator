@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/product/state/localization_cubit.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_screen_cubit.dart';
@@ -19,9 +18,6 @@ final class StateInitialize extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        // Global state
-        BlocProvider(create: (context) => LocalizationCubit()),
-
         // Feature states
         BlocProvider(create: (context) => PricesScreenCubit()),
         BlocProvider(

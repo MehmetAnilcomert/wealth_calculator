@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_bloc.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_event.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/ItemDialogs.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class InventoryListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
@@ -16,8 +16,6 @@ class InventoryListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return ListView.builder(
       padding: EdgeInsets.all(16),
       itemCount: savedWealths.length,
@@ -108,7 +106,7 @@ class InventoryListWidget extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                '${l10n.amount}: ${wealth.amount}',
+                                '${'amount'.tr()}: ${wealth.amount}',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.8),
                                   fontSize: 16,

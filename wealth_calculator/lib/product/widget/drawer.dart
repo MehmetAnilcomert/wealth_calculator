@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/feature/inventory/view/inventory_view.dart';
 import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
 import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
 import 'package:wealth_calculator/feature/settings/view/temp_calculator_view.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Drawer(
       child: Container(
         decoration: BoxDecoration(
@@ -51,7 +49,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    l10n.profile,
+                    'profile'.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -76,19 +74,19 @@ class AppDrawer extends StatelessWidget {
                     _buildMenuItem(
                       context,
                       icon: Icons.receipt_outlined,
-                      title: l10n.invoice,
+                      title: 'invoice'.tr(),
                       onTap: () => _navigateTo(context, InvoiceView()),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.inventory_2_outlined,
-                      title: l10n.inventory,
+                      title: 'inventory'.tr(),
                       onTap: () => _navigateTo(context, InventoryView()),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.calculate_outlined,
-                      title: l10n.totalWealth,
+                      title: 'totalWealth'.tr(),
                       onTap: () => _navigateTo(context, CalculatorScreen()),
                     ),
                     Padding(
@@ -98,7 +96,7 @@ class AppDrawer extends StatelessWidget {
                     _buildMenuItem(
                       context,
                       icon: Icons.settings_outlined,
-                      title: l10n.settings,
+                      title: 'settings'.tr(),
                       onTap: () => _navigateTo(context, SettingsView()),
                     ),
                     Padding(

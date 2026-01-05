@@ -4,19 +4,18 @@ import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_bloc.dar
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_event.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_state.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/ItemDialogs.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/list_widget.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/price_history_chart.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/swipable_appbar.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class InventoryView extends StatelessWidget {
   const InventoryView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final inventoryBloc = BlocProvider.of<InventoryBloc>(context);
 
     return Scaffold(
@@ -25,7 +24,7 @@ class InventoryView extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          l10n.assets,
+          'assets'.tr(),
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -75,7 +74,7 @@ class InventoryView extends StatelessWidget {
           if (state is InventoryError || state is PricesError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('${l10n.error}: ${l10n.noDataAvailable}'),
+                content: Text('${'error'.tr()}: ${'noDataAvailable'.tr()}'),
                 backgroundColor: Colors.red.shade400,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
@@ -131,7 +130,7 @@ class InventoryView extends StatelessWidget {
           } else {
             return Center(
               child: Text(
-                l10n.error,
+                'error'.tr(),
                 style: TextStyle(color: Colors.white),
               ),
             );

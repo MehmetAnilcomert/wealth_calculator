@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WealthPriceCard extends StatefulWidget {
   final WealthPrice equity;
@@ -42,7 +42,6 @@ class _WealthPriceCardState extends State<WealthPriceCard>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final isNegativeChange = widget.equity.change.startsWith('-');
     final changeColor = isNegativeChange ? Colors.red : Colors.green;
     final icon = isNegativeChange ? Icons.trending_down : Icons.trending_up;
@@ -124,20 +123,20 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                       if (widget.equity.type == PriceType.equity ||
                           widget.equity.type == PriceType.commodity)
                         _buildMainPriceRow(
-                            l10n.currentPrice, widget.equity.currentPrice!)
+                            'currentPrice'.tr(), widget.equity.currentPrice!)
                       else
                         _buildMainPriceRow(
-                            l10n.currentPrice, widget.equity.buyingPrice),
+                            'currentPrice'.tr(), widget.equity.buyingPrice),
                       AnimatedCrossFade(
                         firstChild: const SizedBox.shrink(),
                         secondChild: Column(
                           children: [
                             _buildInfoRow(
-                                l10n.highest, widget.equity.buyingPrice),
+                                'highest'.tr(), widget.equity.buyingPrice),
                             _buildInfoRow(
-                                l10n.lowest, widget.equity.sellingPrice),
+                                'lowest'.tr(), widget.equity.sellingPrice),
                             if (widget.equity.volume != null)
-                              _buildInfoRow(l10n.volume, widget.equity.volume!),
+                              _buildInfoRow('volume'.tr(), widget.equity.volume!),
                           ],
                         ),
                         crossFadeState: _isExpanded
@@ -147,7 +146,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${widget.equity.type == PriceType.commodity || widget.equity.type == PriceType.equity ? l10n.date : l10n.time}: ${widget.equity.time}',
+                        '${widget.equity.type == PriceType.commodity || widget.equity.type == PriceType.equity ? 'date'.tr() : 'time'.tr()}: ${widget.equity.time}',
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],

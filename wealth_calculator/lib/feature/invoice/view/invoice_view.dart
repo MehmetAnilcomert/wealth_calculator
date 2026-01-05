@@ -4,18 +4,16 @@ import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_event.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_state.dart';
 import 'package:wealth_calculator/feature/invoice/view/invoice_adding_view.dart';
-import 'package:wealth_calculator/l10n/app_localizations.dart';
 import 'package:wealth_calculator/product/utility/invoice_utils.dart';
 import 'package:wealth_calculator/product/widget/InvoiceWidgets/build_list.dart';
 import 'package:wealth_calculator/product/widget/InvoiceWidgets/popup_item.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class InvoiceView extends StatelessWidget {
   const InvoiceView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return BlocProvider(
       create: (context) => InvoiceBloc()..add(LoadInvoices()),
       child: BlocConsumer<InvoiceBloc, InvoiceState>(
@@ -23,7 +21,7 @@ class InvoiceView extends StatelessWidget {
           if (state is InvoiceError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('${l10n.error}: ${state.message}'),
+                content: Text('${'error'.tr()}: ${state.message}'),
                 backgroundColor: Colors.red.shade400,
                 behavior: SnackBarBehavior.floating,
                 margin: const EdgeInsets.all(16),
@@ -58,7 +56,7 @@ class InvoiceView extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   title: Text(
-                    l10n.invoice,
+                    'invoice'.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -98,14 +96,14 @@ class InvoiceView extends StatelessWidget {
                           }
                         },
                         itemBuilder: (context) => [
-                          buildPopupMenuItem('importance', l10n.priorities,
+                          buildPopupMenuItem('importance', 'priorities'.tr(),
                               Icons.priority_high),
                           buildPopupMenuItem(
-                              'date', l10n.sortByDate, Icons.date_range),
-                          buildPopupMenuItem('amount', l10n.sortByAmount,
+                              'date', 'sortByDate'.tr(), Icons.date_range),
+                          buildPopupMenuItem('amount', 'sortByAmount'.tr(),
                               Icons.monetization_on),
                           buildPopupMenuItem('amount_date',
-                              '${l10n.amount} + ${l10n.date}', Icons.sort),
+                              '${'amount'.tr()} + ${'date'.tr()}', Icons.sort),
                         ],
                       ),
                     ),
@@ -117,8 +115,8 @@ class InvoiceView extends StatelessWidget {
                     labelColor: Colors.white,
                     unselectedLabelColor: Colors.white.withOpacity(0.6),
                     tabs: [
-                      Tab(text: l10n.unpaidInvoices),
-                      Tab(text: l10n.paidInvoices),
+                      Tab(text: 'unpaidInvoices'.tr()),
+                      Tab(text: 'paidInvoices'.tr()),
                     ],
                   ),
                 ),

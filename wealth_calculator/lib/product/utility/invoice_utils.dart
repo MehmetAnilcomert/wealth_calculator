@@ -28,8 +28,6 @@ abstract class InvoiceUtils {
         return Color(0xFFFF7E00);
       case OnemSeviyesi.dusuk:
         return Color(0xFFFFF103);
-      default:
-        return Colors.grey;
     }
   }
 }
