@@ -68,10 +68,49 @@ A comprehensive financial management solution for Turkish markets with real-time
 </table>
 
 ## 🏗️ Architecture
-- Built with Flutter for cross-platform compatibility
-- Uses BLoC pattern for state management
-- Local database storage for asset and invoice data
-- Real-time data scraping for current market values
+
+This project follows a **Feature-First Clean Architecture** pattern, providing clear separation of concerns and maintainability.
+
+### 📁 Project Structure
+
+```
+lib/
+├── 🎯 feature/          # Feature Modules (Self-contained vertical slices)
+│   ├── prices/         # Asset price tracking
+│   ├── inventory/      # Portfolio management
+│   ├── invoice/        # Invoice tracking
+│   ├── settings/       # App configuration
+│   └── splash/         # Initial loading
+│
+├── 🎨 product/          # Shared Product Layer
+│   ├── init/           # App initialization
+│   ├── navigation/     # Routing (AppRouter)
+│   ├── state/          # Global state management
+│   ├── service/        # DAOs & data services
+│   ├── utility/        # Constants & helpers
+│   └── widget/         # Reusable UI components
+│
+└── 🎬 main.dart         # Application entry point
+```
+
+### 🔄 Architecture Principles
+
+- **Feature Independence**: Each feature is self-contained with its own view/viewmodel/model
+- **BLoC Pattern**: State management using flutter_bloc for predictable state handling
+- **Clean Architecture Layers**:
+  - **Presentation**: Views and UI components
+  - **Application**: BLoCs/Cubits (business logic)
+  - **Domain**: Models and business entities
+  - **Data**: Services, DAOs, and external data sources
+- **Dependency Flow**: Features → Product Layer → External Dependencies
+
+### 🗄️ Data Layer
+- **SQLite Database**: Local persistent storage
+- **Custom DAOs**: Specialized data access objects for each domain
+- **Web Scraping**: Real-time market data fetching
+- **Notification Service**: Background task scheduling
+
+📚 For detailed architecture documentation, see [ARCHITECTURE_VISUAL.md](ARCHITECTURE_VISUAL.md)
 
 ### Key Components
 - Custom widgets for wealth display and management
