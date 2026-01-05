@@ -2,14 +2,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
-import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_bloc.dart';
-import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_event.dart';
+import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_bloc.dart';
+import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.dart';
 
-class TempInventoryListWidget extends StatelessWidget {
+class CalculatorListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
   final List<Color> colors;
 
-  const TempInventoryListWidget({
+  const CalculatorListWidget({
     Key? key,
     required this.savedWealths,
     required this.colors,
@@ -38,7 +38,9 @@ class TempInventoryListWidget extends StatelessWidget {
           ),
           direction: DismissDirection.endToStart,
           onDismissed: (direction) {
-            context.read<TempInventoryBloc>().add(DeleteWealth(wealth.id));
+            context
+                .read<CalculatorBloc>()
+                .add(DeleteCalculatorWealth(wealth.id));
           },
           child: Container(
             margin: EdgeInsets.only(bottom: 16),
@@ -112,8 +114,8 @@ class TempInventoryListWidget extends StatelessWidget {
                             Icons.remove,
                             () {
                               if (wealth.amount > 0) {
-                                context.read<TempInventoryBloc>().add(
-                                      AddOrUpdateWealth(
+                                context.read<CalculatorBloc>().add(
+                                      AddOrUpdateCalculatorWealth(
                                           wealth, wealth.amount - 1),
                                     );
                               }
@@ -124,8 +126,8 @@ class TempInventoryListWidget extends StatelessWidget {
                             context,
                             Icons.add,
                             () {
-                              context.read<TempInventoryBloc>().add(
-                                    AddOrUpdateWealth(
+                              context.read<CalculatorBloc>().add(
+                                    AddOrUpdateCalculatorWealth(
                                         wealth, wealth.amount + 1),
                                   );
                             },

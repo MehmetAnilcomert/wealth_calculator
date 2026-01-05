@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_bloc.dart';
-import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_event.dart';
-import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_state.dart';
+import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_bloc.dart';
+import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.dart';
+import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_state.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/custom_sliver_appbar.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/ItemDialogs.dart';
@@ -10,11 +10,13 @@ import 'package:wealth_calculator/product/widget/calculator_list.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
-class CalculatorScreen extends StatelessWidget {
+class CalculatorView extends StatelessWidget {
+  const CalculatorView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TempInventoryBloc()..add(LoadInventoryData()),
+      create: (context) => CalculatorBloc()..add(const LoadCalculatorData()),
       child: Scaffold(
         backgroundColor: const Color(0xFF2C3E50),
         appBar: AppBar(
@@ -26,17 +28,16 @@ class CalculatorScreen extends StatelessWidget {
           ),
           title: Text(
             LocaleKeys.wealthCalculator.tr(),
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        floatingActionButton:
-            BlocBuilder<TempInventoryBloc, TempInventoryState>(
+        floatingActionButton: BlocBuilder<CalculatorBloc, CalculatorState>(
           builder: (context, state) {
-            if (state is InventoryLoaded) {
+            if (state is CalculatorLoaded) {
               return FloatingActionButton(
                 onPressed: () {
                   ItemDialogs.showSelectItemDialog(
@@ -49,8 +50,8 @@ class CalculatorScreen extends StatelessWidget {
                         MapEntry(wealth, 0),
                         (wealth, amount) {
                           context
-                              .read<TempInventoryBloc>()
-                              .add(AddOrUpdateWealth(wealth, amount));
+                              .read<CalculatorBloc>()
+                              .add(AddOrUpdateCalculatorWealth(wealth, amount));
                         },
                       );
                     },
@@ -66,12 +67,12 @@ class CalculatorScreen extends StatelessWidget {
                 child: const Icon(Icons.add, size: 32),
               );
             }
-            return Container();
+            return const SizedBox.shrink();
           },
         ),
-        body: BlocConsumer<TempInventoryBloc, TempInventoryState>(
+        body: BlocConsumer<CalculatorBloc, CalculatorState>(
           listener: (context, state) {
-            if (state is InventoryError) {
+            if (state is CalculatorError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -84,18 +85,16 @@ class CalculatorScreen extends StatelessWidget {
                   ),
                 ),
               );
-            } else if (state is PricesLoaded) {
-              context.read<TempInventoryBloc>().add(LoadInventoryData());
             }
           },
           builder: (context, state) {
-            if (state is InventoryLoading) {
-              return Center(
+            if (state is CalculatorLoading) {
+              return const Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
                 ),
               );
-            } else if (state is InventoryLoaded) {
+            } else if (state is CalculatorLoaded) {
               return Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -119,10 +118,10 @@ class CalculatorScreen extends StatelessWidget {
                         colors: state.colors,
                       ),
                       onAddPressed: () {},
-                      bloc: context.read<TempInventoryBloc>(),
+                      bloc: context.read<CalculatorBloc>(),
                     ),
                     SliverFillRemaining(
-                      child: TempInventoryListWidget(
+                      child: CalculatorListWidget(
                         savedWealths: state.savedWealths,
                         colors: state.colors,
                       ),
@@ -134,7 +133,7 @@ class CalculatorScreen extends StatelessWidget {
               return Center(
                 child: Text(
                   LocaleKeys.error.tr(),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               );
             }

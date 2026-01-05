@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 
-abstract class TempInventoryState extends Equatable {
-  const TempInventoryState();
+abstract class CalculatorState extends Equatable {
+  const CalculatorState();
 
   @override
   List<Object> get props => [];
 }
 
-class InventoryInitial extends TempInventoryState {}
+class CalculatorInitial extends CalculatorState {}
 
-class InventoryLoading extends TempInventoryState {}
+class CalculatorLoading extends CalculatorState {}
 
-class InventoryLoaded extends TempInventoryState {
+class CalculatorLoaded extends CalculatorState {
   final List<SavedWealths> savedWealths;
   final List<WealthPrice> goldPrices;
   final List<WealthPrice> currencyPrices;
@@ -22,7 +22,7 @@ class InventoryLoaded extends TempInventoryState {
   final List<double> segments;
   final List<Color> colors;
 
-  const InventoryLoaded({
+  const CalculatorLoaded({
     required this.savedWealths,
     required this.goldPrices,
     required this.currencyPrices,
@@ -42,13 +42,11 @@ class InventoryLoaded extends TempInventoryState {
       ];
 }
 
-class InventoryError extends TempInventoryState {
+class CalculatorError extends CalculatorState {
   final String message;
 
-  const InventoryError(this.message);
+  const CalculatorError(this.message);
 
   @override
   List<Object> get props => [message];
 }
-
-class PricesLoaded extends TempInventoryState {}

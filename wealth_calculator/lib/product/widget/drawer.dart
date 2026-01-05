@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:wealth_calculator/feature/inventory/view/inventory_view.dart';
 import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
 import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
-import 'package:wealth_calculator/feature/settings/view/temp_calculator_view.dart';
+import 'package:wealth_calculator/feature/calculator/view/calculator_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
@@ -88,7 +88,7 @@ class AppDrawer extends StatelessWidget {
                       context,
                       icon: Icons.calculate_outlined,
                       title: LocaleKeys.wealthCalculator.tr(),
-                      onTap: () => _navigateTo(context, CalculatorScreen()),
+                      onTap: () => _navigateTo(context, const CalculatorView()),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),

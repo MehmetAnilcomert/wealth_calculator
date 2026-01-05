@@ -75,5 +75,14 @@ abstract class  LocaleKeys {
   static const milyar = 'milyar';
   static const milyon = 'milyon';
   static const bin = 'bin';
+  static const statistics = 'statistics';
+  static const reports = 'reports';
+  static const editProfile = 'editProfile';
+  static const privacy = 'privacy';
+  static const helpSupport = 'helpSupport';
+  static const turkish = 'turkish';
+  static const english = 'english';
+  static const turkish_code = 'turkish_code';
+  static const english_code = 'english_code';
 
 }

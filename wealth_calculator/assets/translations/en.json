@@ -70,5 +70,14 @@
     "swipe": "Swipe",
     "milyar": "B",
     "milyon": "M",
-    "bin": "K"
+    "bin": "K",
+    "statistics": "Statistics",
+    "reports": "Reports",
+    "editProfile": "Edit Profile",
+    "privacy": "Privacy",
+    "helpSupport": "Help & Support",
+    "turkish": "Turkish",
+    "english": "English",
+    "turkish_code": "tr",
+    "english_code": "en"
 }

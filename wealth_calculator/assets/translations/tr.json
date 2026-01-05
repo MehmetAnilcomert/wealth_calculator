@@ -70,5 +70,14 @@
     "swipe": "Kaydır",
     "milyar": "Milyar",
     "milyon": "Milyon",
-    "bin": "BİN"
+    "bin": "BİN",
+    "statistics": "İstatistikler",
+    "reports": "Raporlar",
+    "editProfile": "Profil Düzenle",
+    "privacy": "Gizlilik",
+    "helpSupport": "Yardım ve Destek",
+    "turkish": "Türkçe",
+    "english": "İngilizce",
+    "turkish_code": "tr",
+    "english_code": "en"
 }

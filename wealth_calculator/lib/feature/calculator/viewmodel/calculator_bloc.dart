@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_event.dart';
-import 'package:wealth_calculator/feature/settings/viewmodel/temp_calc_state.dart';
+import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.dart';
+import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/product/service/DataScraping.dart';
 
-class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
-  // Temporary lists
+class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];
 
-  TempInventoryBloc() : super(InventoryInitial()) {
-    on<LoadInventoryData>(_onLoadInventoryData);
-    on<AddOrUpdateWealth>(_onEditWealth);
-    on<DeleteWealth>(_onDeleteWealth);
+  CalculatorBloc() : super(CalculatorInitial()) {
+    on<LoadCalculatorData>(_onLoadCalculatorData);
+    on<AddOrUpdateCalculatorWealth>(_onAddOrUpdateWealth);
+    on<DeleteCalculatorWealth>(_onDeleteWealth);
   }
 
-  Future<void> _onLoadInventoryData(
-      LoadInventoryData event, Emitter<TempInventoryState> emit) async {
-    emit(InventoryLoading());
+  Future<void> _onLoadCalculatorData(
+      LoadCalculatorData event, Emitter<CalculatorState> emit) async {
+    emit(CalculatorLoading());
 
     try {
-      // Initialize temporary lists
       _savedWealths = [];
 
       if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
@@ -33,24 +31,23 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
 
       emit(_createLoadedState());
     } catch (e) {
-      emit(InventoryError(e.toString()));
+      emit(CalculatorError(e.toString()));
     }
   }
 
-  Future<void> _onEditWealth(
-      AddOrUpdateWealth event, Emitter<TempInventoryState> emit) async {
+  Future<void> _onAddOrUpdateWealth(
+      AddOrUpdateCalculatorWealth event, Emitter<CalculatorState> emit) async {
     try {
       final existingWealthIndex = _savedWealths
           .indexWhere((wealth) => wealth.type == event.wealth.type);
 
       if (existingWealthIndex != -1) {
-        // Update existing wealth
         _savedWealths[existingWealthIndex] = SavedWealths(
-            id: _savedWealths[existingWealthIndex].id,
-            type: event.wealth.type,
-            amount: event.amount);
+          id: _savedWealths[existingWealthIndex].id,
+          type: event.wealth.type,
+          amount: event.amount,
+        );
       } else {
-        // Add new wealth
         final newWealth = SavedWealths(
           id: DateTime.now().millisecondsSinceEpoch,
           type: event.wealth.type,
@@ -59,25 +56,24 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
         _savedWealths.add(newWealth);
       }
 
-      // Emit new state with updated data
       emit(_createLoadedState());
     } catch (e) {
-      emit(InventoryError('Failed to edit wealth.'));
+      emit(CalculatorError('Failed to edit wealth.'));
     }
   }
 
   Future<void> _onDeleteWealth(
-      DeleteWealth event, Emitter<TempInventoryState> emit) async {
+      DeleteCalculatorWealth event, Emitter<CalculatorState> emit) async {
     try {
       _savedWealths.removeWhere((wealth) => wealth.id == event.id);
       emit(_createLoadedState());
     } catch (e) {
-      emit(InventoryError('Failed to delete wealth.'));
+      emit(CalculatorError('Failed to delete wealth.'));
     }
   }
 
-  InventoryLoaded _createLoadedState() {
-    return InventoryLoaded(
+  CalculatorLoaded _createLoadedState() {
+    return CalculatorLoaded(
       totalPrice: _calculateTotalPrice(
           _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
       segments: _calculateSegments(
