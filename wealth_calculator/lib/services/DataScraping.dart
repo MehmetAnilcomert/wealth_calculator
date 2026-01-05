@@ -4,7 +4,7 @@ import 'package:html/dom.dart';
 import 'package:wealth_calculator/modals/WealthDataModal.dart';
 
 Future<List<WealthPrice>> fetchGoldPrices() async {
-  final url =
+  const url =
       'https://mbigpara.hurriyet.com.tr/altin/'; // Website to scrape data from.
 
   // Fetch the HTML document
@@ -54,7 +54,7 @@ Future<List<WealthPrice>> fetchGoldPrices() async {
 }
 
 Future<List<WealthPrice>> fetchCurrencyPrices() async {
-  final url =
+  const url =
       'https://mbigpara.hurriyet.com.tr/doviz/'; // Website to scrape data from.
 
   // Fetch the HTML document
@@ -168,7 +168,7 @@ WealthPrice? _parseRow(element, Set<String> necessaryCommodities) {
 }
 
 Future<List<WealthPrice>> fetchEquityData() async {
-  final url = 'https://tr.investing.com/equities/turkey';
+  const url = 'https://tr.investing.com/equities/turkey';
   final response = await http.get(Uri.parse(url));
 
   if (response.statusCode == 200) {

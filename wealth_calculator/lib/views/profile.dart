@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wealth_calculator/views/inventory_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,23 +11,24 @@ class ProfileScreen extends StatelessWidget {
         slivers: [
           SliverAppBar(
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.of(context).pop(),
             ),
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text('Profil', style: TextStyle(color: Colors.white)),
+              title:
+                  const Text('Profil', style: TextStyle(color: Colors.white)),
               background: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [Color(0xFF2C3E50), Color(0xFF3498DB)],
                   ),
                 ),
-                child: Center(
+                child: const Center(
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: AssetImage('assets/profile_picture.png'),
@@ -43,11 +44,11 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildUserInfoCard(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildStatisticsCard(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildActionButtons(context),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildSettingsSection(),
                 ],
               ),
@@ -66,17 +67,17 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
+            const Text(
               "Ahmet Yılmaz",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               "ahmet.yilmaz@example.com",
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               "Premium Üye",
               style: TextStyle(
                 fontSize: 18,
@@ -99,11 +100,11 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "İstatistikler",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildStatItem("Toplam Varlık", "₺250,000"),
             _buildStatItem("Aylık Gelir", "₺15,000"),
             _buildStatItem("Aylık Gider", "₺10,000"),
@@ -122,7 +123,8 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Text(label, style: TextStyle(fontSize: 16, color: Colors.grey[600])),
           Text(value,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -153,6 +155,11 @@ class ProfileScreen extends StatelessWidget {
       VoidCallback onPressed) {
     return ElevatedButton(
       onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF3498DB),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -160,11 +167,6 @@ class ProfileScreen extends StatelessWidget {
           SizedBox(height: 4),
           Text(label),
         ],
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFF3498DB),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -178,11 +180,11 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Ayarlar",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildSettingsItem("Profil Düzenle", Icons.edit),
             _buildSettingsItem("Bildirimler", Icons.notifications),
             _buildSettingsItem("Gizlilik", Icons.lock),
@@ -196,9 +198,9 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildSettingsItem(String label, IconData icon) {
     return ListTile(
-      leading: Icon(icon, color: Color(0xFF3498DB)),
+      leading: Icon(icon, color: const Color(0xFF3498DB)),
       title: Text(label),
-      trailing: Icon(Icons.chevron_right),
+      trailing: const Icon(Icons.chevron_right),
       onTap: () {
         // TODO: Implement settings item action
       },

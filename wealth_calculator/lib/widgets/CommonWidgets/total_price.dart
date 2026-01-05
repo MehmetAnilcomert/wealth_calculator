@@ -7,16 +7,16 @@ class TotalPrice extends StatelessWidget {
   final List<Color> colors;
 
   const TotalPrice({
-    Key? key,
+    super.key,
     required this.totalPrice,
     required this.segments,
     required this.colors,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

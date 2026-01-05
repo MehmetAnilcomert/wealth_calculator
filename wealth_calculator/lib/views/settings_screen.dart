@@ -4,6 +4,8 @@ import 'package:wealth_calculator/bloc/LocalizationCubit/localization_cubit.dart
 import 'package:wealth_calculator/l10n/app_localizations.dart';
 
 class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -20,7 +22,7 @@ class SettingsScreen extends StatelessWidget {
               builder: (context, locale) {
                 return DropdownButton<String>(
                   value: locale.languageCode,
-                  items: [
+                  items: const [
                     DropdownMenuItem(
                       value: 'en',
                       child: Text('English'),

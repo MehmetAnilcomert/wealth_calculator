@@ -7,13 +7,14 @@ class CustomNavigationButton extends StatelessWidget {
   final Color? iconColor;
 
   CustomNavigationButton({
+    super.key,
     required this.text,
     required this.icon,
     required this.targetScreen,
     this.iconColor,
   });
 
-  final TextStyle stylishText = TextStyle(
+  TextStyle stylishText = TextStyle(
     fontSize: 20.0,
     color: Colors.black,
     letterSpacing: 0.4,
@@ -25,10 +26,10 @@ class CustomNavigationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
-        side: BorderSide(color: Colors.black),
+        side: const BorderSide(color: Colors.black),
       ),
       child: TextButton(
         onPressed: () {

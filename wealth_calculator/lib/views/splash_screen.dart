@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void startTimer() {
-    Duration duration = Duration(seconds: 3);
+    Duration duration = const Duration(seconds: 3);
     _timer = Timer(duration, _checkLoadingState);
   }
 
@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (_loadingComplete || elapsed.inSeconds >= 7) {
       _goHome();
     } else {
-      _timer = Timer(Duration(milliseconds: 500), _checkLoadingState);
+      _timer = Timer(const Duration(milliseconds: 500), _checkLoadingState);
     }
   }
 

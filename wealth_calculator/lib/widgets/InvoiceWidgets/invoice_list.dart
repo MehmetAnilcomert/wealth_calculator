@@ -16,30 +16,30 @@ class InvoiceListWidget extends StatelessWidget {
     "dusuk": Colors.yellow
   };
 
-  InvoiceListWidget({required this.invoices});
+  InvoiceListWidget({super.key, required this.invoices});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return ListView.builder(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       itemCount: invoices.length,
       itemBuilder: (context, index) {
         final fatura = invoices[index];
-        final color =
-            colors["${fatura.onemSeviyesi.toString().split('.').last}"];
+        final color = colors[fatura.onemSeviyesi.toString().split('.').last];
 
         return Dismissible(
           key: Key(fatura.id.toString()),
           background: Container(
-            margin: EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
               color: Colors.red.shade400,
               borderRadius: BorderRadius.circular(15),
             ),
             alignment: Alignment.centerRight,
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Icon(Icons.delete_outline, color: Colors.white, size: 28),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child:
+                const Icon(Icons.delete_outline, color: Colors.white, size: 28),
           ),
           direction: DismissDirection.endToStart,
           onDismissed: (direction) {
@@ -63,7 +63,7 @@ class InvoiceListWidget extends StatelessWidget {
               });
             },
             child: Container(
-              margin: EdgeInsets.only(bottom: 16),
+              margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -84,7 +84,7 @@ class InvoiceListWidget extends StatelessWidget {
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
                         Container(
@@ -97,34 +97,34 @@ class InvoiceListWidget extends StatelessWidget {
                               BoxShadow(
                                 color: color!.withOpacity(0.3),
                                 blurRadius: 8,
-                                offset: Offset(0, 4),
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(width: 16),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 fatura.aciklama,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 ),
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 "${fatura.tutar} ${l10n.currency}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 "${l10n.date}: ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
                                 style: TextStyle(
@@ -136,7 +136,7 @@ class InvoiceListWidget extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: fatura.odendiMi
                                 ? Colors.green.withOpacity(0.2)

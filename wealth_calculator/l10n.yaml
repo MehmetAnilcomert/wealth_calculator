@@ -3,4 +3,3 @@ template-arb-file: app_en.arb
 output-localization-file: app_localizations.dart
 output-class: AppLocalizations
 untranslated-messages-file: untranslated.txt
-synthetic-package: false

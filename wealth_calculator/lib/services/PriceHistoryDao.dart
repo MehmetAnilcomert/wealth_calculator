@@ -8,7 +8,9 @@ class PriceHistoryDao {
   Future<void> insertTotalPriceHistory(double totalPrice) async {
     final db = await DbHelper.instance.database;
 
-    final todayDate = DateTime.now().toIso8601String();
+    // Sadece tarihi (gün bazında) kaydet - saat/dakika/saniye olmadan
+    // Bu sayede aynı gün için sadece 1 kayıt olur
+    final todayDate = DateTime.now().toIso8601String().split('T')[0];
     print('Inserting into wealth_history: $todayDate, $totalPrice');
     await db.insert(
       'wealth_history',
@@ -27,5 +29,21 @@ class PriceHistoryDao {
     List<Map<String, dynamic>> maps = await db.query('wealth_history');
 
     return maps.map((map) => WealthHistory.fromMap(map)).toList();
+  }
+
+  /// Bugünün tarihinde bir kayıt olup olmadığını kontrol eder
+  /// Checks if there is already a record for today's date
+  Future<bool> hasTodayRecord() async {
+    final db = await DbHelper.instance.database;
+    final todayDate = DateTime.now().toIso8601String().split('T')[0];
+    
+    final List<Map<String, dynamic>> result = await db.query(
+      'wealth_history',
+      where: 'date = ?',
+      whereArgs: [todayDate],
+      limit: 1,
+    );
+    
+    return result.isNotEmpty;
   }
 }

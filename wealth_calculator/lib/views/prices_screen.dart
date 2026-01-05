@@ -15,6 +15,8 @@ import 'package:wealth_calculator/widgets/custom_list.dart';
 import 'package:wealth_calculator/widgets/drawer.dart';
 
 class PricesScreen extends StatefulWidget {
+  const PricesScreen({super.key});
+
   @override
   _PricesScreenState createState() => _PricesScreenState();
 }
@@ -49,7 +51,7 @@ class _PricesScreenState extends State<PricesScreen>
             SnackBar(
               content: Text('${l10n.error}: ${state.message}'),
               backgroundColor: Colors.red,
-              duration: Duration(seconds: 2),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -160,12 +162,12 @@ class _PricesScreenState extends State<PricesScreen>
                       },
                       decoration: InputDecoration(
                         hintText: l10n.search,
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle: const TextStyle(color: Colors.grey),
                         prefixIcon:
-                            Icon(Icons.search, color: Color(0xFF3498DB)),
+                            const Icon(Icons.search, color: Color(0xFF3498DB)),
                         border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                       ),
                     ),
                   ),
@@ -197,7 +199,7 @@ class _PricesScreenState extends State<PricesScreen>
                               },
                             );
                           }
-                          return Center(
+                          return const Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
                                   Color(0xFF3498DB)),

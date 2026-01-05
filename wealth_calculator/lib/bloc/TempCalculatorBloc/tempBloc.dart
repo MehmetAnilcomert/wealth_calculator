@@ -19,7 +19,9 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
   }
 
   Future<void> _onLoadInventoryData(
-      LoadInventoryData event, Emitter<TempInventoryState> emit) async {
+    LoadInventoryData event,
+    Emitter<TempInventoryState> emit,
+  ) async {
     emit(InventoryLoading());
 
     try {
@@ -38,17 +40,21 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
   }
 
   Future<void> _onEditWealth(
-      AddOrUpdateWealth event, Emitter<TempInventoryState> emit) async {
+    AddOrUpdateWealth event,
+    Emitter<TempInventoryState> emit,
+  ) async {
     try {
-      final existingWealthIndex = _savedWealths
-          .indexWhere((wealth) => wealth.type == event.wealth.type);
+      final existingWealthIndex = _savedWealths.indexWhere(
+        (wealth) => wealth.type == event.wealth.type,
+      );
 
       if (existingWealthIndex != -1) {
         // Mevcut varlık güncelleniyor
         _savedWealths[existingWealthIndex] = SavedWealths(
-            id: _savedWealths[existingWealthIndex].id,
-            type: event.wealth.type,
-            amount: event.amount);
+          id: _savedWealths[existingWealthIndex].id,
+          type: event.wealth.type,
+          amount: event.amount,
+        );
       } else {
         // Yeni varlık ekleniyor
         final newWealth = SavedWealths(
@@ -67,7 +73,9 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
   }
 
   Future<void> _onDeleteWealth(
-      DeleteWealth event, Emitter<TempInventoryState> emit) async {
+    DeleteWealth event,
+    Emitter<TempInventoryState> emit,
+  ) async {
     try {
       _savedWealths.removeWhere((wealth) => wealth.id == event.id);
       emit(_createLoadedState());
@@ -79,19 +87,31 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
   InventoryLoaded _createLoadedState() {
     return InventoryLoaded(
       totalPrice: _calculateTotalPrice(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+        _savedWealths,
+        _cachedGoldPrices,
+        _cachedCurrencyPrices,
+      ),
       segments: _calculateSegments(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+        _savedWealths,
+        _cachedGoldPrices,
+        _cachedCurrencyPrices,
+      ),
       colors: _calculateColors(
-          _savedWealths, _cachedGoldPrices, _cachedCurrencyPrices),
+        _savedWealths,
+        _cachedGoldPrices,
+        _cachedCurrencyPrices,
+      ),
       goldPrices: _cachedGoldPrices,
       currencyPrices: _cachedCurrencyPrices,
       savedWealths: _savedWealths,
     );
   }
 
-  double _calculateTotalPrice(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
+  double _calculateTotalPrice(
+    List<SavedWealths> savedWealths,
+    List<WealthPrice> goldPrices,
+    List<WealthPrice> currencyPrices,
+  ) {
     double total = 0;
     for (var wealth in savedWealths) {
       double price = 0.0;
@@ -104,8 +124,9 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
       if (price == 0.0) {
         for (var currency in currencyPrices) {
           if (currency.title == wealth.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+            price = double.parse(
+              currency.buyingPrice.replaceAll(',', '.').trim(),
+            );
             break;
           }
         }
@@ -115,8 +136,11 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
     return total;
   }
 
-  List<double> _calculateSegments(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
+  List<double> _calculateSegments(
+    List<SavedWealths> savedWealths,
+    List<WealthPrice> goldPrices,
+    List<WealthPrice> currencyPrices,
+  ) {
     List<double> segments = [];
     double total = 0;
     for (var wealth in savedWealths) {
@@ -130,8 +154,9 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
       if (price == 0.0) {
         for (var currency in currencyPrices) {
           if (currency.title == wealth.type) {
-            price =
-                double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+            price = double.parse(
+              currency.buyingPrice.replaceAll(',', '.').trim(),
+            );
             break;
           }
         }
@@ -147,8 +172,11 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
     return segments;
   }
 
-  List<Color> _calculateColors(List<SavedWealths> savedWealths,
-      List<WealthPrice> goldPrices, List<WealthPrice> currencyPrices) {
+  List<Color> _calculateColors(
+    List<SavedWealths> savedWealths,
+    List<WealthPrice> goldPrices,
+    List<WealthPrice> currencyPrices,
+  ) {
     final colorMap = {
       'Altın (TL/GR)': Colors.yellow,
       'Cumhuriyet Altını': Colors.yellow,
@@ -161,7 +189,7 @@ class TempInventoryBloc extends Bloc<TempInventoryEvent, TempInventoryState> {
     };
 
     return [
-      for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey
+      for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey,
     ];
   }
 }

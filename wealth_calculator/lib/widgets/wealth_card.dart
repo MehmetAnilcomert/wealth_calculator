@@ -7,10 +7,10 @@ class WealthPriceCard extends StatefulWidget {
   final Function(WealthPrice) onLongPress;
 
   const WealthPriceCard({
-    Key? key,
+    super.key,
     required this.equity,
     required this.onLongPress,
-  }) : super(key: key);
+  });
 
   @override
   _WealthPriceCardState createState() => _WealthPriceCardState();

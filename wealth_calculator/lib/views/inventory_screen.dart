@@ -12,6 +12,8 @@ import 'package:wealth_calculator/widgets/InventoryWidgets/price_history_chart.d
 import 'package:wealth_calculator/widgets/InventoryWidgets/swipable_appbar.dart';
 
 class InventoryScreen extends StatelessWidget {
+  const InventoryScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -24,7 +26,7 @@ class InventoryScreen extends StatelessWidget {
         centerTitle: true,
         title: Text(
           l10n.assets,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -84,7 +86,7 @@ class InventoryScreen extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is InventoryLoading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
               ),
@@ -130,7 +132,7 @@ class InventoryScreen extends StatelessWidget {
             return Center(
               child: Text(
                 l10n.error,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             );
           }

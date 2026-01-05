@@ -9,13 +9,13 @@ class SwipableAppBar extends StatefulWidget {
   final List<Widget> pages;
 
   const SwipableAppBar({
-    Key? key,
+    super.key,
     required this.expandedHeight,
     required this.collapsedHeight,
     required this.onAddPressed,
     required this.bloc,
     required this.pages,
-  }) : super(key: key);
+  });
 
   @override
   _SwipableAppBarState createState() => _SwipableAppBarState();

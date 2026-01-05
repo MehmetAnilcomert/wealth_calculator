@@ -7,7 +7,7 @@ import 'package:wealth_calculator/views/settings_screen.dart';
 import 'package:wealth_calculator/views/temp_calculator.dart';
 
 class AppDrawer extends StatelessWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+  const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class AppDrawer extends StatelessWidget {
 
     return Drawer(
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -42,17 +42,17 @@ class AppDrawer extends StatelessWidget {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 10,
-                          offset: Offset(0, 5),
+                          offset: const Offset(0, 5),
                         ),
                       ],
                     ),
-                    child:
-                        Icon(Icons.person, size: 50, color: Color(0xFF3498DB)),
+                    child: const Icon(Icons.person,
+                        size: 50, color: Color(0xFF3498DB)),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
                     l10n.profile,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ class AppDrawer extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
@@ -71,7 +71,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ),
                 child: ListView(
-                  padding: EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(15),
                   children: [
                     _buildMenuItem(
                       context,
@@ -130,7 +130,7 @@ class AppDrawer extends StatelessWidget {
     bool isDestructive = false,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: Colors.grey.withOpacity(0.1),
@@ -138,16 +138,16 @@ class AppDrawer extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         leading: Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isDestructive
                 ? Colors.red.withOpacity(0.1)
-                : Color(0xFF3498DB).withOpacity(0.1),
+                : const Color(0xFF3498DB).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            color: isDestructive ? Colors.red : Color(0xFF3498DB),
+            color: isDestructive ? Colors.red : const Color(0xFF3498DB),
           ),
         ),
         title: Text(

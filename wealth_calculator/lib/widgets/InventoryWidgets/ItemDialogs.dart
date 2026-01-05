@@ -47,7 +47,7 @@ class ItemDialogs {
           backgroundColor: Colors.transparent,
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
@@ -56,7 +56,7 @@ class ItemDialogs {
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 10,
@@ -64,37 +64,37 @@ class ItemDialogs {
                 ),
               ],
             ),
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   l10n.enterAmount,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextField(
                   controller: controller,
                   keyboardType: TextInputType.number,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: l10n.amount,
-                    labelStyle: TextStyle(color: Colors.white70),
+                    labelStyle: const TextStyle(color: Colors.white70),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.white30),
+                      borderSide: const BorderSide(color: Colors.white30),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.white),
+                      borderSide: const BorderSide(color: Colors.white),
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -102,10 +102,10 @@ class ItemDialogs {
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
                         l10n.cancel,
-                        style: TextStyle(color: Colors.white70),
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
                         int amount = int.tryParse(controller.text) ?? 0;
@@ -114,7 +114,7 @@ class ItemDialogs {
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        backgroundColor: Color(0xFF3498DB),
+                        backgroundColor: const Color(0xFF3498DB),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -139,7 +139,8 @@ class SelectItemDialog extends StatefulWidget {
   final List<String> disabledItems;
   final List<String> hiddenItems;
 
-  SelectItemDialog({
+  const SelectItemDialog({
+    super.key,
     required this.futureGoldPrices,
     required this.futureCurrencyPrices,
     required this.onItemSelected,
@@ -173,7 +174,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
 
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -182,7 +183,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 10,
@@ -194,10 +195,11 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -206,14 +208,14 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                   selectedOption == 'selectGold'
                       ? l10n.selectGold
                       : l10n.selectCurrency,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 PopupMenuButton<String>(
-                  icon: Icon(Icons.more_vert, color: Colors.white),
+                  icon: const Icon(Icons.more_vert, color: Colors.white),
                   onSelected: (String result) {
                     setState(() {
                       selectedOption = result;
@@ -236,7 +238,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
             ),
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Column(
                   children: [
                     ...(selectedOption == 'selectGold'
@@ -259,8 +261,8 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
       value: value,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Color(0xFF3498DB)),
-          SizedBox(width: 12),
+          Icon(icon, size: 20, color: const Color(0xFF3498DB)),
+          const SizedBox(width: 12),
           Text(text),
         ],
       ),
@@ -271,7 +273,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
     final isDisabled = widget.disabledItems.contains(price.title);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(isDisabled ? 0.05 : 0.1),
         borderRadius: BorderRadius.circular(10),

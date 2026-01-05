@@ -11,12 +11,12 @@ class CircularMoneyState extends StatelessWidget {
   final double gapPercentage;
 
   const CircularMoneyState({
-    Key? key,
+    super.key,
     required this.totalAmount,
     required this.segments,
     required this.colors,
     this.gapPercentage = 0.03,
-  }) : super(key: key);
+  });
 
   String _formatAmount(double amount, AppLocalizations l10n) {
     if (amount >= 1000000000) {
@@ -34,7 +34,7 @@ class CircularMoneyState extends StatelessWidget {
   }
 
   double _calculateFontSize(BuildContext context, String text) {
-    final baseSize = 28.0;
+    const baseSize = 28.0;
     if (text.length > 12) {
       return baseSize * (12 / text.length);
     }
@@ -57,8 +57,8 @@ class CircularMoneyState extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF2C3E50).withOpacity(0.8),
-            Color(0xFF3498DB).withOpacity(0.8),
+            const Color(0xFF2C3E50).withOpacity(0.8),
+            const Color(0xFF3498DB).withOpacity(0.8),
           ],
         ),
         boxShadow: [
@@ -81,7 +81,7 @@ class CircularMoneyState extends StatelessWidget {
           ),
           Center(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -93,7 +93,7 @@ class CircularMoneyState extends StatelessWidget {
                       color: Colors.white.withOpacity(0.8),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     formattedAmount,
                     style: TextStyle(
@@ -104,12 +104,12 @@ class CircularMoneyState extends StatelessWidget {
                         Shadow(
                           blurRadius: 4,
                           color: Colors.black.withOpacity(0.3),
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   if (totalAmount >=
                       1000) // Sadece büyük sayılar için detaylı gösterim
                     Text(

@@ -7,7 +7,8 @@ class CustomSliverAppBar extends StatelessWidget {
   final VoidCallback onAddPressed; // Doğrudan çağırılabilecek bir fonksiyon
   final Object bloc;
 
-  CustomSliverAppBar({
+  const CustomSliverAppBar({
+    super.key,
     required this.expandedHeight,
     required this.collapsedHeight,
     required this.flexibleSpaceBackground,

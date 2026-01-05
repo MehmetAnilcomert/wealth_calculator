@@ -10,6 +10,8 @@ import 'package:wealth_calculator/widgets/InvoiceWidgets/build_list.dart';
 import 'package:wealth_calculator/widgets/InvoiceWidgets/popup_item.dart';
 
 class InvoiceListScreen extends StatelessWidget {
+  const InvoiceListScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -57,7 +59,7 @@ class InvoiceListScreen extends StatelessWidget {
                   ),
                   title: Text(
                     l10n.invoice,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
@@ -160,7 +162,7 @@ class InvoiceListScreen extends StatelessWidget {
               ),
             );
           }
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
