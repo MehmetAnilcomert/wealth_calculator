@@ -7,6 +7,7 @@ import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_event.dart';
 import 'package:wealth_calculator/feature/invoice/model/invoice_model.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
+import 'package:wealth_calculator/product/utility/snackbar_helper.dart';
 
 class InvoiceAddingView extends StatefulWidget {
   final Invoice? fatura;
@@ -53,11 +54,9 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
       try {
         selectedDate = dateFormat.parse(_tarihController.text);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(LocaleKeys.date_format_error).tr(),
-            backgroundColor: Colors.red,
-          ),
+        SnackbarHelper.showError(
+          context,
+          LocaleKeys.date_format_error.tr(),
         );
         return;
       }
@@ -177,13 +176,10 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                             _odendiMi = value;
                             if (_odendiMi) {
                               _isNotificationEnabled = false;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                          LocaleKeys.invoice_paid_message)
-                                      .tr(),
-                                  backgroundColor: const Color(0xFF34495E),
-                                ),
+                              SnackbarHelper.showCustom(
+                                context,
+                                LocaleKeys.invoice_paid_message.tr(),
+                                backgroundColor: const Color(0xFF34495E),
                               );
                             }
                           });
@@ -217,7 +213,6 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                                   try {
                                     await NotificationService
                                         .scheduleNotification(
-                                      context,
                                       notificationId,
                                       LocaleKeys.notification.tr(),
                                       LocaleKeys.notification_content.tr(args: [
@@ -227,18 +222,14 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                                       scheduledDate,
                                     );
                                   } catch (error) {
+                                    if (!mounted) return;
                                     setState(() {
                                       _isNotificationEnabled = false;
                                     });
-                                    if (!mounted) return;
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(LocaleKeys
-                                            .error_schedule_notification
-                                            .tr(args: [error.toString()])),
-                                        backgroundColor: Colors.red,
-                                      ),
+                                    SnackbarHelper.showError(
+                                      context,
+                                      LocaleKeys.error_schedule_notification
+                                          .tr(args: [error.toString()]),
                                     );
                                   }
                                 } else {
@@ -248,24 +239,19 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                                     await NotificationService
                                         .cancelNotification(notificationId);
                                     if (!mounted) return;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: const Text(LocaleKeys
-                                                  .notification_canceled)
-                                              .tr()),
+                                    SnackbarHelper.showInfo(
+                                      context,
+                                      LocaleKeys.notification_canceled.tr(),
                                     );
                                   } catch (error) {
+                                    if (!mounted) return;
                                     setState(() {
                                       _isNotificationEnabled = true;
                                     });
-                                    if (!mounted) return;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: Colors.red,
-                                        content: Text(LocaleKeys
-                                            .error_cancel_notification
-                                            .tr(args: [error.toString()])),
-                                      ),
+                                    SnackbarHelper.showError(
+                                      context,
+                                      LocaleKeys.error_cancel_notification
+                                          .tr(args: [error.toString()]),
                                     );
                                   }
                                 }

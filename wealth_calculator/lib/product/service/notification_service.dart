@@ -1,8 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -53,46 +51,35 @@ class NotificationService {
     );
   }
 
-  static Future<void> scheduleNotification(BuildContext context, int id,
-      String title, String body, DateTime scheduledTime) async {
-    try {
-      final now = tz.TZDateTime.now(tz.local);
-      final scheduledDate = tz.TZDateTime.from(scheduledTime, tz.local);
+  static Future<void> scheduleNotification(
+      int id, String title, String body, DateTime scheduledTime) async {
+    final now = tz.TZDateTime.now(tz.local);
+    final scheduledDate = tz.TZDateTime.from(scheduledTime, tz.local);
 
-      // Geçmiş bir tarih kontrolü
-      if (scheduledDate.isBefore(now)) {
-        throw Exception('Notification date must be in the future');
-      }
-
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        scheduledDate,
-        const NotificationDetails(
-          iOS: DarwinNotificationDetails(),
-          android: AndroidNotificationDetails(
-              'reminder_channel', 'Reminder Channel',
-              importance: Importance.high,
-              priority: Priority.high,
-              color: Colors.lightBlueAccent,
-              colorized: true),
-        ),
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.dateAndTime,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      );
-    } catch (e) {
-      debugPrint('Error scheduling notification: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              const Text(LocaleKeys.notification_schedule_error_past_date).tr(),
-          backgroundColor: Colors.red,
-        ),
-      );
+    // Geçmiş bir tarih kontrolü
+    if (scheduledDate.isBefore(now)) {
+      throw Exception('Notification date must be in the future');
     }
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      scheduledDate,
+      const NotificationDetails(
+        iOS: DarwinNotificationDetails(),
+        android: AndroidNotificationDetails(
+            'reminder_channel', 'Reminder Channel',
+            importance: Importance.high,
+            priority: Priority.high,
+            color: Colors.lightBlueAccent,
+            colorized: true),
+      ),
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.dateAndTime,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
   }
 
   static Future<void> cancelNotification(int id) async {
