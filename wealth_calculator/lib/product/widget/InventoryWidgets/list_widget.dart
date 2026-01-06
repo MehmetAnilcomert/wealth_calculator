@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_bloc.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_event.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
-import 'package:wealth_calculator/product/widget/InventoryWidgets/ItemDialogs.dart';
+import 'package:wealth_calculator/product/widget/InventoryWidgets/item_dialogs.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
@@ -61,13 +61,13 @@ class InventoryListWidget extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withOpacity(0.1),
-                    Colors.white.withOpacity(0.05),
+                    Colors.white.withAlpha(26),
+                    Colors.white.withAlpha(13),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withAlpha(26),
                   width: 1,
                 ),
               ),
@@ -87,7 +87,7 @@ class InventoryListWidget extends StatelessWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: color.withOpacity(0.3),
+                                color: color.withAlpha(77),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -110,8 +110,8 @@ class InventoryListWidget extends StatelessWidget {
                               const SizedBox(height: 4),
                               Text(
                                 '${LocaleKeys.amount.tr()}: ${wealth.amount}',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.8),
+                                style: const TextStyle(
+                                  color: Colors.white70,
                                   fontSize: 16,
                                 ),
                               ),
@@ -165,7 +165,7 @@ class InventoryListWidget extends StatelessWidget {
       BuildContext context, IconData icon, VoidCallback onPressed) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withAlpha(26),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Material(

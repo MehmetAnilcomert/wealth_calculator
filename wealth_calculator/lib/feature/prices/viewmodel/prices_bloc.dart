@@ -3,7 +3,7 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/utility/price_utils.dart';
-import 'package:wealth_calculator/product/service/CustomListDao.dart';
+import 'package:wealth_calculator/product/service/custom_list_dao.dart';
 
 class PricesBloc extends Bloc<PricesEvent, PricesState> {
   final PriceFetcher _priceFetcher = PriceFetcher();
@@ -22,7 +22,6 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
     try {
       final allPrices = await _priceFetcher.fetchPrices();
       final customPrices = await _customListDao.getSelectedWealthPrices();
-      print('Custom prices in bloc: $customPrices');
 
       emit(PricesLoaded(
         commodityPrices: allPrices[3],
@@ -32,7 +31,6 @@ class PricesBloc extends Bloc<PricesEvent, PricesState> {
         customPrices: customPrices,
       ));
     } catch (e) {
-      print('Error occurred: $e');
       emit(PricesError('Failed to load prices.'));
     }
   }

@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
-import 'package:html/dom.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 
 Future<List<WealthPrice>> fetchGoldPrices() async {
@@ -12,15 +13,15 @@ Future<List<WealthPrice>> fetchGoldPrices() async {
 
   if (response.statusCode == 200) {
     // Parse the HTML document
-    Document document = parse(response.body);
+    dom.Document document = parse(response.body);
 
     // Select the specific part of the HTML document
-    Element? wrapper = document.getElementById('wrapper');
-    Element? mContent = wrapper?.querySelector('.mContent');
-    Element? table = mContent?.querySelector('.table');
+    dom.Element? wrapper = document.getElementById('wrapper');
+    dom.Element? mContent = wrapper?.querySelector('.mContent');
+    dom.Element? table = mContent?.querySelector('.table');
 
     if (table != null) {
-      List<Element> rows = table.querySelectorAll('.tBody');
+      List<dom.Element> rows = table.querySelectorAll('.tBody');
       List<WealthPrice> goldPrices = [];
 
       for (var row in rows) {
@@ -47,7 +48,7 @@ Future<List<WealthPrice>> fetchGoldPrices() async {
       return goldPrices;
     }
   } else {
-    print('Failed to load the webpage.');
+    debugPrint('Failed to load the webpage.');
   }
 
   return [];
@@ -62,13 +63,13 @@ Future<List<WealthPrice>> fetchCurrencyPrices() async {
 
   if (response.statusCode == 200) {
     // Parse the HTML document
-    Document document = parse(response.body);
+    dom.Document document = parse(response.body);
 
     // Select the specific part of the HTML document
-    Element? table = document.querySelector('.table .tList');
+    dom.Element? table = document.querySelector('.table .tList');
 
     if (table != null) {
-      List<Element> rows = table.querySelectorAll('.tBody');
+      List<dom.Element> rows = table.querySelectorAll('.tBody');
       List<WealthPrice> currencyPrices = [];
 
       for (var row in rows) {
@@ -96,7 +97,7 @@ Future<List<WealthPrice>> fetchCurrencyPrices() async {
       return currencyPrices;
     }
   } else {
-    print('Failed to load the webpage.');
+    debugPrint('Failed to load the webpage.');
   }
 
   return [];

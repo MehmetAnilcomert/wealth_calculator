@@ -139,7 +139,7 @@ class ProfileScreen extends StatelessWidget {
           "Envanter",
           Icons.inventory,
           () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => InventoryView())),
+              MaterialPageRoute(builder: (context) => const InventoryView())),
         ),
         _buildActionButton(
           context,
@@ -164,7 +164,7 @@ class ProfileScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(label),
         ],
       ),

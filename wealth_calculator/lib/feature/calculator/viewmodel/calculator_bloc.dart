@@ -4,7 +4,7 @@ import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
-import 'package:wealth_calculator/product/service/DataScraping.dart';
+import 'package:wealth_calculator/product/service/data_scraping.dart';
 
 class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
   List<WealthPrice> _cachedGoldPrices = [];
@@ -59,7 +59,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
 
       emit(_createLoadedState());
     } catch (e) {
-      emit(CalculatorError('Failed to edit wealth.'));
+      emit(const CalculatorError('Failed to edit wealth.'));
     }
   }
 
@@ -69,7 +69,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       _savedWealths.removeWhere((wealth) => wealth.id == event.id);
       emit(_createLoadedState());
     } catch (e) {
-      emit(CalculatorError('Failed to delete wealth.'));
+      emit(const CalculatorError('Failed to delete wealth.'));
     }
   }
 

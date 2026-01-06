@@ -68,4 +68,7 @@ class WealthPrice {
       other is WealthPrice &&
           runtimeType == other.runtimeType &&
           title == other.title;
+
+  @override
+  int get hashCode => title.hashCode;
 }

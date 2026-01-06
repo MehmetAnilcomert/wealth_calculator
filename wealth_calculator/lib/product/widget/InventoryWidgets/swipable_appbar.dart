@@ -75,7 +75,7 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                     shape: BoxShape.circle,
                     color: currentPage == index
                         ? Colors.white
-                        : Colors.white.withOpacity(0.5),
+                        : Colors.white.withAlpha(128),
                   ),
                 ),
               ),
@@ -90,7 +90,7 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                 bottom: MediaQuery.of(context).size.height * 0.15,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withAlpha(77),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
@@ -114,7 +114,7 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                 bottom: MediaQuery.of(context).size.height * 0.15,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withAlpha(77),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
@@ -151,13 +151,13 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                     Text(
                       LocaleKeys.swipe.tr(),
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withAlpha(204),
                         fontSize: 14,
                       ),
                     ),
                     Icon(
                       Icons.chevron_right,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withAlpha(204),
                     ),
                   ],
                 ),

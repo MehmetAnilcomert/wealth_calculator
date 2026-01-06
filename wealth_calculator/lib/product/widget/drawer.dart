@@ -39,7 +39,7 @@ class AppDrawer extends StatelessWidget {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withAlpha(51),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -51,7 +51,7 @@ class AppDrawer extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     LocaleKeys.profile.tr(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -76,13 +76,13 @@ class AppDrawer extends StatelessWidget {
                       context,
                       icon: Icons.receipt_outlined,
                       title: LocaleKeys.invoice.tr(),
-                      onTap: () => _navigateTo(context, InvoiceView()),
+                      onTap: () => _navigateTo(context, const InvoiceView()),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.inventory_2_outlined,
                       title: LocaleKeys.inventory.tr(),
-                      onTap: () => _navigateTo(context, InventoryView()),
+                      onTap: () => _navigateTo(context, const InventoryView()),
                     ),
                     _buildMenuItem(
                       context,
@@ -92,22 +92,22 @@ class AppDrawer extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Divider(color: Colors.grey.withOpacity(0.3)),
+                      child: Divider(color: Colors.grey.withAlpha(77)),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.settings_outlined,
                       title: LocaleKeys.settings.tr(),
-                      onTap: () => _navigateTo(context, SettingsView()),
+                      onTap: () => _navigateTo(context, const SettingsView()),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Divider(color: Colors.grey.withOpacity(0.3)),
+                      child: Divider(color: Colors.grey.withAlpha(77)),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.logout,
-                      title: 'Logout',
+                      title: LocaleKeys.logout.tr(),
                       isDestructive: true,
                       onTap: () => SystemNavigator.pop(),
                     ),
@@ -132,7 +132,7 @@ class AppDrawer extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.withOpacity(0.1),
+        color: Colors.grey.withAlpha(26),
       ),
       child: ListTile(
         onTap: onTap,
@@ -140,8 +140,8 @@ class AppDrawer extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isDestructive
-                ? Colors.red.withOpacity(0.1)
-                : const Color(0xFF3498DB).withOpacity(0.1),
+                ? Colors.red.withAlpha(26)
+                : const Color(0xFF3498DB).withAlpha(26),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

@@ -1,16 +1,18 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_bloc.dart';
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class CalculatorListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
   final List<Color> colors;
 
   const CalculatorListWidget({
-    Key? key,
+    super.key,
     required this.savedWealths,
     required this.colors,
   });
@@ -50,13 +52,13 @@ class CalculatorListWidget extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withOpacity(0.1),
-                  Colors.white.withOpacity(0.05),
+                  Colors.white.withAlpha(25),
+                  Colors.white.withAlpha(13),
                 ],
               ),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withAlpha(25),
                 width: 1,
               ),
             ),
@@ -76,7 +78,7 @@ class CalculatorListWidget extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: color.withOpacity(0.3),
+                              color: color.withAlpha(75),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -98,9 +100,10 @@ class CalculatorListWidget extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Miktar: ${wealth.amount}',
+                              LocaleKeys.amount
+                                  .tr(args: [wealth.amount.toString()]),
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withAlpha(204),
                                 fontSize: 16,
                               ),
                             ),
@@ -150,7 +153,7 @@ class CalculatorListWidget extends StatelessWidget {
       BuildContext context, IconData icon, VoidCallback onPressed) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withAlpha(25),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Material(

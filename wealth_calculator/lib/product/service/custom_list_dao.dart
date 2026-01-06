@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/service/database_helper.dart';
@@ -9,7 +10,7 @@ class CustomListDao {
   Future<void> insertWealthPrice(WealthPrice wealthPrice) async {
     try {
       final db = await DbHelper.instance.database;
-      print('Inserting into custom_wealth_assets: ${wealthPrice.title}');
+
       await db.insert(
         'custom_wealth_assets',
         {
@@ -21,7 +22,8 @@ class CustomListDao {
         // Eğer aynı varlık zaten varsa eklemeyi göz ardı eder.
       );
     } catch (e) {
-      print('Error occurred while inserting into custom_wealth_assets: $e');
+      debugPrint(
+          'Error occurred while inserting into custom_wealth_assets: $e');
     }
   }
 
@@ -59,14 +61,13 @@ class CustomListDao {
   Future<void> deleteWealthPrice(WealthPrice wealthPrice) async {
     try {
       final db = await DbHelper.instance.database;
-      print('Deleting from custom_wealth_assets: ${wealthPrice.title}');
       await db.delete(
         'custom_wealth_assets',
         where: 'title = ? AND type = ?',
         whereArgs: [wealthPrice.title, wealthPrice.type.index],
       );
     } catch (e) {
-      print('Error occurred while deleting from custom_wealth_assets: $e');
+      debugPrint('Error occurred while deleting from custom_wealth_assets: $e');
     }
   }
 }

@@ -7,9 +7,7 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   static Future<void> onDidReceiveNotification(
-      NotificationResponse notificationResponse) async {
-    print("Notification receive");
-  }
+      NotificationResponse notificationResponse) async {}
 
   static Future<void> init() async {
     const AndroidInitializationSettings androidInitializationSettings =
@@ -53,48 +51,35 @@ class NotificationService {
     );
   }
 
-  static Future<void> scheduleNotification(BuildContext context, int id,
-      String title, String body, DateTime scheduledTime) async {
-    try {
-      final now = tz.TZDateTime.now(tz.local);
-      final scheduledDate = tz.TZDateTime.from(scheduledTime, tz.local);
+  static Future<void> scheduleNotification(
+      int id, String title, String body, DateTime scheduledTime) async {
+    final now = tz.TZDateTime.now(tz.local);
+    final scheduledDate = tz.TZDateTime.from(scheduledTime, tz.local);
 
-      // Geçmiş bir tarih kontrolü
-      if (scheduledDate.isBefore(now)) {
-        throw Exception('Notification date must be in the future');
-      }
-
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        scheduledDate,
-        const NotificationDetails(
-          iOS: DarwinNotificationDetails(),
-          android: AndroidNotificationDetails(
-              'reminder_channel', 'Reminder Channel',
-              importance: Importance.high,
-              priority: Priority.high,
-              color: Colors.lightBlueAccent,
-              colorized: true),
-        ),
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.dateAndTime,
-        androidAllowWhileIdle: true,
-      );
-
-      print('Notification scheduled for $scheduledDate');
-    } catch (e) {
-      print('Error scheduling notification: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              "Bildirim planlanırken hata oluştu: Geçmiş tarih için oluşturulamaz"),
-          backgroundColor: Colors.red,
-        ),
-      );
+    // Geçmiş bir tarih kontrolü
+    if (scheduledDate.isBefore(now)) {
+      throw Exception('Notification date must be in the future');
     }
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      scheduledDate,
+      const NotificationDetails(
+        iOS: DarwinNotificationDetails(),
+        android: AndroidNotificationDetails(
+            'reminder_channel', 'Reminder Channel',
+            importance: Importance.high,
+            priority: Priority.high,
+            color: Colors.lightBlueAccent,
+            colorized: true),
+      ),
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.dateAndTime,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
   }
 
   static Future<void> cancelNotification(int id) async {

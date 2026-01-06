@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/circular_painter.dart';
-import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
@@ -57,13 +55,13 @@ class CircularMoneyState extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF2C3E50).withOpacity(0.8),
-            const Color(0xFF3498DB).withOpacity(0.8),
+            const Color(0xFF2C3E50).withAlpha(204),
+            const Color(0xFF3498DB).withAlpha(204),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withAlpha(51),
             blurRadius: 10,
             spreadRadius: 5,
           ),
@@ -90,7 +88,7 @@ class CircularMoneyState extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withAlpha(204),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -103,7 +101,7 @@ class CircularMoneyState extends StatelessWidget {
                       shadows: [
                         Shadow(
                           blurRadius: 4,
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withAlpha(77),
                           offset: const Offset(0, 2),
                         ),
                       ],
@@ -116,7 +114,7 @@ class CircularMoneyState extends StatelessWidget {
                       detailedAmount,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withAlpha(153),
                       ),
                     ),
                 ],

@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_event.dart';
 import 'package:wealth_calculator/feature/invoice/model/invoice_model.dart';
@@ -69,13 +68,13 @@ class InvoiceListWidget extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withOpacity(0.1),
-                    Colors.white.withOpacity(0.05),
+                    Colors.white.withAlpha(26),
+                    Colors.white.withAlpha(13),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withAlpha(26),
                   width: 1,
                 ),
               ),
@@ -95,7 +94,7 @@ class InvoiceListWidget extends StatelessWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: color!.withOpacity(0.3),
+                                color: color!.withAlpha(77),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -118,7 +117,7 @@ class InvoiceListWidget extends StatelessWidget {
                               const SizedBox(height: 4),
                               Text(
                                 "${fatura.tutar} ${LocaleKeys.currency.tr()}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -129,7 +128,7 @@ class InvoiceListWidget extends StatelessWidget {
                                 "${LocaleKeys.date.tr()}: ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.white.withOpacity(0.8),
+                                  color: Colors.white.withAlpha(204),
                                 ),
                               ),
                             ],
@@ -139,8 +138,8 @@ class InvoiceListWidget extends StatelessWidget {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: fatura.odendiMi
-                                ? Colors.green.withOpacity(0.2)
-                                : Colors.red.withOpacity(0.2),
+                                ? Colors.green.withAlpha(51)
+                                : Colors.red.withAlpha(51),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(

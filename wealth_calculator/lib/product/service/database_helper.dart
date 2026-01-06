@@ -43,7 +43,6 @@ class DbHelper {
           await db.execute(_createCustomWealthPricesTable);
         }
         if (oldVersion < 6) {
-          print('Upgrading database to version 5');
           await db.execute(_createWealthPricesHistoryTable);
         }
       },
