@@ -51,11 +51,5 @@ flutter:
 
   assets:
     - assets/translations/
-    - images/lira.png
-    - images/logo.json
-    - images/isim.json
-    - images/invoice.json
-    - images/bill.json
-    - images/logo.png
-    - images/logo2.png
     - database/inventory.db
+    - images/logo.png

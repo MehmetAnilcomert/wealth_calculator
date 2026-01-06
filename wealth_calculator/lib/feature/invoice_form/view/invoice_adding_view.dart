@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lottie/lottie.dart';
+import 'package:gen/gen.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_event.dart';
 import 'package:wealth_calculator/feature/invoice_form/viewmodel/invoice_form_bloc.dart';
@@ -73,14 +73,13 @@ class InvoiceAddingContent extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 200,
-              child: Lottie.asset(
-                "images/bill.json",
-                fit: BoxFit.contain,
-                repeat: false,
-                animate: true,
-              ),
-            ),
+                height: 200,
+                child: Assets.lottie.animBill.lottie(
+                  package: "gen",
+                  fit: BoxFit.contain,
+                  repeat: false,
+                  animate: true,
+                )),
             Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
