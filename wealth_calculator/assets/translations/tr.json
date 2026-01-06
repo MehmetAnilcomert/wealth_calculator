@@ -100,5 +100,8 @@
     "notification_schedule_error_past_date": "Bildirim planlanırken hata oluştu: Geçmiş tarih için oluşturulamaz",
     "helpAndSupport": "Yardım ve Destek",
     "nameSurname": "Ad Soyad",
-    "email": "E-posta"
+    "email": "E-posta",
+    "amount_pure": "Miktar",
+    "tl": "TL"
+
 }

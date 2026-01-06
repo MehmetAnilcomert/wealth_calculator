@@ -107,7 +107,7 @@ class InvoiceView extends StatelessWidget {
                               Icons.monetization_on),
                           buildPopupMenuItem(
                               'amount_date',
-                              '${LocaleKeys.amount.tr()} + ${LocaleKeys.date.tr()}',
+                              '${LocaleKeys.amount_pure.tr()} + ${LocaleKeys.date.tr()}',
                               Icons.sort),
                         ],
                       ),

@@ -77,6 +77,8 @@ class InvoiceAddingContent extends StatelessWidget {
               child: Lottie.asset(
                 "images/bill.json",
                 fit: BoxFit.contain,
+                repeat: false,
+                animate: true,
               ),
             ),
             Container(

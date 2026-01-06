@@ -105,5 +105,7 @@ abstract class  LocaleKeys {
   static const helpAndSupport = 'helpAndSupport';
   static const nameSurname = 'nameSurname';
   static const email = 'email';
+  static const amount_pure = 'amount_pure';
+  static const tl = 'tl';
 
 }

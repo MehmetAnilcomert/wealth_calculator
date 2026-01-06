@@ -116,7 +116,7 @@ class InvoiceListWidget extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "${fatura.tutar} ${LocaleKeys.currency.tr()}",
+                                "${fatura.tutar} ${LocaleKeys.tl.tr()}",
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,

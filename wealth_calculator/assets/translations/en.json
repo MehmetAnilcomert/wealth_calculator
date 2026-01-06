@@ -100,5 +100,7 @@
     "notification_schedule_error_past_date": "Error scheduling notification: Cannot create for a past date",
     "helpAndSupport": "Help & Support",
     "nameSurname": "Name Surname",
-    "email": "Email"
+    "email": "Email",
+    "amount_pure": "Amount",
+    "tl": "TL"
 }
