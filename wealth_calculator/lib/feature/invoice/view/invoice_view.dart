@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_event.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_state.dart';
-import 'package:wealth_calculator/feature/invoice/view/invoice_adding_view.dart';
+import 'package:wealth_calculator/feature/invoice_form/view/invoice_adding_view.dart';
 import 'package:wealth_calculator/product/utility/invoice_utils.dart';
 import 'package:wealth_calculator/product/widget/InvoiceWidgets/build_list.dart';
 import 'package:wealth_calculator/product/widget/InvoiceWidgets/popup_item.dart';
