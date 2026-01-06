@@ -97,5 +97,8 @@
     "importance_level": "Önem Seviyesi",
     "invoice_paid_message": "Fatura ödendi, bildirim gönderimi kapalı.",
     "is_paid_invoice": "Ödendi mi?",
-    "notification_schedule_error_past_date": "Bildirim planlanırken hata oluştu: Geçmiş tarih için oluşturulamaz"
+    "notification_schedule_error_past_date": "Bildirim planlanırken hata oluştu: Geçmiş tarih için oluşturulamaz",
+    "helpAndSupport": "Yardım ve Destek",
+    "nameSurname": "Ad Soyad",
+    "email": "E-posta"
 }
