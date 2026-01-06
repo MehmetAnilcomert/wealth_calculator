@@ -75,7 +75,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: changeColor.withOpacity(0.2),
+                color: changeColor.withAlpha(51),
                 spreadRadius: 2,
                 blurRadius: 15,
                 offset: const Offset(0, 5),
@@ -93,7 +93,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: changeColor.withOpacity(0.1),
+                      color: changeColor.withAlpha(26),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -176,7 +176,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha(26),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

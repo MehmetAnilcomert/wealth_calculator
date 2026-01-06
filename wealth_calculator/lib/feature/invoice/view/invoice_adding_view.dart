@@ -1,10 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_event.dart';
 import 'package:wealth_calculator/feature/invoice/model/invoice_model.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
 
 class InvoiceAddingView extends StatefulWidget {
@@ -53,9 +54,8 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
         selectedDate = dateFormat.parse(_tarihController.text);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Tarih formatı hatalı. Lütfen doğru formatta bir tarih girin.'),
+          SnackBar(
+            content: const Text(LocaleKeys.date_format_error).tr(),
             backgroundColor: Colors.red,
           ),
         );
@@ -108,7 +108,9 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
         backgroundColor: const Color(0xFF34495E),
         elevation: 0,
         title: Text(
-          widget.fatura == null ? 'Fatura Ekle' : 'Fatura Güncelle',
+          widget.fatura == null
+              ? LocaleKeys.add_invoice.tr()
+              : LocaleKeys.update_invoice.tr(),
           style:
               const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
@@ -140,7 +142,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                     children: [
                       _buildTextField(
                         controller: _tarihController,
-                        label: 'Son Ödeme Tarihi',
+                        label: LocaleKeys.due_date.tr(),
                         icon: Icons.calendar_today,
                         onTap: () => _selectDate(context),
                         readOnly: true,
@@ -148,12 +150,12 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                       const SizedBox(height: 20),
                       _buildTextField(
                         controller: _tutarController,
-                        label: 'Tutar',
+                        label: LocaleKeys.enter_amount.tr(),
                         icon: Icons.attach_money,
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Lütfen tutarı giriniz';
+                            return LocaleKeys.enter_amount.tr();
                           }
                           return null;
                         },
@@ -161,14 +163,14 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                       const SizedBox(height: 20),
                       _buildTextField(
                         controller: _aciklamaController,
-                        label: 'Açıklama',
+                        label: LocaleKeys.explanation.tr(),
                         icon: Icons.description,
                       ),
                       const SizedBox(height: 20),
                       _buildDropdown(),
                       const SizedBox(height: 20),
                       _buildSwitchTile(
-                        title: 'Ödendi Mi?',
+                        title: LocaleKeys.is_paid_invoice.tr(),
                         value: _odendiMi,
                         onChanged: (bool value) {
                           setState(() {
@@ -176,11 +178,11 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                             if (_odendiMi) {
                               _isNotificationEnabled = false;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Fatura ödendi, bildirim gönderimi kapalı.',
-                                  ),
-                                  backgroundColor: Color(0xFF34495E),
+                                SnackBar(
+                                  content: const Text(
+                                          LocaleKeys.invoice_paid_message)
+                                      .tr(),
+                                  backgroundColor: const Color(0xFF34495E),
                                 ),
                               );
                             }
@@ -189,7 +191,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                       ),
                       const SizedBox(height: 10),
                       _buildSwitchTile(
-                        title: 'Hatırlatma bildirimi gönderilsin mi?',
+                        title: LocaleKeys.notification_send_permission.tr(),
                         value: _isNotificationEnabled,
                         onChanged: _odendiMi ||
                                 DateFormat('dd.MM.yyyy')
@@ -217,18 +219,24 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                                         .scheduleNotification(
                                       context,
                                       notificationId,
-                                      "Hatırlatma!",
-                                      "${_tutarController.text} TL tutarında olan ${_aciklamaController.text} faturanızı ödemiş miydiniz?",
+                                      LocaleKeys.notification.tr(),
+                                      LocaleKeys.notification_content.tr(args: [
+                                        _tutarController.text,
+                                        _aciklamaController.text
+                                      ]),
                                       scheduledDate,
                                     );
                                   } catch (error) {
                                     setState(() {
                                       _isNotificationEnabled = false;
                                     });
+                                    if (!mounted) return;
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            'Bildirim planlanırken hata oluştu: $error'),
+                                        content: Text(LocaleKeys
+                                            .error_schedule_notification
+                                            .tr(args: [error.toString()])),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
@@ -239,20 +247,24 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                                         widget.fatura?.id ?? 0;
                                     await NotificationService
                                         .cancelNotification(notificationId);
+                                    if (!mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text('Bildirim iptal edildi.')),
+                                      SnackBar(
+                                          content: const Text(LocaleKeys
+                                                  .notification_canceled)
+                                              .tr()),
                                     );
                                   } catch (error) {
                                     setState(() {
                                       _isNotificationEnabled = true;
                                     });
+                                    if (!mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            'Bildirim iptal edilirken hata oluştu: $error'),
                                         backgroundColor: Colors.red,
+                                        content: Text(LocaleKeys
+                                            .error_cancel_notification
+                                            .tr(args: [error.toString()])),
                                       ),
                                     );
                                   }
@@ -273,9 +285,9 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
                           ),
                           child: Text(
                             widget.fatura == null
-                                ? 'Faturayı Kaydet'
-                                : 'Faturayı Güncelle',
-                            style: TextStyle(fontSize: 16),
+                                ? LocaleKeys.save_invoice.tr()
+                                : LocaleKeys.update_invoice.tr(),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ),
                       ),
@@ -363,7 +375,7 @@ class _InvoiceAddingViewState extends State<InvoiceAddingView> {
         );
       }).toList(),
       decoration: InputDecoration(
-        labelText: 'Önem Seviyesi',
+        labelText: LocaleKeys.importance_level.tr(),
         prefixIcon: const Icon(Icons.priority_high, color: Color(0xFF3498DB)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
-import 'package:wealth_calculator/product/service/Wealthsdao.dart';
+import 'package:wealth_calculator/product/service/wealths_dao.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
@@ -70,7 +70,7 @@ class ItemDialogs {
               children: [
                 Text(
                   LocaleKeys.enterAmount.tr(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -83,7 +83,7 @@ class ItemDialogs {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: LocaleKeys.amount.tr(),
-                    labelStyle: TextStyle(color: Colors.white70),
+                    labelStyle: const TextStyle(color: Colors.white70),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: Colors.white30),
@@ -102,7 +102,7 @@ class ItemDialogs {
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
                         LocaleKeys.cancel.tr(),
-                        style: TextStyle(color: Colors.white70),
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -195,7 +195,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withAlpha(26),
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(20)),
             ),
@@ -206,7 +206,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                   selectedOption == 'selectGold'
                       ? LocaleKeys.selectGold.tr()
                       : LocaleKeys.selectCurrency.tr(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -275,7 +275,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(isDisabled ? 0.05 : 0.1),
+        color: Colors.white.withAlpha(isDisabled ? 13 : 26),
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListTile(

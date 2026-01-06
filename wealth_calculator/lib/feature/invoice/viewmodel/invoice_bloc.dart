@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_event.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_state.dart';
 import 'package:wealth_calculator/feature/invoice/model/invoice_model.dart';
-import 'package:wealth_calculator/product/service/InvoiceDao.dart';
+import 'package:wealth_calculator/product/service/invoice_dao.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
 
 class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {

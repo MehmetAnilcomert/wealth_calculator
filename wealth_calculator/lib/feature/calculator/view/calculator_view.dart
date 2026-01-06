@@ -5,7 +5,7 @@ import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_state.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/custom_sliver_appbar.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/total_price.dart';
-import 'package:wealth_calculator/product/widget/InventoryWidgets/ItemDialogs.dart';
+import 'package:wealth_calculator/product/widget/InventoryWidgets/item_dialogs.dart';
 import 'package:wealth_calculator/product/widget/calculator_list.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';

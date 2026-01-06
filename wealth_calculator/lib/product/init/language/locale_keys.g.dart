@@ -84,5 +84,23 @@ abstract class  LocaleKeys {
   static const english = 'english';
   static const turkish_code = 'turkish_code';
   static const english_code = 'english_code';
+  static const save_invoice = 'save_invoice';
+  static const update_invoice = 'update_invoice';
+  static const error_cancel_notification = 'error_cancel_notification';
+  static const notification_canceled = 'notification_canceled';
+  static const error_schedule_notification = 'error_schedule_notification';
+  static const notification_scheduled = 'notification_scheduled';
+  static const notification = 'notification';
+  static const notification_content = 'notification_content';
+  static const notification_send_permission = 'notification_send_permission';
+  static const explanation = 'explanation';
+  static const enter_amount = 'enter_amount';
+  static const due_date = 'due_date';
+  static const add_invoice = 'add_invoice';
+  static const date_format_error = 'date_format_error';
+  static const importance_level = 'importance_level';
+  static const invoice_paid_message = 'invoice_paid_message';
+  static const is_paid_invoice = 'is_paid_invoice';
+  static const notification_schedule_error_past_date = 'notification_schedule_error_past_date';
 
 }

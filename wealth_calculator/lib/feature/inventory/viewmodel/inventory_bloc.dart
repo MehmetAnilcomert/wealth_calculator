@@ -5,8 +5,8 @@ import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_state.da
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealth_history_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
-import 'package:wealth_calculator/product/service/PriceHistoryDao.dart';
-import 'package:wealth_calculator/product/service/Wealthsdao.dart';
+import 'package:wealth_calculator/product/service/price_history_dao.dart';
+import 'package:wealth_calculator/product/service/wealths_dao.dart';
 import 'package:wealth_calculator/product/utility/inventory_utils.dart';
 import 'package:wealth_calculator/product/utility/price_utils.dart';
 
@@ -41,7 +41,6 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       final hasTodayRecord = await _priceHistoryDao.hasTodayRecord();
       emit(await _createLoadedState(saveToHistory: !hasTodayRecord));
     } catch (e) {
-      print(e.toString());
       emit(InventoryError(e.toString()));
     }
   }

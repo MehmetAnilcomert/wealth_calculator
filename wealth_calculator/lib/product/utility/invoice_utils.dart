@@ -27,7 +27,7 @@ abstract class InvoiceUtils {
       case OnemSeviyesi.orta:
         return const Color(0xFFFF7E00);
       case OnemSeviyesi.dusuk:
-        return Color(0xFFFFF103);
+        return const Color(0xFFFFF103);
     }
   }
 }

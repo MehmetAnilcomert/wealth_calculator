@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class CustomNavigationButton extends StatelessWidget {
+final class CustomNavigationButton extends StatelessWidget {
   final String text;
   final IconData icon;
   final Widget targetScreen;
   final Color? iconColor;
 
-  CustomNavigationButton({
+  const CustomNavigationButton({
     super.key,
     required this.text,
     required this.icon,
@@ -14,7 +14,7 @@ class CustomNavigationButton extends StatelessWidget {
     this.iconColor,
   });
 
-  TextStyle stylishText = TextStyle(
+  final TextStyle stylishText = const TextStyle(
     fontSize: 20.0,
     color: Colors.black,
     letterSpacing: 0.4,

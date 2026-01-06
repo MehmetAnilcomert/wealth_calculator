@@ -1,15 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   static Future<void> onDidReceiveNotification(
-      NotificationResponse notificationResponse) async {
-    print("Notification receive");
-  }
+      NotificationResponse notificationResponse) async {}
 
   static Future<void> init() async {
     const AndroidInitializationSettings androidInitializationSettings =
@@ -81,16 +81,14 @@ class NotificationService {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dateAndTime,
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
-
-      print('Notification scheduled for $scheduledDate');
     } catch (e) {
-      print('Error scheduling notification: $e');
+      debugPrint('Error scheduling notification: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-              "Bildirim planlanırken hata oluştu: Geçmiş tarih için oluşturulamaz"),
+          content:
+              const Text(LocaleKeys.notification_schedule_error_past_date).tr(),
           backgroundColor: Colors.red,
         ),
       );

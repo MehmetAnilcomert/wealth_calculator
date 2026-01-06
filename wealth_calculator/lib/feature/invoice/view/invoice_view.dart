@@ -58,7 +58,7 @@ class InvoiceView extends StatelessWidget {
                   ),
                   title: Text(
                     LocaleKeys.invoice.tr(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
@@ -118,7 +118,7 @@ class InvoiceView extends StatelessWidget {
                     indicatorColor: const Color(0xFF3498DB),
                     indicatorWeight: 3,
                     labelColor: Colors.white,
-                    unselectedLabelColor: Colors.white.withOpacity(0.6),
+                    unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
                     tabs: [
                       Tab(text: LocaleKeys.unpaidInvoices.tr()),
                       Tab(text: LocaleKeys.paidInvoices.tr()),
@@ -132,7 +132,7 @@ class InvoiceView extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => BlocProvider.value(
                           value: BlocProvider.of<InvoiceBloc>(context),
-                          child: InvoiceAddingView(),
+                          child: const InvoiceAddingView(),
                         ),
                       ),
                     ).then((_) {

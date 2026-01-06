@@ -110,7 +110,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withAlpha(26),
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(20)),
             ),
@@ -130,7 +130,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withAlpha(51),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -238,7 +238,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(isDisabled ? 0.05 : 0.1),
+        color: Colors.white.withAlpha(isDisabled ? 13 : 26),
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListTile(

@@ -41,7 +41,7 @@ class PriceHistoryChart extends StatelessWidget {
                 horizontalInterval: 50000,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withAlpha(26),
                     strokeWidth: 1,
                   );
                 },
@@ -126,7 +126,7 @@ class PriceHistoryChart extends StatelessWidget {
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF3498DB).withOpacity(0.2),
+                        const Color(0xFF3498DB).withAlpha(51),
                         Colors.transparent,
                       ],
                       begin: Alignment.topCenter,

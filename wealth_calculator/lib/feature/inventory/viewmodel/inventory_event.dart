@@ -20,7 +20,7 @@ class AddOrUpdateWealth extends InventoryEvent {
   final SavedWealths wealth;
   final int amount;
 
-  AddOrUpdateWealth(this.wealth, this.amount);
+  const AddOrUpdateWealth(this.wealth, this.amount);
 
   @override
   List<Object> get props => [wealth, amount];
@@ -29,7 +29,7 @@ class AddOrUpdateWealth extends InventoryEvent {
 class DeleteWealth extends InventoryEvent {
   final int id;
 
-  DeleteWealth(this.id);
+  const DeleteWealth(this.id);
 
   @override
   List<Object> get props => [id];

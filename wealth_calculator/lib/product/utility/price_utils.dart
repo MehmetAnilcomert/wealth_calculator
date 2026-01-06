@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
-import 'package:wealth_calculator/product/service/DataScraping.dart';
-import 'package:wealth_calculator/product/service/WealthPricesDao.dart';
+import 'package:wealth_calculator/product/service/data_scraping.dart';
+import 'package:wealth_calculator/product/service/wealth_prices_dao.dart';
 
 class PriceFetcher {
   final WealthPricesDao _wealthPricesDao = WealthPricesDao();
@@ -33,7 +34,7 @@ class PriceFetcher {
         commodityPrices
       ]; // Return the combined list
     } catch (e) {
-      print('Error occurred while fetching from internet: $e');
+      debugPrint('Error occurred while fetching from internet: $e');
 
       // If there is an internet connection error, return the prices from the database
       final allPrices = await _wealthPricesDao.getAllPrices();
@@ -68,7 +69,7 @@ class PriceFetcher {
 
       return categorizedPrices;
     } catch (e) {
-      print('Error occurred while categorizing prices: $e');
+      debugPrint('Error occurred while categorizing prices: $e');
       return []; // Return an empty list in case of error
     }
   }

@@ -4,7 +4,7 @@ import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_bloc.dar
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_event.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_state.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
-import 'package:wealth_calculator/product/widget/InventoryWidgets/ItemDialogs.dart';
+import 'package:wealth_calculator/product/widget/InventoryWidgets/item_dialogs.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/list_widget.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/price_history_chart.dart';
@@ -26,7 +26,7 @@ class InventoryView extends StatelessWidget {
         centerTitle: true,
         title: Text(
           LocaleKeys.assets.tr(),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -133,7 +133,7 @@ class InventoryView extends StatelessWidget {
             return Center(
               child: Text(
                 LocaleKeys.error.tr(),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             );
           }
