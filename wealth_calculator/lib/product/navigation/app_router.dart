@@ -3,7 +3,7 @@ import 'package:wealth_calculator/feature/splash/view/splash_view.dart';
 import 'package:wealth_calculator/feature/prices/view/prices_view.dart';
 import 'package:wealth_calculator/feature/inventory/view/inventory_view.dart';
 import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
-import 'package:wealth_calculator/feature/invoice/view/invoice_adding_view.dart';
+import 'package:wealth_calculator/feature/invoice_form/view/invoice_adding_view.dart';
 import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
 
 /// Application route names

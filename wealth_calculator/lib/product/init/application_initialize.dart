@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/product/init/config/product_environment.dart';
 import 'package:wealth_calculator/product/service/database_helper.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -24,6 +25,7 @@ final class ApplicationInitialize {
     WidgetsFlutterBinding.ensureInitialized();
     await EasyLocalization.ensureInitialized();
     EasyLocalization.logger.enableLevels = [LevelMessages.error];
+    ProductEnvironment.general();
 
     // Initialize timezone data
     tz.initializeTimeZones();

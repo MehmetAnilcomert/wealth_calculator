@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lottie/lottie.dart';
+import 'package:gen/gen.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_bloc.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_event.dart';
 import 'package:wealth_calculator/feature/prices/view/prices_view.dart';
@@ -45,8 +45,12 @@ class _SplashViewState extends State<SplashView> with SplashViewMixin {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Lottie.asset("images/logo.json"),
-                Lottie.asset("images/isim.json"),
+                Assets.lottie.animLogo.lottie(
+                  package: "gen",
+                ),
+                Assets.lottie.animIsim.lottie(
+                  package: "gen",
+                ),
               ],
             ),
           ),

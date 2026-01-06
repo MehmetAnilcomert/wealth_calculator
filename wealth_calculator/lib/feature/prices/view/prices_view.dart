@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gen/gen.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_screen_cubit.dart';
@@ -66,7 +67,9 @@ class _PricesViewState extends State<PricesView>
                     border:
                         Border.all(color: Colors.white.withValues(alpha: 0.2)),
                   ),
-                  child: Image.asset("images/logo2.png"),
+                  child: Assets.images.imgLogoNoBackground.image(
+                    package: "gen",
+                  ),
                 ),
               ),
               flexibleSpace: Container(

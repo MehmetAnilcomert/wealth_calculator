@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_event.dart';
 import 'package:wealth_calculator/feature/invoice/model/invoice_model.dart';
-import 'package:wealth_calculator/feature/invoice/view/invoice_adding_view.dart';
+import 'package:wealth_calculator/feature/invoice_form/view/invoice_adding_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
@@ -116,7 +116,7 @@ class InvoiceListWidget extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "${fatura.tutar} ${LocaleKeys.currency.tr()}",
+                                "${fatura.tutar} ${LocaleKeys.tl.tr()}",
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,

@@ -17,14 +17,14 @@ class SettingsView extends StatelessWidget {
             title: Text(LocaleKeys.language.tr()),
             trailing: DropdownButton<String>(
               value: context.locale.languageCode,
-              items: const [
+              items: [
                 DropdownMenuItem(
-                  value: 'en',
-                  child: Text('English'),
+                  value: LocaleKeys.english_code,
+                  child: const Text(LocaleKeys.english).tr(),
                 ),
                 DropdownMenuItem(
-                  value: 'tr',
-                  child: Text('Türkçe'),
+                  value: LocaleKeys.turkish_code,
+                  child: const Text(LocaleKeys.turkish).tr(),
                 ),
               ],
               onChanged: (String? newValue) {
