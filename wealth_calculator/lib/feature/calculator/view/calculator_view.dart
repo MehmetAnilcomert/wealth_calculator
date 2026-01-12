@@ -9,27 +9,31 @@ import 'package:wealth_calculator/product/widget/InventoryWidgets/item_dialogs.d
 import 'package:wealth_calculator/product/widget/calculator_list.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class CalculatorView extends StatelessWidget {
   const CalculatorView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return BlocProvider(
       create: (context) => CalculatorBloc()..add(const LoadCalculatorData()),
       child: Scaffold(
-        backgroundColor: const Color(0xFF2C3E50),
+        backgroundColor: colorScheme.primaryContainer,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: colorScheme.transparent,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: Icon(Icons.arrow_back_ios,
+                color: colorScheme.onPrimaryContainer),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
             LocaleKeys.wealthCalculator.tr(),
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: colorScheme.onPrimaryContainer,
               fontSize: 24,
               fontWeight: FontWeight.w600,
             ),
@@ -63,7 +67,7 @@ class CalculatorView extends StatelessWidget {
                     ],
                   );
                 },
-                backgroundColor: const Color(0xFF3498DB),
+                backgroundColor: colorScheme.primary,
                 child: const Icon(Icons.add, size: 32),
               );
             }
@@ -77,7 +81,7 @@ class CalculatorView extends StatelessWidget {
                 SnackBar(
                   content: Text(
                       '${LocaleKeys.error.tr()}: ${LocaleKeys.noDataAvailable.tr()}'),
-                  backgroundColor: Colors.red.shade400,
+                  backgroundColor: colorScheme.deleteBackground,
                   behavior: SnackBarBehavior.floating,
                   margin: const EdgeInsets.all(16),
                   shape: RoundedRectangleBorder(
@@ -89,20 +93,21 @@ class CalculatorView extends StatelessWidget {
           },
           builder: (context, state) {
             if (state is CalculatorLoading) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(colorScheme.primary),
                 ),
               );
             } else if (state is CalculatorLoaded) {
               return Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color(0xFF2C3E50),
-                      Color(0xFF3498DB),
+                      colorScheme.gradientStart,
+                      colorScheme.gradientEnd,
                     ],
                   ),
                 ),

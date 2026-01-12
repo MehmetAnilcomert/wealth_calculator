@@ -7,38 +7,51 @@ import 'package:wealth_calculator/feature/invoice/model/invoice_model.dart';
 import 'package:wealth_calculator/feature/invoice_form/view/invoice_adding_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class InvoiceListWidget extends StatelessWidget {
   final List<Invoice> invoices;
-  final Map<String, MaterialColor> colors = {
-    "yuksek": Colors.red,
-    "orta": Colors.orange,
-    "dusuk": Colors.yellow
-  };
 
-  InvoiceListWidget({super.key, required this.invoices});
+  const InvoiceListWidget({super.key, required this.invoices});
+
+  Color _getImportanceColor(BuildContext context, String importance) {
+    final colorScheme = context.general.colorScheme;
+    switch (importance) {
+      case 'yuksek':
+        return colorScheme.error;
+      case 'orta':
+        return colorScheme.warning;
+      case 'dusuk':
+        return colorScheme.tertiary;
+      default:
+        return colorScheme.primary;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: invoices.length,
       itemBuilder: (context, index) {
         final fatura = invoices[index];
-        final color = colors[fatura.onemSeviyesi.toString().split('.').last];
+        final color = _getImportanceColor(
+            context, fatura.onemSeviyesi.toString().split('.').last);
 
         return Dismissible(
           key: Key(fatura.id.toString()),
           background: Container(
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
-              color: Colors.red.shade400,
+              color: colorScheme.deleteBackground,
               borderRadius: BorderRadius.circular(15),
             ),
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child:
-                const Icon(Icons.delete_outline, color: Colors.white, size: 28),
+            child: Icon(Icons.delete_outline,
+                color: colorScheme.onError, size: 28),
           ),
           direction: DismissDirection.endToStart,
           onDismissed: (direction) {
@@ -68,13 +81,13 @@ class InvoiceListWidget extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withAlpha(26),
-                    Colors.white.withAlpha(13),
+                    colorScheme.whiteOverlay10,
+                    colorScheme.whiteOverlay05,
                   ],
                 ),
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: Colors.white.withAlpha(26),
+                  color: colorScheme.whiteOverlay10,
                   width: 1,
                 ),
               ),
@@ -94,7 +107,7 @@ class InvoiceListWidget extends StatelessWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: color!.withAlpha(77),
+                                color: color.withAlpha(77),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -108,8 +121,8 @@ class InvoiceListWidget extends StatelessWidget {
                             children: [
                               Text(
                                 fatura.aciklama,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: colorScheme.onPrimaryContainer,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 ),
@@ -117,8 +130,8 @@ class InvoiceListWidget extends StatelessWidget {
                               const SizedBox(height: 4),
                               Text(
                                 "${fatura.tutar} ${LocaleKeys.tl.tr()}",
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: colorScheme.onPrimaryContainer,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -128,7 +141,8 @@ class InvoiceListWidget extends StatelessWidget {
                                 "${LocaleKeys.date.tr()}: ${DateFormat('dd.MM.yyyy').format(fatura.tarih)}",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.white.withAlpha(204),
+                                  color: colorScheme.onPrimaryContainer
+                                      .withAlpha(204),
                                 ),
                               ),
                             ],
@@ -138,15 +152,17 @@ class InvoiceListWidget extends StatelessWidget {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: fatura.odendiMi
-                                ? Colors.green.withAlpha(51)
-                                : Colors.red.withAlpha(51),
+                                ? colorScheme.tertiary.withAlpha(51)
+                                : colorScheme.error.withAlpha(51),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             fatura.odendiMi
                                 ? Icons.check_circle
                                 : Icons.warning_rounded,
-                            color: fatura.odendiMi ? Colors.green : Colors.red,
+                            color: fatura.odendiMi
+                                ? colorScheme.tertiary
+                                : colorScheme.error,
                             size: 24,
                           ),
                         ),

@@ -4,12 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_state.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text(LocaleKeys.settings.tr()),
@@ -19,9 +21,9 @@ class SettingsView extends StatelessWidget {
           return ListView(
             children: [
               ListTile(
-                leading: const Icon(
+                leading: Icon(
                   Icons.language,
-                  color: Color(0xFF3498DB),
+                  color: colorScheme.primary,
                 ),
                 title: Text(LocaleKeys.language.tr()),
                 trailing: DropdownButton<String>(
@@ -51,8 +53,9 @@ class SettingsView extends StatelessWidget {
                   state.themeMode == ThemeMode.dark
                       ? Icons.dark_mode
                       : Icons.light_mode,
-                  color: const Color(0xFF3498DB),
+                  color: colorScheme.primary,
                 ),
+                title: Text(LocaleKeys.theme.tr()),
                 trailing: Switch(
                   value: state.themeMode == ThemeMode.dark,
                   onChanged: (bool value) {

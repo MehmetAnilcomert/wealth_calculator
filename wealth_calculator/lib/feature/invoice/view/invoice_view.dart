@@ -9,12 +9,15 @@ import 'package:wealth_calculator/product/widget/InvoiceWidgets/build_list.dart'
 import 'package:wealth_calculator/product/widget/InvoiceWidgets/popup_item.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class InvoiceView extends StatelessWidget {
   const InvoiceView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return BlocProvider(
       create: (context) => InvoiceBloc()..add(LoadInvoices()),
       child: BlocConsumer<InvoiceBloc, InvoiceState>(
@@ -23,7 +26,7 @@ class InvoiceView extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('${LocaleKeys.error.tr()}: ${state.message}'),
-                backgroundColor: Colors.red.shade400,
+                backgroundColor: colorScheme.deleteBackground,
                 behavior: SnackBarBehavior.floating,
                 margin: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
@@ -48,18 +51,19 @@ class InvoiceView extends StatelessWidget {
             return DefaultTabController(
               length: 2,
               child: Scaffold(
-                backgroundColor: const Color(0xFF2C3E50),
+                backgroundColor: colorScheme.primaryContainer,
                 appBar: AppBar(
                   elevation: 0,
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: colorScheme.transparent,
                   leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                    icon: Icon(Icons.arrow_back_ios,
+                        color: colorScheme.onPrimaryContainer),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   title: Text(
                     LocaleKeys.invoice.tr(),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onPrimaryContainer,
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
                     ),
@@ -68,14 +72,15 @@ class InvoiceView extends StatelessWidget {
                     Theme(
                       data: Theme.of(context).copyWith(
                         popupMenuTheme: PopupMenuThemeData(
-                          color: const Color(0xFF2C3E50),
+                          color: colorScheme.primaryContainer,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
                       child: PopupMenuButton<String>(
-                        icon: const Icon(Icons.sort, color: Colors.white),
+                        icon: Icon(Icons.sort,
+                            color: colorScheme.onPrimaryContainer),
                         onSelected: (value) {
                           switch (value) {
                             case 'importance':
@@ -97,28 +102,34 @@ class InvoiceView extends StatelessWidget {
                           }
                         },
                         itemBuilder: (context) => [
-                          buildPopupMenuItem('importance',
-                              LocaleKeys.priorities.tr(), Icons.priority_high),
+                          buildPopupMenuItem(
+                              'importance',
+                              LocaleKeys.priorities.tr(),
+                              Icons.priority_high,
+                              context),
                           buildPopupMenuItem('date', LocaleKeys.sortByDate.tr(),
-                              Icons.date_range),
+                              Icons.date_range, context),
                           buildPopupMenuItem(
                               'amount',
                               LocaleKeys.sortByAmount.tr(),
-                              Icons.monetization_on),
+                              Icons.monetization_on,
+                              context),
                           buildPopupMenuItem(
                               'amount_date',
                               '${LocaleKeys.amount_pure.tr()} + ${LocaleKeys.date.tr()}',
-                              Icons.sort),
+                              Icons.sort,
+                              context),
                         ],
                       ),
                     ),
                     const SizedBox(width: 8),
                   ],
                   bottom: TabBar(
-                    indicatorColor: const Color(0xFF3498DB),
+                    indicatorColor: colorScheme.primary,
                     indicatorWeight: 3,
-                    labelColor: Colors.white,
-                    unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
+                    labelColor: colorScheme.onPrimaryContainer,
+                    unselectedLabelColor:
+                        colorScheme.onPrimaryContainer.withAlpha(153),
                     tabs: [
                       Tab(text: LocaleKeys.unpaidInvoices.tr()),
                       Tab(text: LocaleKeys.paidInvoices.tr()),
@@ -139,17 +150,18 @@ class InvoiceView extends StatelessWidget {
                       BlocProvider.of<InvoiceBloc>(context).add(LoadInvoices());
                     });
                   },
-                  backgroundColor: const Color.fromARGB(255, 90, 189, 255),
-                  child: const Icon(Icons.add, size: 32, color: Colors.white),
+                  backgroundColor: colorScheme.secondaryContainer,
+                  child: Icon(Icons.add,
+                      size: 32, color: colorScheme.onSecondaryContainer),
                 ),
                 body: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Color(0xFF2C3E50),
-                        Color(0xFF3498DB),
+                        colorScheme.gradientStart,
+                        colorScheme.gradientEnd,
                       ],
                     ),
                   ),
@@ -165,10 +177,10 @@ class InvoiceView extends StatelessWidget {
               ),
             );
           }
-          return const Scaffold(
+          return Scaffold(
             body: Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
+                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
             ),
           );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
 class WealthPriceCard extends StatefulWidget {
   final WealthPrice equity;
@@ -43,8 +44,10 @@ class _WealthPriceCardState extends State<WealthPriceCard>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     final isNegativeChange = widget.equity.change.startsWith('-');
-    final changeColor = isNegativeChange ? Colors.red : Colors.green;
+    final changeColor =
+        isNegativeChange ? colorScheme.error : colorScheme.tertiary;
     final icon = isNegativeChange ? Icons.trending_down : Icons.trending_up;
 
     return GestureDetector(
@@ -71,7 +74,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
           margin: const EdgeInsets.all(8),
           width: MediaQuery.of(context).size.width * 0.45,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colorScheme.surface,
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
@@ -110,10 +113,10 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                           Expanded(
                             child: Text(
                               widget.equity.title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                           ),
@@ -149,7 +152,8 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                       const SizedBox(height: 8),
                       Text(
                         '${widget.equity.type == PriceType.commodity || widget.equity.type == PriceType.equity ? LocaleKeys.date.tr() : LocaleKeys.time.tr()}: ${widget.equity.time}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: TextStyle(
+                            fontSize: 12, color: colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -161,7 +165,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
                     _isExpanded
                         ? Icons.keyboard_arrow_up
                         : Icons.keyboard_arrow_down,
-                    color: Colors.grey[400],
+                    color: colorScheme.outline,
                   ),
                 ),
               ],
@@ -198,6 +202,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
   }
 
   Widget _buildMainPriceRow(String label, String value) {
+    final colorScheme = context.general.colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -206,15 +211,16 @@ class _WealthPriceCardState extends State<WealthPriceCard>
           Expanded(
             child: Text(
               label,
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style:
+                  TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87),
+                color: colorScheme.onSurface),
           ),
         ],
       ),
@@ -222,6 +228,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
   }
 
   Widget _buildInfoRow(String label, String value) {
+    final colorScheme = context.general.colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -229,14 +236,14 @@ class _WealthPriceCardState extends State<WealthPriceCard>
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
           ),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87),
+                color: colorScheme.onSurface),
           ),
         ],
       ),

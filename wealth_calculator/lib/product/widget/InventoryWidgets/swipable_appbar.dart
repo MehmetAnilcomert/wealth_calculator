@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class SwipableAppBar extends StatefulWidget {
   final double expandedHeight;
@@ -40,6 +42,7 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return SliverAppBar(
       automaticallyImplyLeading: false,
       expandedHeight: widget.expandedHeight,
@@ -74,8 +77,8 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: currentPage == index
-                        ? Colors.white
-                        : Colors.white.withAlpha(128),
+                        ? colorScheme.onPrimaryContainer
+                        : colorScheme.onPrimaryContainer.withAlpha(128),
                   ),
                 ),
               ),
@@ -90,13 +93,13 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                 bottom: MediaQuery.of(context).size.height * 0.15,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withAlpha(77),
+                    color: colorScheme.blackOverlay30,
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.chevron_left,
-                      color: Colors.white,
+                      color: colorScheme.onPrimaryContainer,
                     ),
                     onPressed: () {
                       _pageController.previousPage(
@@ -114,13 +117,13 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                 bottom: MediaQuery.of(context).size.height * 0.15,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withAlpha(77),
+                    color: colorScheme.blackOverlay30,
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.chevron_right,
-                      color: Colors.white,
+                      color: colorScheme.onPrimaryContainer,
                     ),
                     onPressed: () {
                       _pageController.nextPage(
@@ -151,13 +154,13 @@ class _SwipableAppBarState extends State<SwipableAppBar> {
                     Text(
                       LocaleKeys.swipe.tr(),
                       style: TextStyle(
-                        color: Colors.white.withAlpha(204),
+                        color: colorScheme.onPrimaryContainer.withAlpha(204),
                         fontSize: 14,
                       ),
                     ),
                     Icon(
                       Icons.chevron_right,
-                      color: Colors.white.withAlpha(204),
+                      color: colorScheme.onPrimaryContainer.withAlpha(204),
                     ),
                   ],
                 ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class MultiItemDialogs {
   static void showMultiSelectItemDialog(
@@ -16,7 +18,7 @@ class MultiItemDialogs {
       context: context,
       builder: (context) {
         return Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: context.general.colorScheme.transparent,
           child: MultiSelectItemDialog(
             futureGoldPrices: futureGoldPrices,
             futureCurrencyPrices: futureCurrencyPrices,
@@ -81,26 +83,27 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     final allItems = getSelectedList()
         .where((item) => !widget.hiddenItems.contains(item.title))
         .toList();
 
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF2C3E50),
-            Color(0xFF3498DB),
+            colorScheme.gradientStart,
+            colorScheme.gradientEnd,
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Colors.black26,
+            color: colorScheme.blackOverlay10,
             blurRadius: 10,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -110,17 +113,17 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(26),
+              color: colorScheme.whiteOverlay10,
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Seçim Yapın',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: colorScheme.onPrimaryContainer,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -130,7 +133,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(51),
+                      color: colorScheme.whiteOverlay20,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -138,9 +141,11 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                       children: [
                         Text(
                           _selectedOption,
-                          style: const TextStyle(color: Colors.white),
+                          style:
+                              TextStyle(color: colorScheme.onPrimaryContainer),
                         ),
-                        const Icon(Icons.arrow_drop_down, color: Colors.white),
+                        Icon(Icons.arrow_drop_down,
+                            color: colorScheme.onPrimaryContainer),
                       ],
                     ),
                   ),
@@ -187,9 +192,10 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text(
+                  child: Text(
                     'İptal',
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(
+                        color: colorScheme.onPrimaryContainer.withAlpha(179)),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -203,8 +209,8 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color(0xFF3498DB),
+                    foregroundColor: colorScheme.onPrimary,
+                    backgroundColor: colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -220,11 +226,12 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
   }
 
   PopupMenuItem<String> _buildPopupMenuItem(String value, IconData icon) {
+    final colorScheme = context.general.colorScheme;
     return PopupMenuItem<String>(
       value: value,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: const Color(0xFF3498DB)),
+          Icon(icon, size: 20, color: colorScheme.primary),
           const SizedBox(width: 12),
           Text(value),
         ],
@@ -233,19 +240,24 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
   }
 
   Widget _buildListItem(WealthPrice price, bool isSelected) {
+    final colorScheme = context.general.colorScheme;
     final isDisabled = widget.disabledItems.contains(price.title);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(isDisabled ? 13 : 26),
+        color: isDisabled
+            ? colorScheme.whiteOverlay10.withAlpha(13)
+            : colorScheme.whiteOverlay10,
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListTile(
         title: Text(
           price.title,
           style: TextStyle(
-            color: isDisabled ? Colors.white38 : Colors.white,
+            color: isDisabled
+                ? colorScheme.disabledText
+                : colorScheme.onPrimaryContainer,
             fontSize: 16,
           ),
         ),
@@ -262,8 +274,9 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                 });
               },
         trailing: isSelected
-            ? const Icon(Icons.check_circle, color: Colors.green)
-            : const Icon(Icons.circle_outlined, color: Colors.white70),
+            ? Icon(Icons.check_circle, color: colorScheme.tertiary)
+            : Icon(Icons.circle_outlined,
+                color: colorScheme.onPrimaryContainer.withAlpha(179)),
       ),
     );
   }

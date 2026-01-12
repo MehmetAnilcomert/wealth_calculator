@@ -8,6 +8,8 @@ import 'package:wealth_calculator/feature/profile/viewmodel/profile_state.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/constants/enums/profile_status.dart';
 import 'package:wealth_calculator/product/utility/snackbar_helper.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -74,6 +76,7 @@ class ProfileContent extends StatelessWidget {
   }
 
   Widget _buildAppBar(BuildContext context, ProfileState state) {
+    final colorScheme = context.general.colorScheme;
     return SliverAppBar(
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -83,13 +86,14 @@ class ProfileContent extends StatelessWidget {
       floating: false,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: const Text('Profil', style: TextStyle(color: Colors.white)),
+        title: Text('Profil',
+            style: TextStyle(color: colorScheme.onPrimaryContainer)),
         background: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF2C3E50), Color(0xFF3498DB)],
+              colors: [colorScheme.gradientStart, colorScheme.gradientEnd],
             ),
           ),
           child: Center(
@@ -97,7 +101,7 @@ class ProfileContent extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundColor: Colors.white,
+                  backgroundColor: colorScheme.surface,
                   backgroundImage: state.user.profilePicture != null &&
                           state.user.profilePicture!.isNotEmpty
                       ? NetworkImage(state.user.profilePicture!)
@@ -108,9 +112,9 @@ class ProfileContent extends StatelessWidget {
                           state.user.name.isNotEmpty
                               ? state.user.name[0].toUpperCase()
                               : '?',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 40,
-                            color: Color(0xFF3498DB),
+                            color: colorScheme.primary,
                           ),
                         )
                       : null,
@@ -120,13 +124,13 @@ class ProfileContent extends StatelessWidget {
                   right: 0,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3498DB),
+                      color: colorScheme.primary,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: colorScheme.surface, width: 2),
                     ),
                     child: IconButton(
                       icon: const Icon(Icons.camera_alt, size: 20),
-                      color: Colors.white,
+                      color: colorScheme.onPrimary,
                       onPressed: () {
                         // TODO: Implement image picker
                         SnackbarHelper.showInfo(
@@ -149,6 +153,7 @@ class ProfileContent extends StatelessWidget {
   }
 
   Widget _buildUserInfoCard(BuildContext context, ProfileState state) {
+    final colorScheme = context.general.colorScheme;
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -171,13 +176,14 @@ class ProfileContent extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         state.user.email,
-                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                        style: TextStyle(
+                            fontSize: 16, color: colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.edit, color: Color(0xFF3498DB)),
+                  icon: Icon(Icons.edit, color: colorScheme.primary),
                   onPressed: () => _showEditProfileDialog(context, state),
                 ),
               ],
@@ -187,8 +193,8 @@ class ProfileContent extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: state.user.isPremium
-                    ? const Color(0xFF3498DB)
-                    : Colors.grey[300],
+                    ? colorScheme.primary
+                    : colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -196,7 +202,9 @@ class ProfileContent extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: state.user.isPremium ? Colors.white : Colors.black87,
+                  color: state.user.isPremium
+                      ? colorScheme.onPrimary
+                      : colorScheme.onSurface,
                 ),
               ),
             ),
@@ -204,7 +212,8 @@ class ProfileContent extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 'Son giriş: ${DateFormat('dd.MM.yyyy HH:mm').format(state.user.lastLogin!)}',
-                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                style: TextStyle(
+                    fontSize: 12, color: colorScheme.onSurfaceVariant),
               ),
             ],
           ],
@@ -214,6 +223,7 @@ class ProfileContent extends StatelessWidget {
   }
 
   Widget _buildStatisticsCard(BuildContext context, ProfileState state) {
+    final colorScheme = context.general.colorScheme;
     final stats = state.user.statistics ?? {};
     final totalAssets = stats['totalAssets'] as double? ?? 0.0;
     final monthlyIncome = stats['monthlyIncome'] as double? ?? 0.0;
@@ -236,7 +246,7 @@ class ProfileContent extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ).tr(),
                 IconButton(
-                  icon: const Icon(Icons.refresh, color: Color(0xFF3498DB)),
+                  icon: Icon(Icons.refresh, color: colorScheme.primary),
                   onPressed: () {
                     context.read<ProfileBloc>().add(const RefreshStatistics());
                   },
@@ -265,17 +275,24 @@ class ProfileContent extends StatelessWidget {
   }
 
   Widget _buildStatItem(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(fontSize: 16, color: Colors.grey[600])),
-          Text(value,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        ],
-      ),
+    return Builder(
+      builder: (context) {
+        final colorScheme = context.general.colorScheme;
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label,
+                  style: TextStyle(
+                      fontSize: 16, color: colorScheme.onSurfaceVariant)),
+              Text(value,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -304,10 +321,11 @@ class ProfileContent extends StatelessWidget {
 
   Widget _buildActionButton(BuildContext context, String label, IconData icon,
       VoidCallback onPressed) {
+    final colorScheme = context.general.colorScheme;
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF3498DB),
+        backgroundColor: colorScheme.primary,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -380,14 +398,15 @@ class ProfileContent extends StatelessWidget {
     VoidCallback onTap, {
     bool isDestructive = false,
   }) {
+    final colorScheme = context.general.colorScheme;
     return ListTile(
       leading: Icon(
         icon,
-        color: isDestructive ? Colors.red : const Color(0xFF3498DB),
+        color: isDestructive ? colorScheme.error : colorScheme.primary,
       ),
       title: Text(
         label,
-        style: TextStyle(color: isDestructive ? Colors.red : null),
+        style: TextStyle(color: isDestructive ? colorScheme.error : null),
       ),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
@@ -395,6 +414,7 @@ class ProfileContent extends StatelessWidget {
   }
 
   void _showEditProfileDialog(BuildContext context, ProfileState state) {
+    final colorScheme = context.general.colorScheme;
     final nameController = TextEditingController(text: state.user.name);
     final emailController = TextEditingController(text: state.user.email);
 
@@ -437,7 +457,7 @@ class ProfileContent extends StatelessWidget {
               Navigator.pop(dialogContext);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF3498DB),
+              backgroundColor: colorScheme.primary,
             ),
             child: const Text(LocaleKeys.save).tr(),
           ),
@@ -447,6 +467,7 @@ class ProfileContent extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -464,7 +485,7 @@ class ProfileContent extends StatelessWidget {
               Navigator.pop(context); // Return to previous screen
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: colorScheme.error,
             ),
             child: const Text('Çıkış Yap'),
           ),
