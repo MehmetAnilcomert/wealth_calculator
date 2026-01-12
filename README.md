@@ -1,5 +1,7 @@
 # 💼 Cüzdan - Wealth Calculator
 
+**English** | [Türkçe](README_TR.md)
+
 ![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-blue)
 ![Flutter](https://img.shields.io/badge/Flutter-3.19.5-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
@@ -65,6 +67,23 @@ A comprehensive financial management solution for Turkish markets with real-time
       </div>
     </td>
   </tr>
+
+  <!-- Wealth Calculator Row -->
+  <tr>
+    <td>
+      <h3>4. Wealth Calculator</h3>
+      <ul>
+        <li>Quick asset addition and calculation</li>
+        <li>Multiple asset type support (gold, currency)</li>
+        <li>Interactive calculation interface</li>
+      </ul>
+    </td>
+    <td>
+      <div style="display: flex; gap: 10px;">
+        <img src="screenshots/portfolio.jpeg" width="150" alt="Portfolio">
+      </div>
+    </td>
+  </tr>
 </table>
 
 ## 🏗️ Architecture
@@ -79,6 +98,8 @@ lib/
 │   ├── prices/         # Asset price tracking
 │   ├── inventory/      # Portfolio management
 │   ├── invoice/        # Invoice tracking
+│   ├── calculator/     # Wealth calculator
+│   ├── profile/        # Profile management
 │   ├── settings/       # App configuration
 │   └── splash/         # Initial loading
 │
@@ -110,7 +131,7 @@ lib/
 - **Web Scraping**: Real-time market data fetching
 - **Notification Service**: Background task scheduling
 
-📚 For detailed architecture documentation, see [ARCHITECTURE_VISUAL.md](ARCHITECTURE_VISUAL.md)
+📚 For detailed architecture documentation, see [ARCHITECTURE_VISUAL.md](wealth_calculator/ARCHITECTURE_VISUAL.md)
 
 ### Key Components
 - Custom widgets for wealth display and management
@@ -118,7 +139,7 @@ lib/
 - Database helpers for local data management
 - Utility functions for calculations and conversions
 
-## Data Management
+## 📊 Data Management
 - 🔒 Secure local storage using SQLite
 - 📡 Efficient data scraping services
 - 📦 Custom DAO (Data Access Object) implementations for:
@@ -127,17 +148,98 @@ lib/
   - Price monitoring
   - Portfolio list handling
 
+## 🎨 Features
+
+### 💰 Multi-Asset Support
+- Gold (gram, quarter, half, full)
+- Currencies (USD, EUR, GBP, CHF)
+- Real estate valuation
+
+### 📈 Real-Time Data
+- Live price updates
+- Automated data scraping from Turkish financial sources
+- Historical price charts
+- Portfolio performance analysis
+
+### 🔔 Smart Notifications
+- Invoice payment reminders
+- Price alert systems
+- Customizable notification settings
+
+### 🌐 Multi-Language Support
+- Turkish
+- English
+- Easy translation management with easy_localization
+
 ## 📥 Installation
 
 Clone the repository and ensure you have Flutter installed on your system. Run the following commands:
 
 ```bash
+# Install dependencies
 flutter pub get
+
+# Run the application
 flutter run
 ```
 
 ## 📦 Dependencies
-- Flutter SDK
-- SQLite for local database
-- BLoC pattern libraries
-- HTTP client for data scraping
+
+### Core Packages
+- **flutter_bloc** (^8.1.0): State management
+- **sqflite** (^2.3.3+1): Local database
+- **http** (^1.6.0) & **html** (^0.15.0): Web scraping
+- **easy_localization** (^3.0.7): Multi-language support
+- **fl_chart** (^0.70.0): Chart visualization
+- **flutter_local_notifications** (^17.2.2): Notification management
+
+### Dependency Injection
+- **get_it** (^9.2.0): Service location
+- **vexana** (^5.0.3): Network management
+
+### UI/UX
+- **lottie** (^3.0.0): Animations
+- **flutter_native_splash** (^2.4.0): Splash screen
+- **intl** (^0.20.2): Date and number formatting
+
+## 🛠️ Development
+
+### Project Structure
+```
+wealth_calculator/
+├── lib/
+│   ├── feature/        # Feature modules
+│   ├── product/        # Shared layer
+│   └── main.dart
+├── assets/
+│   └── translations/   # Language files
+├── database/           # SQLite database files
+└── screenshots/        # App screenshots
+```
+
+### Testing
+```bash
+flutter test
+```
+
+### Build
+```bash
+# Android APK
+flutter build apk --release
+
+# iOS IPA
+flutter build ios --release
+```
+
+## 📱 Platform Support
+- ✅ Android
+- ✅ iOS
+
+## 📄 License
+This project is licensed under the MIT License.
+
+## 🤝 Contributing
+Contributions are welcome! Please open an issue or submit a pull request.
+
+## 📧 Contact
+For questions or suggestions, please open an issue.

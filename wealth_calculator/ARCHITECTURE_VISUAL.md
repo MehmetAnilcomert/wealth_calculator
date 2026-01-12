@@ -1,209 +1,222 @@
-# Architecture Visual Guide
+# Wealth Calculator - Görsel Mimari Kılavuzu
 
-## 🏗️ Project Structure Tree
+## 🏗️ Klasör Yapısı
 
 ```
 wealth_calculator/
 │
 ├── 📱 lib/
 │   │
-│   ├── 🎯 feature/                    # Feature Modules (Business Logic + UI)
+│   ├── 🎯 feature/                    # Özellik Modülleri
 │   │   │
-│   │   ├── 💰 prices/
+│   │   ├── 💰 prices/                 # Fiyat takibi
 │   │   │   ├── view/
-│   │   │   │   └── prices_view.dart
-│   │   │   ├── viewmodel/
-│   │   │   │   ├── prices_bloc.dart
-│   │   │   │   ├── prices_event.dart
-│   │   │   │   ├── prices_state.dart
-│   │   │   │   └── prices_screen_cubit.dart
-│   │   │   ├── model/
-│   │   │   │   └── wealth_data_model.dart
-│   │   │   └── prices.dart           # Barrel file
+│   │   │   ├── viewmodel/             # PricesBloc
+│   │   │   └── model/
 │   │   │
-│   │   ├── 📦 inventory/
+│   │   ├── 📦 inventory/              # Envanter yönetimi
 │   │   │   ├── view/
-│   │   │   ├── viewmodel/
-│   │   │   ├── model/
-│   │   │   └── inventory.dart
+│   │   │   ├── viewmodel/             # InventoryBloc
+│   │   │   └── model/
 │   │   │
-│   │   ├── 🧾 invoice/
+│   │   ├── 🧾 invoice/                # Fatura yönetimi
 │   │   │   ├── view/
-│   │   │   ├── viewmodel/
-│   │   │   ├── model/
-│   │   │   └── invoice.dart
+│   │   │   ├── viewmodel/             # InvoiceBloc
+│   │   │   └── model/
 │   │   │
-│   │   ├── ⚙️ settings/
+│   │   ├── 📝 invoice_form/           # Fatura formu
+│   │   │   └── view/
+│   │   │
+│   │   ├── 🧮 calculator/             # Hesap makinesi
 │   │   │   ├── view/
-│   │   │   └── settings.dart
+│   │   │   └── viewmodel/             # CalculatorCubit
 │   │   │
-│   │   └── 🚀 splash/
-│   │       ├── view/
-│   │       └── splash.dart
+│   │   ├── 👤 profile/                # Profil
+│   │   │   ├── view/
+│   │   │   ├── viewmodel/             # ProfileCubit
+│   │   │   └── model/
+│   │   │
+│   │   ├── ⚙️ settings/               # Ayarlar
+│   │   │   └── view/
+│   │   │
+│   │   └── 🚀 splash/                 # Başlangıç ekranı
+│   │       └── view/
 │   │
-│   ├── 🎨 product/                    # Shared Product Layer
+│   ├── 🎨 product/                    # Paylaşılan Katman
 │   │   │
-│   │   ├── init/                      # Initialization
+│   │   ├── init/                      # Başlatma
 │   │   │   ├── application_initialize.dart
 │   │   │   └── state_initialize.dart
 │   │   │
-│   │   ├── navigation/                # Routing
+│   │   ├── navigation/                # Yönlendirme
 │   │   │   └── app_router.dart
 │   │   │
 │   │   ├── state/                     # Global State
-│   │   │   └── localization_cubit.dart
+│   │   │   ├── base/                  # BaseCubit, BaseState
+│   │   │   ├── container/             # ProductContainer (DI)
+│   │   │   └── viewmodel/             # ProductViewmodel
 │   │   │
-│   │   ├── service/                   # Services & DAOs
+│   │   ├── theme/                     # Tema Sistemi
+│   │   │   ├── light_theme/
+│   │   │   ├── dark_theme/
+│   │   │   └── custom_colors.dart
+│   │   │
+│   │   ├── cache/                     # Cache yönetimi
+│   │   │
+│   │   ├── service/                   # Servisler
 │   │   │   ├── database_helper.dart
 │   │   │   ├── notification_service.dart
-│   │   │   ├── CustomListDao.dart
-│   │   │   ├── InvoiceDao.dart
-│   │   │   ├── PriceHistoryDao.dart
-│   │   │   ├── Wealthsdao.dart
-│   │   │   └── DataScraping.dart
+│   │   │   └── *Dao.dart
 │   │   │
-│   │   ├── utility/                   # Utilities & Constants
+│   │   ├── utility/                   # Yardımcılar
 │   │   │   ├── constants/
-│   │   │   │   └── app_constants.dart
 │   │   │   ├── extensions/
-│   │   │   ├── inventory_utils.dart
-│   │   │   ├── invoice_utils.dart
-│   │   │   ├── prices_screen_utils.dart
-│   │   │   └── price_utils.dart
+│   │   │   └── *_utils.dart
 │   │   │
-│   │   ├── widget/                    # Shared Widgets
-│   │   │   ├── drawer.dart
-│   │   │   ├── wealth_card.dart
-│   │   │   ├── CommonWidgets/
-│   │   │   ├── InventoryWidgets/
-│   │   │   ├── InvoiceWidgets/
-│   │   │   └── PricesWidgets/
-│   │   │
-│   │   └── product.dart               # Barrel file
+│   │   └── widget/                    # Paylaşılan Widget'lar
+│   │       ├── CommonWidgets/
+│   │       ├── InventoryWidgets/
+│   │       ├── InvoiceWidgets/
+│   │       └── PricesWidgets/
 │   │
-│   ├── 🌍 l10n/                        # Localization
-│   │   └── app_localizations.dart
-│   │
-│   └── 🎬 main.dart                    # Entry Point
+│   └── 🎬 main.dart
 │
-├── 📚 Documentation/
-│   ├── ARCHITECTURE.md
-│   ├── MIGRATION_GUIDE.md
-│   ├── REFACTORING_COMPLETE.md
-│   └── POST_REFACTORING_CHECKLIST.md
+├── 📄 assets/
+│   └── translations/
+│       ├── en.json
+│       └── tr.json
 │
-└── 🛠️ Scripts/
-    ├── migrate_imports.py
-    └── cleanup_old_folders.ps1
+└── 📚 Dokümantasyon/
+    ├── ARCHITECTURE.md
+    └── ARCHITECTURE_VISUAL.md
 ```
 
-## 🔄 Data Flow Diagram
+
+## 🔄 Veri Akışı Diyagramı
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         USER INTERFACE                       │
-│                    (Feature Views Layer)                     │
-├──────────────┬──────────────┬──────────────┬────────────────┤
-│ PricesView   │ InventoryView│ InvoiceView  │ SettingsView   │
-└──────────────┴──────────────┴──────────────┴────────────────┘
-       ↕              ↕               ↕              ↕
+│                      KULLANICI ARAYÜZLERİ                    │
+│                        (Feature Views)                       │
+├──────────┬──────────┬──────────┬──────────┬─────────────────┤
+│ Prices   │Inventory │ Invoice  │Calculator│Settings/Profile │
+└──────────┴──────────┴──────────┴──────────┴─────────────────┘
+      ↕          ↕         ↕          ↕            ↕
 ┌─────────────────────────────────────────────────────────────┐
-│                    BUSINESS LOGIC                            │
-│               (Feature ViewModels - BLoC)                    │
-├──────────────┬──────────────┬──────────────┬────────────────┤
-│ PricesBloc   │ InventoryBloc│ InvoiceBloc  │ SettingsCubit  │
-└──────────────┴──────────────┴──────────────┴────────────────┘
-       ↕              ↕               ↕              ↕
+│                     İŞ MANTIK KATMANI                        │
+│                  (BLoC/Cubit Pattern)                        │
+├──────────┬──────────┬──────────┬──────────┬─────────────────┤
+│PricesBloc│Inventory │ Invoice  │Calculator│  ProfileCubit   │
+│          │   Bloc   │   Bloc   │  Cubit   │                 │
+└──────────┴──────────┴──────────┴──────────┴─────────────────┘
+      ↕          ↕         ↕          ↕            ↕
 ┌─────────────────────────────────────────────────────────────┐
-│                       DATA MODELS                            │
-│                  (Feature Models Layer)                      │
-├──────────────┬──────────────┬──────────────┬────────────────┤
-│ WealthPrice  │ SavedWealths │ Invoice      │ Settings       │
-└──────────────┴──────────────┴──────────────┴────────────────┘
-       ↕              ↕               ↕              ↕
+│                       VERİ MODELLERİ                         │
+├──────────┬──────────┬──────────┬──────────┬─────────────────┤
+│ Wealth   │  Saved   │ Invoice  │Calculator│   Profile       │
+│  Price   │ Wealths  │          │   Data   │                 │
+└──────────┴──────────┴──────────┴──────────┴─────────────────┘
+      ↕          ↕         ↕          
 ┌─────────────────────────────────────────────────────────────┐
-│                    SERVICES & DAOs                           │
-│                  (Product Service Layer)                     │
-├──────────────┬──────────────┬──────────────┬────────────────┤
-│ PriceDao     │ WealthsDao   │ InvoiceDao   │ DatabaseHelper │
-└──────────────┴──────────────┴──────────────┴────────────────┘
-       ↕              ↕               ↕              ↕
+│                     SERVİSLER & DAO                          │
+├──────────┬──────────┬──────────┬──────────────────────────┐ │
+│PriceDao  │WealthsDao│InvoiceDao│ DatabaseHelper           │ │
+└──────────┴──────────┴──────────┴──────────────────────────┘ │
+      ↕                                                         │
 ┌─────────────────────────────────────────────────────────────┐
-│                       DATA SOURCES                           │
-│              (Database, API, Local Storage)                  │
-├──────────────┬──────────────┬──────────────┬────────────────┤
-│ SQLite DB    │ Web Scraping │ SharedPrefs  │ Notifications  │
-└──────────────┴──────────────┴──────────────┴────────────────┘
+│                      VERİ KAYNAKLARI                         │
+│              (SQLite, API, SharedPreferences)                │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## 🎯 Dependency Flow
+## 🎯 Bağımlılık Akışı
 
 ```
-Feature Layer (Independent)
-     ↓
-Product Layer (Shared)
-     ↓
-External Dependencies (Packages)
+┌─────────────────────────┐
+│   Feature Layer         │  ← Bağımsız özellikler
+│   (prices, inventory)   │
+└───────────┬─────────────┘
+            ↓
+┌─────────────────────────┐
+│   Product Layer         │  ← Paylaşılan kod
+│   (state, service)      │
+└───────────┬─────────────┘
+            ↓
+┌─────────────────────────┐
+│   External Packages     │  ← Flutter, BLoC, etc.
+└─────────────────────────┘
 ```
 
-**Key Principle**: Features never depend on each other, only on the product layer.
+**Temel Kural**: Feature'lar birbirine değil, sadece product layer'a bağlıdır.
 
-## 📦 Module Composition
+## 📦 Design Pattern'ler
 
-### Feature Module Structure
+### 1. BLoC Pattern (State Management)
 ```
-feature/[feature_name]/
-├── view/           # UI Components
-│   └── [name]_view.dart
-├── viewmodel/      # Business Logic
-│   ├── [name]_bloc.dart
-│   ├── [name]_event.dart
-│   └── [name]_state.dart
-├── model/          # Data Models
-│   └── [name]_model.dart
-└── [feature_name].dart  # Barrel export
+User Event  →  BLoC  →  New State  →  UI Rebuild
+
+Örnek:
+LoadPrices event → PricesBloc → PricesLoaded → View güncellenir
 ```
 
-### Product Layer Structure
+### 2. Repository Pattern (Data Access)
 ```
-product/
-├── init/          # App bootstrapping
-├── navigation/    # Routing & navigation
-├── state/         # Global state
-├── service/       # Data access & APIs
-├── utility/       # Helpers & constants
-├── widget/        # Reusable UI components
-└── product.dart   # Barrel export
+ViewModel  →  DAO  →  Database
+
+Örnek:
+PricesBloc → PriceHistoryDao → SQLite
 ```
 
-## 🚦 Application Lifecycle
+### 3. Singleton Pattern
+```dart
+DatabaseHelper.instance      // ✅ Tek instance
+NotificationService.instance // ✅ Tek instance
+```
+
+### 4. Dependency Injection (DI)
+```dart
+ProductContainer.read<ProductViewmodel>()  // Service locator
+```
+
+### 5. Factory Pattern
+```dart
+Model.fromJson(json)   // Factory constructor
+Model.fromMap(map)     // Factory constructor
+```
+
+### 6. Observer Pattern
+```dart
+BlocBuilder<Bloc, State>(...)  // Stream observer
+```
+
+## 🚦 Uygulama Yaşam Döngüsü
 
 ```
 1. main()
       ↓
 2. ApplicationInitialize.init()
-      ├── Database initialization
-      ├── Notification setup
-      └── Timezone configuration
+      ├─ Database oluşturma
+      ├─ Notification kurulumu
+      └─ Timezone ayarları
       ↓
-3. MyApp (MaterialApp)
+3. StateInitialize
+      ├─ ProductViewmodel (global state)
+      ├─ PricesBloc
+      ├─ InventoryBloc
+      ├─ InvoiceBloc
+      └─ ProfileCubit
       ↓
-4. StateInitialize
-      ├── LocalizationCubit
-      ├── PricesBloc
-      ├── InventoryBloc
-      └── InvoiceBloc
+4. MaterialApp (BlocBuilder ile)
+      ├─ theme: CustomLightTheme
+      ├─ darkTheme: CustomDarkTheme
+      └─ themeMode: state.themeMode (reactive)
       ↓
-5. AppRouter
-      ├── Initial Route: /splash
-      └── Route generation
+5. SplashView
       ↓
-6. SplashView
-      ↓
-7. PricesView (Home)
+6. PricesView (Ana Sayfa)
 ```
 
-## 🔀 Navigation Flow
+## 🔀 Navigasyon Akışı
 
 ```
                     ┌─────────────┐
@@ -212,113 +225,142 @@ product/
                            ↓
                     ┌─────────────┐
             ┌───────│ PricesView  │──────┐
-            │       │   (Home)    │      │
+            │       │  (Ana Sayfa)│      │
             │       └─────────────┘      │
-            │              │             │
             ↓              ↓             ↓
-    ┌──────────────┐ ┌──────────┐ ┌──────────┐
-    │InventoryView │ │InvoiceView│ │ Settings │
-    └──────────────┘ └──────────┘ └──────────┘
+    ┌──────────┐    ┌──────────┐  ┌──────────┐
+    │Inventory │    │ Invoice  │  │Calculator│
+    └──────────┘    └──────────┘  └──────────┘
             │              │             │
-            │              ↓             │
-            │       ┌─────────────┐     │
-            │       │InvoiceAdding│     │
-            │       └─────────────┘     │
+            │       ┌─────────────┐      │
+            │       │InvoiceForm  │      │
+            │       └─────────────┘      │
             │                            │
-            └────────────────────────────┘
-                         ↕
-                   ┌──────────┐
-                   │  Drawer  │
-                   └──────────┘
+            └──────────┬─────────────────┘
+                       ↓
+              ┌─────────────────┐
+              │Settings/Profile │
+              └─────────────────┘
 ```
 
-## 🎨 UI Component Hierarchy
+## 🎨 State Management Yapısı
 
-```
-MaterialApp
-  └── StateInitialize (BLoC Providers)
-      └── BlocBuilder<LocalizationCubit>
-          └── MaterialApp (with localization)
-              └── AppRouter
-                  └── Feature Views
-                      ├── AppBar
-                      ├── Drawer (Product Widget)
-                      ├── Body
-                      │   ├── Feature Widgets
-                      │   └── Product Widgets
-                      └── FloatingActionButton
-```
-
-## 🔐 State Management Pattern
-
-```
-View (UI)
-  ↓ events
-BLoC/Cubit
-  ↓ states
-View (rebuilds)
-
-Example:
-PricesView
-  ↓ LoadPrices event
-PricesBloc
-  ├── fetches data from PriceFetcher
-  ├── processes data
-  └── emits PricesLoaded state
-  ↓
-PricesView rebuilds with new data
-```
-
-## 📋 Import Pattern Examples
-
-### Feature Import (Recommended)
+### Global State (Product Layer)
 ```dart
-import 'package:wealth_calculator/feature/prices/prices.dart';
-// Access: PricesView(), PricesBloc(), WealthPrice()
+product/state/
+├── base/                    # BaseCubit, BaseState
+├── container/               # ProductContainer (DI)
+├── viewmodel/
+│   ├── product_viewmodel.dart    # Global ViewModel
+│   └── product_state.dart        # Global State
+└── state.dart
 ```
 
-### Selective Feature Import
+**ProductState İçeriği:**
+- `ThemeMode` → Tema yönetimi (light/dark/system)
+- `Locale` → Dil yönetimi (tr/en)
+
+### Reactive State Update
 ```dart
-import 'package:wealth_calculator/feature/prices/view/prices_view.dart';
-import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
+// ❌ Non-reactive (tekil okuma)
+ProductContainer.read<ProductViewmodel>().state.themeMode
+
+// ✅ Reactive (stream subscription)
+BlocBuilder<ProductViewmodel, ProductState>(
+  builder: (context, state) => Text(state.themeMode),
+)
 ```
 
-### Product Layer Import
+## 🎨 Tema Sistemi
+
+### Tema Mimarisi
 ```dart
-import 'package:wealth_calculator/product/product.dart';
-// Access: AppRouter, AppConstants, LocalizationCubit
+product/theme/
+├── light_theme/
+│   └── custom_light_theme.dart      # LightColorScheme
+├── dark_theme/
+│   └── custom_dark_theme.dart       # DarkColorScheme
+├── custom_colors.dart                # Extension: gold, euro
+└── custom_theme.dart
 ```
 
-### Service Import
+### Tema Kullanımı
 ```dart
-import 'package:wealth_calculator/product/service/database_helper.dart';
+// Material 3 ColorScheme
+context.colorScheme.primary
+context.colorScheme.surface
+context.colorScheme.onSurface
+
+// Özel renkler
+context.customColors.gold
+context.customColors.euro
+context.customColors.dollar
 ```
 
-### Widget Import
+### Tema Değiştirme
 ```dart
-import 'package:wealth_calculator/product/widget/drawer.dart';
+// Settings'ten tema değiştir
+ProductContainer.read<ProductViewmodel>()
+  .changeThemeMode(themeMode: ThemeMode.dark);
+
+// MaterialApp otomatik güncellenir (BlocBuilder sayesinde)
 ```
+
+## 🔐 BLoC State Pattern
+
+### Karmaşık State (Bloc)
+```dart
+// Çoklu event, karmaşık state geçişleri
+PricesBloc, InventoryBloc, InvoiceBloc
+
+Event → Bloc → State
+```
+
+### Basit State (Cubit)
+```dart
+// Tek fonksiyonla state değişimi
+CalculatorCubit, ProfileCubit, ProductViewmodel
+
+Method → Cubit → State
+```
+
+### State Immutability
+```dart
+class ProductState extends Equatable {
+  const ProductState({required this.themeMode});
+  
+  final ThemeMode themeMode;
+  
+  // Immutable güncelleme
+  ProductState copyWith({ThemeMode? themeMode}) {
+    return ProductState(themeMode: themeMode ?? this.themeMode);
+  }
+}
+```
+
+## 📋 Temel Prensipler
+
+### ✅ Feature İzolasyonu
+- Feature'lar birbirine import etmez
+- Sadece product layer'a bağımlıdır
+- Her feature bağımsız test edilebilir
+
+### ✅ Single Responsibility
+- Her class tek bir sorumluluğa sahip
+- View → UI
+- ViewModel → Business Logic
+- Model → Data Structure
+- Service → Data Access
+
+### ✅ Dependency Injection
+- ProductContainer ile servis yönetimi
+- Test edilebilir kod
+- Gevşek bağlı (loosely coupled) yapı
+
+### ✅ Reactive UI
+- BlocBuilder ile otomatik güncelleme
+- Stream-based state management
+- Performanslı rebuild mekanizması
 
 ---
 
-## 🎓 Key Concepts
-
-### Feature-First Architecture
-- Each feature is a vertical slice of the application
-- Features are independent and self-contained
-- Easy to understand, test, and maintain
-
-### Product Layer
-- Horizontal layer of shared functionality
-- Services, utilities, widgets used by multiple features
-- Single source of truth for shared code
-
-### Clean Architecture Layers
-1. **Presentation** (View): UI and user interaction
-2. **Application** (ViewModel): Business logic and state
-3. **Domain** (Model): Business entities and rules
-4. **Data** (Service): Data access and external APIs
-
----
-
-**This visual guide complements the detailed ARCHITECTURE.md documentation.**
