@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:wealth_calculator/product/init/config/product_environment.dart';
 import 'package:wealth_calculator/product/service/database_helper.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
+import 'package:wealth_calculator/product/cache/product_cache.dart';
+import 'package:wealth_calculator/product/state/container/product_state_container.dart';
+import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:easy_logger/easy_logger.dart';
-import 'package:wealth_calculator/product/state/container/product_state_container.dart';
 
 /// Application initialization manager
 /// Handles all initialization tasks before app starts
@@ -27,7 +29,7 @@ final class ApplicationInitialize {
     await EasyLocalization.ensureInitialized();
     EasyLocalization.logger.enableLevels = [LevelMessages.error];
 
-    _setupConfigAndGetit();
+    await _setupConfigAndGetit();
 
     // Initialize timezone data
     tz.initializeTimeZones();
@@ -37,14 +39,28 @@ final class ApplicationInitialize {
 
     // Initialize database
     await DbHelper.instance.database;
+
+    // Load saved theme preference
+    await _loadThemePreference();
   }
 
   /// Burada çağırılma sıraları önemlidir. Env değişkenleri Getit içinde kullanılabilir olmalıdır.
-  void _setupConfigAndGetit() {
+  Future<void> _setupConfigAndGetit() async {
     /// Set up environment configurations
     ProductEnvironment.general();
 
-    /// Initialize Getit
-    ProductContainer.setUp();
+    /// Initialize Getit and cache
+    await ProductContainer.setUp();
+  }
+
+  /// Loads the saved theme preference from cache
+  Future<void> _loadThemePreference() async {
+    final productCache = ProductContainer.read<ProductCache>();
+    final savedThemeMode = productCache.getThemeMode();
+
+    if (savedThemeMode != null) {
+      final productViewmodel = ProductContainer.read<ProductViewmodel>();
+      productViewmodel.changeThemeMode(themeMode: savedThemeMode);
+    }
   }
 }

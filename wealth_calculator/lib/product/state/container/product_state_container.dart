@@ -13,13 +13,17 @@ final class ProductContainer {
   static final GetIt _getit = GetIt.I;
 
   /// Sets up the necessary dependencies for the product state container.
-  static void setUp() {
+  static Future<void> setUp() async {
     _getit
       ..registerSingleton(
         ProductNetworkManager.base(),
       )
-      ..registerSingleton(ProductCache(cacheManager: HiveCacheManager()))
-      ..registerLazySingleton(ProductViewmodel.new);
+      ..registerSingleton(ProductCache(cacheManager: HiveCacheManager()));
+
+    // Initialize cache before other dependencies
+    await _getit<ProductCache>().initialize();
+
+    _getit.registerLazySingleton(ProductViewmodel.new);
   }
 
   /// Reads an instance of type [T] from the service locator then returns it.
