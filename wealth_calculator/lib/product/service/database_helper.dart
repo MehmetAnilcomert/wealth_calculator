@@ -23,7 +23,7 @@ class DbHelper {
     String dbPath = join(await getDatabasesPath(), 'app_database.db');
     return await openDatabase(
       dbPath,
-      version: 5,
+      version: 7,
       onCreate: (db, version) async {
         await db.execute(_createFaturaTable);
         await db.execute(_createInventoryTable);
@@ -45,12 +45,34 @@ class DbHelper {
         if (oldVersion < 6) {
           await db.execute(_createWealthPricesHistoryTable);
         }
+        if (oldVersion < 7) {
+          // amount kolonunu INTEGER'dan REAL'a (double) dönüştür
+          // Mevcut inventory tablosunu kontrol et
+          var tables = await db.rawQuery(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name='inventory'");
+
+          if (tables.isNotEmpty) {
+            await db.execute('''
+              CREATE TABLE IF NOT EXISTS inventory_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                type TEXT NOT NULL,
+                amount REAL NOT NULL
+              )
+            ''');
+            await db.execute('''
+              INSERT INTO inventory_new (id, type, amount)
+              SELECT id, type, CAST(amount AS REAL) FROM inventory
+            ''');
+            await db.execute('DROP TABLE IF EXISTS inventory');
+            await db.execute('ALTER TABLE inventory_new RENAME TO inventory');
+          }
+        }
       },
     );
   }
 
   static const String _createFaturaTable = '''
-    CREATE TABLE fatura (
+    CREATE TABLE IF NOT EXISTS fatura (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       tarih TEXT NOT NULL,
       tutar REAL NOT NULL,
@@ -62,15 +84,15 @@ class DbHelper {
   ''';
 
   static const String _createInventoryTable = '''
-    CREATE TABLE inventory (
+    CREATE TABLE IF NOT EXISTS inventory (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       type TEXT NOT NULL,
-      amount INTEGER NOT NULL
+      amount REAL NOT NULL
     )
   ''';
 
   static const String _createCachedWealthPricesTable = '''
-    CREATE TABLE cached_wealth_prices (
+    CREATE TABLE IF NOT EXISTS cached_wealth_prices (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
       buyingPrice TEXT NOT NULL,
@@ -89,7 +111,7 @@ class DbHelper {
   ''';
 
   static const _createCustomWealthPricesTable = '''
-    CREATE TABLE custom_wealth_assets (
+    CREATE TABLE IF NOT EXISTS custom_wealth_assets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         type INTEGER NOT NULL,
@@ -98,7 +120,7 @@ class DbHelper {
   ''';
 
   static const _createWealthPricesHistoryTable = '''
-    CREATE TABLE wealth_history (
+    CREATE TABLE IF NOT EXISTS wealth_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT NOT NULL,
         totalPrice REAL NOT NULL,

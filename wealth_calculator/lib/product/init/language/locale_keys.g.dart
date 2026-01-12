@@ -107,5 +107,6 @@ abstract class  LocaleKeys {
   static const email = 'email';
   static const amount_pure = 'amount_pure';
   static const tl = 'tl';
+  static const amount_inventory = 'amount_inventory';
 
 }

@@ -10,6 +10,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
+import 'package:wealth_calculator/product/utility/wealth_amount_utils.dart';
 
 class InventoryListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
@@ -112,7 +113,7 @@ class InventoryListWidget extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${LocaleKeys.amount.tr()}: ${wealth.amount}',
+                                '${LocaleKeys.amount_inventory.tr()}: ${wealth.amount}',
                                 style: TextStyle(
                                   color: colorScheme.onPrimaryContainer
                                       .withAlpha(179),
@@ -129,12 +130,15 @@ class InventoryListWidget extends StatelessWidget {
                               context,
                               Icons.remove,
                               () {
-                                if (wealth.amount > 0) {
+                                final newAmount = WealthAmountUtils
+                                    .calculateDecrementedAmount(wealth.amount);
+
+                                if (newAmount != null) {
                                   context.read<InventoryBloc>().add(
-                                        AddOrUpdateWealth(
-                                            wealth, wealth.amount - 1),
+                                        AddOrUpdateWealth(wealth, newAmount),
                                       );
-                                } else if (wealth.amount == 0) {
+                                } else {
+                                  // null = item silinmeli
                                   BlocProvider.of<InventoryBloc>(context)
                                       .add(DeleteWealth(wealth.id));
                                 }
@@ -145,9 +149,11 @@ class InventoryListWidget extends StatelessWidget {
                               context,
                               Icons.add,
                               () {
+                                final newAmount =
+                                    WealthAmountUtils.incrementAmount(
+                                        wealth.amount);
                                 context.read<InventoryBloc>().add(
-                                      AddOrUpdateWealth(
-                                          wealth, wealth.amount + 1),
+                                      AddOrUpdateWealth(wealth, newAmount),
                                     );
                               },
                             ),

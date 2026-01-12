@@ -51,11 +51,11 @@ class CalculatorView extends StatelessWidget {
                     (wealth, amount) {
                       ItemDialogs.showEditItemDialog(
                         context,
-                        MapEntry(wealth, 0),
+                        MapEntry(wealth, 0.0),
                         (wealth, amount) {
-                          context
-                              .read<CalculatorBloc>()
-                              .add(AddOrUpdateCalculatorWealth(wealth, amount));
+                          context.read<CalculatorBloc>().add(
+                              AddOrUpdateCalculatorWealth(
+                                  wealth, amount.toDouble()));
                         },
                       );
                     },

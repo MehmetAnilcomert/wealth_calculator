@@ -102,6 +102,7 @@
     "nameSurname": "Ad Soyad",
     "email": "E-posta",
     "amount_pure": "Miktar",
-    "tl": "TL"
+    "tl": "TL",
+    "amount_inventory": "Miktar"
 
 }

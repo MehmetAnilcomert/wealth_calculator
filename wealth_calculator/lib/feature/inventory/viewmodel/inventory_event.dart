@@ -18,7 +18,7 @@ class LoadInventoryData extends InventoryEvent {
 
 class AddOrUpdateWealth extends InventoryEvent {
   final SavedWealths wealth;
-  final int amount;
+  final double amount;
 
   const AddOrUpdateWealth(this.wealth, this.amount);
 
