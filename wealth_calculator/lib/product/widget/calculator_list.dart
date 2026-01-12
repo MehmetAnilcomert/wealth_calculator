@@ -9,6 +9,7 @@ import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/item_dialogs.dart';
+import 'package:wealth_calculator/product/utility/wealth_amount_utils.dart';
 
 class CalculatorListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
@@ -132,21 +133,14 @@ class CalculatorListWidget extends StatelessWidget {
                               context,
                               Icons.remove,
                               () {
-                                if (wealth.amount >= 1.0) {
-                                  // Floating point precision fix: 2 ondalık basamak
-                                  final newAmount = ((wealth.amount * 100 - 100) / 100);
+                                final newAmount = WealthAmountUtils.calculateDecrementedAmount(wealth.amount);
+                                
+                                if (newAmount != null) {
                                   context.read<CalculatorBloc>().add(
-                                        AddOrUpdateCalculatorWealth(
-                                            wealth, newAmount),
-                                      );
-                                } else if (wealth.amount > 0 &&
-                                    wealth.amount < 1.0) {
-                                  // 0 ile 1 arasındaysa direkt 0 yap
-                                  context.read<CalculatorBloc>().add(
-                                        AddOrUpdateCalculatorWealth(
-                                            wealth, 0.0),
+                                        AddOrUpdateCalculatorWealth(wealth, newAmount),
                                       );
                                 }
+                                // Calculator'da 0 olunca silmiyoruz, sadece görüntülemeye devam
                               },
                             ),
                             const SizedBox(width: 8),
@@ -154,11 +148,9 @@ class CalculatorListWidget extends StatelessWidget {
                               context,
                               Icons.add,
                               () {
-                                // Floating point precision fix: 2 ondalık basamak
-                                final newAmount = ((wealth.amount * 100 + 100) / 100);
+                                final newAmount = WealthAmountUtils.incrementAmount(wealth.amount);
                                 context.read<CalculatorBloc>().add(
-                                      AddOrUpdateCalculatorWealth(
-                                          wealth, newAmount),
+                                      AddOrUpdateCalculatorWealth(wealth, newAmount),
                                     );
                               },
                             ),
