@@ -27,10 +27,14 @@ dependencies:
   fl_chart: ^0.70.0
   logger: ^2.6.2
   easy_logger: ^0.0.2
+  get_it: ^9.2.0
+  vexana: ^5.0.3
 
   # Modules 
   gen:
     path: ./module/gen
+  core: 
+    path: ./module/core
 
 flutter_native_splash:
   color: "#2196F3"
