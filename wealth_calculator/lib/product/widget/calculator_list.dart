@@ -6,6 +6,8 @@ import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_bloc.dart';
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class CalculatorListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
@@ -19,6 +21,7 @@ class CalculatorListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: savedWealths.length,
@@ -31,13 +34,13 @@ class CalculatorListWidget extends StatelessWidget {
           background: Container(
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
-              color: Colors.red.shade400,
+              color: colorScheme.deleteBackground,
               borderRadius: BorderRadius.circular(15),
             ),
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child:
-                const Icon(Icons.delete_outline, color: Colors.white, size: 28),
+            child: Icon(Icons.delete_outline,
+                color: colorScheme.onError, size: 28),
           ),
           direction: DismissDirection.endToStart,
           onDismissed: (direction) {
@@ -52,13 +55,13 @@ class CalculatorListWidget extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withAlpha(25),
-                  Colors.white.withAlpha(13),
+                  colorScheme.whiteOverlay10,
+                  colorScheme.whiteOverlay10.withAlpha(13),
                 ],
               ),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: Colors.white.withAlpha(25),
+                color: colorScheme.whiteOverlay10,
                 width: 1,
               ),
             ),
@@ -92,8 +95,8 @@ class CalculatorListWidget extends StatelessWidget {
                           children: [
                             Text(
                               wealth.type,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: colorScheme.onPrimaryContainer,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
@@ -103,7 +106,7 @@ class CalculatorListWidget extends StatelessWidget {
                               LocaleKeys.amount
                                   .tr(args: [wealth.amount.toString()]),
                               style: TextStyle(
-                                color: Colors.white.withAlpha(204),
+                                color: colorScheme.whiteOverlay80,
                                 fontSize: 16,
                               ),
                             ),
@@ -151,13 +154,14 @@ class CalculatorListWidget extends StatelessWidget {
 
   Widget _buildControlButton(
       BuildContext context, IconData icon, VoidCallback onPressed) {
+    final colorScheme = context.general.colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(25),
+        color: colorScheme.whiteOverlay10,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: colorScheme.transparent,
         child: InkWell(
           onTap: onPressed,
           borderRadius: BorderRadius.circular(8),
@@ -165,7 +169,7 @@ class CalculatorListWidget extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Icon(
               icon,
-              color: Colors.white,
+              color: colorScheme.onPrimaryContainer,
               size: 24,
             ),
           ),

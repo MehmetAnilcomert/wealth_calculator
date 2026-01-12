@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/product.dart';
-import 'package:wealth_calculator/product/state/container/product_state_items.dart';
-import 'package:wealth_calculator/product/state/viewmodel/product_state.dart';
+import 'package:wealth_calculator/product/theme/dark_theme/custom_dark_theme.dart';
+import 'package:wealth_calculator/product/theme/light_theme/custom_light_theme.dart';
 
 /// Application entry point
 Future<void> main() async {
@@ -27,11 +28,12 @@ class MyApp extends StatelessWidget {
       locale: context.locale,
 
       // Theme
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
-      themeMode: ProductStateItems.productViewModel.state.themeMode,
+      theme: CustomLightTheme().themeData,
+      darkTheme: CustomDarkTheme().themeData,
+      themeMode: context
+          .watch<ProductViewmodel>()
+          .state
+          .themeMode, // Listen to theme mode changes
       // Navigation
       initialRoute: AppRouter.initialRoute,
       onGenerateRoute: AppRouter.onGenerateRoute,

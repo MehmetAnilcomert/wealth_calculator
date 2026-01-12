@@ -10,6 +10,8 @@ import 'package:wealth_calculator/feature/invoice_form/viewmodel/invoice_form_st
 import 'package:wealth_calculator/feature/invoice/model/invoice_model.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/snackbar_helper.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class InvoiceAddingView extends StatelessWidget {
   final Invoice? fatura;
@@ -56,17 +58,18 @@ class InvoiceAddingContent extends StatelessWidget {
   }
 
   Widget _buildScaffold(BuildContext context, InvoiceFormState formState) {
+    final colorScheme = context.general.colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFF2C3E50),
+      backgroundColor: colorScheme.primaryContainer,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF34495E),
+        backgroundColor: colorScheme.secondary,
         elevation: 0,
         title: Text(
           fatura == null
               ? LocaleKeys.add_invoice.tr()
               : LocaleKeys.update_invoice.tr(),
-          style:
-              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: colorScheme.onSecondary, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -81,9 +84,9 @@ class InvoiceAddingContent extends StatelessWidget {
                   animate: true,
                 )),
             Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
                 ),
@@ -115,7 +118,7 @@ class InvoiceAddingContent extends StatelessWidget {
                                     .add(const SubmitForm());
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3498DB),
+                          backgroundColor: colorScheme.primary,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 15),
                           shape: RoundedRectangleBorder(
@@ -123,13 +126,13 @@ class InvoiceAddingContent extends StatelessWidget {
                           ),
                         ),
                         child: formState.status == FormStatus.submitting
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
+                                      colorScheme.onPrimary),
                                 ),
                               )
                             : Text(
@@ -151,17 +154,18 @@ class InvoiceAddingContent extends StatelessWidget {
   }
 
   Widget _buildDateField(BuildContext context, InvoiceFormState formState) {
+    final colorScheme = context.general.colorScheme;
     return TextFormField(
       decoration: InputDecoration(
         labelText: LocaleKeys.due_date.tr(),
-        prefixIcon: const Icon(Icons.calendar_today, color: Color(0xFF3498DB)),
+        prefixIcon: Icon(Icons.calendar_today, color: colorScheme.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF3498DB)),
+          borderSide: BorderSide(color: colorScheme.primary),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF3498DB), width: 2),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
       ),
       readOnly: true,
@@ -183,17 +187,18 @@ class InvoiceAddingContent extends StatelessWidget {
   }
 
   Widget _buildAmountField(BuildContext context, InvoiceFormState formState) {
+    final colorScheme = context.general.colorScheme;
     return TextFormField(
       decoration: InputDecoration(
         labelText: LocaleKeys.enter_amount.tr(),
-        prefixIcon: const Icon(Icons.attach_money, color: Color(0xFF3498DB)),
+        prefixIcon: Icon(Icons.attach_money, color: colorScheme.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF3498DB)),
+          borderSide: BorderSide(color: colorScheme.primary),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF3498DB), width: 2),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         errorText: formState.amount.isNotEmpty && !formState.isAmountValid
             ? LocaleKeys.enter_amount.tr()
@@ -209,17 +214,18 @@ class InvoiceAddingContent extends StatelessWidget {
 
   Widget _buildDescriptionField(
       BuildContext context, InvoiceFormState formState) {
+    final colorScheme = context.general.colorScheme;
     return TextFormField(
       decoration: InputDecoration(
         labelText: LocaleKeys.explanation.tr(),
-        prefixIcon: const Icon(Icons.description, color: Color(0xFF3498DB)),
+        prefixIcon: Icon(Icons.description, color: colorScheme.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF3498DB)),
+          borderSide: BorderSide(color: colorScheme.primary),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF3498DB), width: 2),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
       ),
       initialValue: formState.description,
@@ -230,6 +236,7 @@ class InvoiceAddingContent extends StatelessWidget {
   }
 
   Widget _buildDropdown(BuildContext context, InvoiceFormState formState) {
+    final colorScheme = context.general.colorScheme;
     return DropdownButtonFormField<OnemSeviyesi>(
       value: formState.importanceLevel,
       onChanged: (OnemSeviyesi? newValue) {
@@ -243,15 +250,15 @@ class InvoiceAddingContent extends StatelessWidget {
         switch (onemSeviyesi) {
           case OnemSeviyesi.dusuk:
             icon = Icons.arrow_downward;
-            color = Colors.green;
+            color = colorScheme.tertiary;
             break;
           case OnemSeviyesi.orta:
             icon = Icons.remove;
-            color = Colors.orange;
+            color = colorScheme.warning;
             break;
           case OnemSeviyesi.yuksek:
             icon = Icons.arrow_upward;
-            color = Colors.red;
+            color = colorScheme.error;
             break;
         }
         return DropdownMenuItem<OnemSeviyesi>(
@@ -273,26 +280,27 @@ class InvoiceAddingContent extends StatelessWidget {
       }).toList(),
       decoration: InputDecoration(
         labelText: LocaleKeys.importance_level.tr(),
-        prefixIcon: const Icon(Icons.priority_high, color: Color(0xFF3498DB)),
+        prefixIcon: Icon(Icons.priority_high, color: colorScheme.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF3498DB)),
+          borderSide: BorderSide(color: colorScheme.primary),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF3498DB), width: 2),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
       ),
-      icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF3498DB)),
-      dropdownColor: Colors.white,
-      style: const TextStyle(color: Color(0xFF2C3E50), fontSize: 16),
+      icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
+      dropdownColor: colorScheme.surface,
+      style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
     );
   }
 
   Widget _buildPaidSwitch(BuildContext context, InvoiceFormState formState) {
+    final colorScheme = context.general.colorScheme;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF3498DB)),
+        border: Border.all(color: colorScheme.primary),
         borderRadius: BorderRadius.circular(15),
       ),
       child: SwitchListTile(
@@ -307,11 +315,11 @@ class InvoiceAddingContent extends StatelessWidget {
             SnackbarHelper.showCustom(
               context,
               LocaleKeys.invoice_paid_message.tr(),
-              backgroundColor: const Color(0xFF34495E),
+              backgroundColor: colorScheme.secondary,
             );
           }
         },
-        activeThumbColor: const Color(0xFF3498DB),
+        activeThumbColor: colorScheme.primary,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
     );
@@ -319,9 +327,10 @@ class InvoiceAddingContent extends StatelessWidget {
 
   Widget _buildNotificationSwitch(
       BuildContext context, InvoiceFormState formState) {
+    final colorScheme = context.general.colorScheme;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF3498DB)),
+        border: Border.all(color: colorScheme.primary),
         borderRadius: BorderRadius.circular(15),
       ),
       child: SwitchListTile(
@@ -337,7 +346,7 @@ class InvoiceAddingContent extends StatelessWidget {
                     .add(NotificationStatusChanged(value));
               }
             : null,
-        activeThumbColor: const Color(0xFF3498DB),
+        activeThumbColor: colorScheme.primary,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
     );

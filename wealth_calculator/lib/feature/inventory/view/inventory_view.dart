@@ -11,30 +11,34 @@ import 'package:wealth_calculator/product/widget/InventoryWidgets/price_history_
 import 'package:wealth_calculator/product/widget/InventoryWidgets/swipable_appbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class InventoryView extends StatelessWidget {
   const InventoryView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     final inventoryBloc = BlocProvider.of<InventoryBloc>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF2C3E50),
+      backgroundColor: colorScheme.primaryContainer,
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
         title: Text(
           LocaleKeys.assets.tr(),
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: colorScheme.onPrimaryContainer,
             fontSize: 24,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: colorScheme.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon:
+              Icon(Icons.arrow_back_ios, color: colorScheme.onPrimaryContainer),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -66,8 +70,9 @@ class InventoryView extends StatelessWidget {
             );
           }
         },
-        backgroundColor: const Color.fromARGB(255, 90, 189, 255),
-        child: const Icon(Icons.add, size: 32, color: Colors.white),
+        backgroundColor: colorScheme.secondaryContainer,
+        child:
+            Icon(Icons.add, size: 32, color: colorScheme.onSecondaryContainer),
       ),
       body: BlocConsumer<InventoryBloc, InventoryState>(
         bloc: inventoryBloc,
@@ -77,7 +82,7 @@ class InventoryView extends StatelessWidget {
               SnackBar(
                 content: Text(
                     '${LocaleKeys.error.tr()}: ${LocaleKeys.noDataAvailable.tr()}'),
-                backgroundColor: Colors.red.shade400,
+                backgroundColor: colorScheme.deleteBackground,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
@@ -87,20 +92,20 @@ class InventoryView extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is InventoryLoading) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3498DB)),
+                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
             );
           } else if (state is InventoryLoaded) {
             return Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFF2C3E50),
-                    Color(0xFF3498DB),
+                    colorScheme.gradientStart,
+                    colorScheme.gradientEnd,
                   ],
                 ),
               ),

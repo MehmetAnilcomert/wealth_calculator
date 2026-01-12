@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/widget/wealth_card.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
 class CustomPricesWidget extends StatelessWidget {
   final List<dynamic> customPrices;
@@ -16,6 +17,7 @@ class CustomPricesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return Stack(
       children: [
         Column(
@@ -33,9 +35,10 @@ class CustomPricesWidget extends StatelessWidget {
           bottom: 16,
           child: IconButton(
             onPressed: onAddPressed,
-            icon: const Icon(Icons.add, color: Colors.white),
+            icon: Icon(Icons.add, color: colorScheme.onSecondaryContainer),
             style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(Colors.blueGrey),
+              backgroundColor:
+                  WidgetStateProperty.all(colorScheme.secondaryContainer),
               elevation: WidgetStateProperty.all(4),
               shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
 final class CustomNavigationButton extends StatelessWidget {
   final String text;
@@ -14,22 +15,22 @@ final class CustomNavigationButton extends StatelessWidget {
     this.iconColor,
   });
 
-  final TextStyle stylishText = const TextStyle(
-    fontSize: 20.0,
-    color: Colors.black,
-    letterSpacing: 0.4,
-    wordSpacing: 1.0,
-    fontFamily: 'Arial', // Font ailesi
-  );
-
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
+    final stylishText = TextStyle(
+      fontSize: 20.0,
+      color: colorScheme.onSurface,
+      letterSpacing: 0.4,
+      wordSpacing: 1.0,
+      fontFamily: 'Arial',
+    );
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
-        side: const BorderSide(color: Colors.black),
+        side: BorderSide(color: colorScheme.outline),
       ),
       child: TextButton(
         onPressed: () {
@@ -46,7 +47,7 @@ final class CustomNavigationButton extends StatelessWidget {
             Text(text, style: stylishText),
             Icon(
               icon,
-              color: iconColor ?? Colors.black,
+              color: iconColor ?? colorScheme.onSurface,
             ),
           ],
         ),

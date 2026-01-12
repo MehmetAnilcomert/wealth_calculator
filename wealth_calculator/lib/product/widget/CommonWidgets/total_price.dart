@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/circular.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class TotalPrice extends StatelessWidget {
   final double totalPrice;
@@ -15,14 +17,15 @@ class TotalPrice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF2C3E50),
-            Color(0xFF3498DB),
+            colorScheme.gradientStart,
+            colorScheme.gradientEnd,
           ],
         ),
       ),
@@ -39,7 +42,7 @@ class TotalPrice extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha(25),
+                      color: colorScheme.blackOverlay10,
                       blurRadius: 10,
                       spreadRadius: 5,
                     ),
