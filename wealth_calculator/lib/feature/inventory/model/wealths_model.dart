@@ -2,7 +2,7 @@
 class SavedWealths {
   final int id;
   final String type;
-  late final int amount;
+  late final double amount;
 
   SavedWealths({required this.id, required this.type, required this.amount});
 

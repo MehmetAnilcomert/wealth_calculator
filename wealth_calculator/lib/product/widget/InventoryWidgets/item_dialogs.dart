@@ -12,7 +12,7 @@ class ItemDialogs {
     BuildContext context,
     List<WealthPrice> futureGoldPrices,
     List<WealthPrice> futureCurrencyPrices,
-    Function(SavedWealths, int) onItemSelected, {
+    Function(SavedWealths, double) onItemSelected, {
     List<String> disabledItems = const [],
     List<String> hiddenItems = const [],
   }) {
@@ -35,8 +35,8 @@ class ItemDialogs {
 
   static void showEditItemDialog(
     BuildContext context,
-    MapEntry<SavedWealths, int> entry,
-    Function(SavedWealths, int) onSave,
+    MapEntry<SavedWealths, double> entry,
+    Function(SavedWealths, double) onSave,
   ) {
     final colorScheme = context.general.colorScheme;
     TextEditingController controller = TextEditingController(
@@ -82,10 +82,11 @@ class ItemDialogs {
                 const SizedBox(height: 20),
                 TextField(
                   controller: controller,
-                  keyboardType: TextInputType.number,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   style: TextStyle(color: colorScheme.onPrimaryContainer),
                   decoration: InputDecoration(
-                    labelText: LocaleKeys.amount.tr(),
+                    labelText: LocaleKeys.amount_inventory.tr(),
                     labelStyle: TextStyle(
                         color: colorScheme.onPrimaryContainer.withAlpha(179)),
                     enabledBorder: OutlineInputBorder(
@@ -116,7 +117,7 @@ class ItemDialogs {
                     const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () {
-                        int amount = int.tryParse(controller.text) ?? 0;
+                        double amount = double.tryParse(controller.text) ?? 0.0;
                         onSave(entry.key, amount);
                         Navigator.of(context).pop();
                       },
@@ -143,7 +144,7 @@ class ItemDialogs {
 class SelectItemDialog extends StatefulWidget {
   final List<WealthPrice> futureGoldPrices;
   final List<WealthPrice> futureCurrencyPrices;
-  final Function(SavedWealths, int)? onItemSelected;
+  final Function(SavedWealths, double)? onItemSelected;
   final List<String> disabledItems;
   final List<String> hiddenItems;
 
@@ -318,7 +319,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                     SavedWealths(
                       id: DateTime.now().millisecondsSinceEpoch,
                       type: price.title,
-                      amount: 0,
+                      amount: 0.0,
                     ),
                     0,
                   );

@@ -102,5 +102,6 @@
     "nameSurname": "Name Surname",
     "email": "Email",
     "amount_pure": "Amount",
-    "tl": "TL"
+    "tl": "TL",
+    "amount_inventory": "Quantity"
 }

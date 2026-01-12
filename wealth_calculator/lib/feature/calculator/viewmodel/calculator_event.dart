@@ -14,7 +14,7 @@ class LoadCalculatorData extends CalculatorEvent {
 
 class AddOrUpdateCalculatorWealth extends CalculatorEvent {
   final SavedWealths wealth;
-  final int amount;
+  final double amount;
 
   const AddOrUpdateCalculatorWealth(this.wealth, this.amount);
 

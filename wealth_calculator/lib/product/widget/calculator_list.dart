@@ -8,6 +8,7 @@ import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
+import 'package:wealth_calculator/product/widget/InventoryWidgets/item_dialogs.dart';
 
 class CalculatorListWidget extends StatelessWidget {
   final List<SavedWealths> savedWealths;
@@ -48,100 +49,123 @@ class CalculatorListWidget extends StatelessWidget {
                 .read<CalculatorBloc>()
                 .add(DeleteCalculatorWealth(wealth.id));
           },
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  colorScheme.whiteOverlay10,
-                  colorScheme.whiteOverlay10.withAlpha(13),
-                ],
+          child: GestureDetector(
+            onTap: () {
+              ItemDialogs.showEditItemDialog(
+                context,
+                MapEntry(wealth, wealth.amount),
+                (wealth, amount) {
+                  context
+                      .read<CalculatorBloc>()
+                      .add(AddOrUpdateCalculatorWealth(wealth, amount));
+                },
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorScheme.whiteOverlay10,
+                    colorScheme.whiteOverlay10.withAlpha(13),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: colorScheme.whiteOverlay10,
+                  width: 1,
+                ),
               ),
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(
-                color: colorScheme.whiteOverlay10,
-                width: 1,
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: color.withAlpha(75),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: color.withAlpha(75),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                wealth.type,
+                                style: TextStyle(
+                                  color: colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${LocaleKeys.amount_inventory.tr()}: ${wealth.amount}',
+                                style: TextStyle(
+                                  color: colorScheme.whiteOverlay80,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              wealth.type,
-                              style: TextStyle(
-                                color: colorScheme.onPrimaryContainer,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+                            _buildControlButton(
+                              context,
+                              Icons.remove,
+                              () {
+                                if (wealth.amount >= 1.0) {
+                                  // Floating point precision fix: 2 ondalık basamak
+                                  final newAmount = ((wealth.amount * 100 - 100) / 100);
+                                  context.read<CalculatorBloc>().add(
+                                        AddOrUpdateCalculatorWealth(
+                                            wealth, newAmount),
+                                      );
+                                } else if (wealth.amount > 0 &&
+                                    wealth.amount < 1.0) {
+                                  // 0 ile 1 arasındaysa direkt 0 yap
+                                  context.read<CalculatorBloc>().add(
+                                        AddOrUpdateCalculatorWealth(
+                                            wealth, 0.0),
+                                      );
+                                }
+                              },
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              LocaleKeys.amount
-                                  .tr(args: [wealth.amount.toString()]),
-                              style: TextStyle(
-                                color: colorScheme.whiteOverlay80,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildControlButton(
-                            context,
-                            Icons.remove,
-                            () {
-                              if (wealth.amount > 0) {
+                            const SizedBox(width: 8),
+                            _buildControlButton(
+                              context,
+                              Icons.add,
+                              () {
+                                // Floating point precision fix: 2 ondalık basamak
+                                final newAmount = ((wealth.amount * 100 + 100) / 100);
                                 context.read<CalculatorBloc>().add(
                                       AddOrUpdateCalculatorWealth(
-                                          wealth, wealth.amount - 1),
+                                          wealth, newAmount),
                                     );
-                              }
-                            },
-                          ),
-                          const SizedBox(width: 8),
-                          _buildControlButton(
-                            context,
-                            Icons.add,
-                            () {
-                              context.read<CalculatorBloc>().add(
-                                    AddOrUpdateCalculatorWealth(
-                                        wealth, wealth.amount + 1),
-                                  );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

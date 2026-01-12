@@ -112,7 +112,7 @@ class InventoryListWidget extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${LocaleKeys.amount.tr()}: ${wealth.amount}',
+                                '${LocaleKeys.amount_inventory.tr()}: ${wealth.amount}',
                                 style: TextStyle(
                                   color: colorScheme.onPrimaryContainer
                                       .withAlpha(179),
@@ -129,10 +129,18 @@ class InventoryListWidget extends StatelessWidget {
                               context,
                               Icons.remove,
                               () {
-                                if (wealth.amount > 0) {
+                                if (wealth.amount >= 1.0) {
+                                  // Floating point precision fix: 2 ondalık basamak
+                                  final newAmount =
+                                      ((wealth.amount * 100 - 100) / 100);
                                   context.read<InventoryBloc>().add(
-                                        AddOrUpdateWealth(
-                                            wealth, wealth.amount - 1),
+                                        AddOrUpdateWealth(wealth, newAmount),
+                                      );
+                                } else if (wealth.amount > 0 &&
+                                    wealth.amount < 1.0) {
+                                  // 0 ile 1 arasındaysa direkt 0 yap
+                                  context.read<InventoryBloc>().add(
+                                        AddOrUpdateWealth(wealth, 0.0),
                                       );
                                 } else if (wealth.amount == 0) {
                                   BlocProvider.of<InventoryBloc>(context)
@@ -145,9 +153,11 @@ class InventoryListWidget extends StatelessWidget {
                               context,
                               Icons.add,
                               () {
+                                // Floating point precision fix: 2 ondalık basamak
+                                final newAmount =
+                                    ((wealth.amount * 100 + 100) / 100);
                                 context.read<InventoryBloc>().add(
-                                      AddOrUpdateWealth(
-                                          wealth, wealth.amount + 1),
+                                      AddOrUpdateWealth(wealth, newAmount),
                                     );
                               },
                             ),
