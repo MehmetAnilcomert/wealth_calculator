@@ -154,6 +154,20 @@ BlocBuilder<Bloc, State>(...)  // Stream subscription
 ```
 - BLoC stream'leri üzerinden reactive UI
 
+### 7. **Strategy Pattern** (Data Source Management)
+```dart
+// Farklı veri kaynaklarını runtime'da değiştirme
+abstract class DataSourceStrategy {
+  Future<List<Price>> fetchPrices();
+}
+
+class FirebaseDataSource implements DataSourceStrategy { }
+class LocalDataSource implements DataSourceStrategy { }
+```
+- Firebase ve yerel veritabanı arasında esnek geçiş
+- Veri kaynağı soyutlama
+- Test edilebilir data layer
+
 ## State Management Yapısı
 
 ### Global State (Product Layer)

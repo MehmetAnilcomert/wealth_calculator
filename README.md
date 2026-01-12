@@ -15,7 +15,7 @@ A comprehensive financial management solution for Turkish markets with real-time
       <h3>1. Asset Price Tracking</h3>
       <ul>
         <li>Real-time gold, currency (USD/EUR/TRY), commodity and BIST100 monitoring</li>
-        <li>Automated data scraping from Turkish financial sources</li>
+        <li>Firebase database for reliable data management</li>
         <li>Historical price charts</li>
       </ul>
     </td>
@@ -127,7 +127,8 @@ lib/
 ### 🗄️ Data Layer
 - **SQLite Database**: Local persistent storage
 - **Custom DAOs**: Specialized data access objects for each domain
-- **Web Scraping**: Real-time market data fetching
+- **Firebase Database**: Real-time market data synchronization
+- **Strategy Pattern**: Flexible data source management with strategy pattern implementation
 - **Notification Service**: Background task scheduling
 
 📚 For detailed architecture documentation, see [ARCHITECTURE_VISUAL.md](wealth_calculator/ARCHITECTURE_VISUAL.md)
@@ -140,7 +141,8 @@ lib/
 
 ## 📊 Data Management
 - 🔒 Secure local storage using SQLite
-- 📡 Efficient data scraping services
+- 📡 Firebase Realtime Database integration
+- 🎯 Flexible data source management with strategy pattern
 - 📦 Custom DAO (Data Access Object) implementations for:
   - Inventory management
   - Invoice tracking
@@ -156,7 +158,7 @@ lib/
 
 ### 📈 Real-Time Data
 - Live price updates
-- Automated data scraping from Turkish financial sources
+- Real-time synchronization with Firebase database
 - Historical price charts
 - Portfolio performance analysis
 

@@ -15,7 +15,7 @@ Türkiye pazarları için gerçek zamanlı varlık takibi ve servet analizi suna
       <h3>1. Varlık Fiyat Takibi</h3>
       <ul>
         <li>Neredeyse gerçek zamanlı altın, döviz (USD/EUR/TRY), emtia ve BIST100 takibi</li>
-        <li>Türk finans kaynaklarından otomatik veri çekimi</li>
+        <li>Firebase veritabanı ile güvenilir veri yönetimi</li>
         <li>Geçmiş fiyat grafikleri</li>
       </ul>
     </td>
@@ -124,7 +124,8 @@ lib/
 ### 🗄️ Veri Katmanı
 - **SQLite Veritabanı**: Yerel kalıcı depolama
 - **Özel DAO'lar**: Her domain için özelleştirilmiş veri erişim nesneleri
-- **Web Scraping**: Gerçek zamanlı piyasa verisi çekme
+- **Firebase Veritabanı**: Gerçek zamanlı piyasa verisi senkronizasyonu
+- **Strateji Deseni**: Esnek veri kaynağı yönetimi için strategy pattern implementasyonu
 - **Bildirim Servisi**: Arka plan görev zamanlama
 
 📚 Detaylı mimari dokümantasyonu için, [ARCHITECTURE_VISUAL.md](wealth_calculator/ARCHITECTURE_VISUAL.md) dosyasına bakınız
@@ -137,7 +138,8 @@ lib/
 
 ## 📊 Veri Yönetimi
 - 🔒 SQLite kullanarak güvenli yerel depolama
-- 📡 Verimli veri çekme servisleri
+- 📡 Firebase Realtime Database entegrasyonu
+- 🎯 Strateji deseni ile esnek veri kaynağı yönetimi
 - 📦 Özel DAO (Data Access Object) implementasyonları:
   - Envanter yönetimi
   - Fatura takibi
@@ -154,7 +156,7 @@ lib/
 - Gayrimenkul değerleme
 
 ### 📈 Gerçek Zamanlı Veri
-- Türk finans kaynaklarından otomatik veri çekimi
+- Firebase veritabanı ile gerçek zamanlı senkronizasyon
 - Tarihsel fiyat grafikleri
 - Portföy performans analizi
 

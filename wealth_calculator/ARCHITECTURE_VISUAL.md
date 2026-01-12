@@ -189,6 +189,20 @@ Model.fromMap(map)     // Factory constructor
 BlocBuilder<Bloc, State>(...)  // Stream observer
 ```
 
+### 7. Strategy Pattern (Data Source Management)
+```
+DataSourceStrategy Interface
+        ↓
+   ┌────┴────┐
+   ↓         ↓
+Firebase  Local DB
+
+Örnek:
+ViewModel → DataSourceStrategy → Firebase/LocalDB
+```
+- Veri kaynağı stratejisi runtime'da değiştirilebilir
+- Firebase ve yerel veritabanı arasında esnek geçiş
+
 ## 🚦 Uygulama Yaşam Döngüsü
 
 ```
