@@ -7,6 +7,7 @@ import 'package:wealth_calculator/product/service/database_helper.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:easy_logger/easy_logger.dart';
+import 'package:wealth_calculator/product/state/container/product_state_container.dart';
 
 /// Application initialization manager
 /// Handles all initialization tasks before app starts
@@ -21,11 +22,12 @@ final class ApplicationInitialize {
   }
 
   /// Initialize all required services
-  static Future<void> _init() async {
+  Future<void> _init() async {
     WidgetsFlutterBinding.ensureInitialized();
     await EasyLocalization.ensureInitialized();
     EasyLocalization.logger.enableLevels = [LevelMessages.error];
-    ProductEnvironment.general();
+
+    _setupConfigAndGetit();
 
     // Initialize timezone data
     tz.initializeTimeZones();
@@ -35,5 +37,14 @@ final class ApplicationInitialize {
 
     // Initialize database
     await DbHelper.instance.database;
+  }
+
+  /// Burada çağırılma sıraları önemlidir. Env değişkenleri Getit içinde kullanılabilir olmalıdır.
+  void _setupConfigAndGetit() {
+    /// Set up environment configurations
+    ProductEnvironment.general();
+
+    /// Initialize Getit
+    ProductContainer.setUp();
   }
 }

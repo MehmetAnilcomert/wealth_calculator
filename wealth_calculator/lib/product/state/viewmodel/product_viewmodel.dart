@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/product/state/base/base_cubit.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_state.dart';
@@ -10,5 +11,11 @@ final class ProductViewmodel extends BaseCubit<ProductState> {
   /// Changes the theme mode of the application.
   void changeThemeMode({required ThemeMode themeMode}) {
     emit(state.copyWith(themeMode: themeMode));
+  }
+
+  /// Changes the locale of the application.
+  void changeLanguage({required BuildContext context, required Locale locale}) {
+    emit(state.copyWith(locale: locale));
+    context.setLocale(locale);
   }
 }
