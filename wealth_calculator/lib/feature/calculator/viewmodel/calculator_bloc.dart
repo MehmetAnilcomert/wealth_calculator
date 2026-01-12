@@ -4,9 +4,10 @@ import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
-import 'package:wealth_calculator/product/service/firebase_data_service.dart';
+import 'package:wealth_calculator/product/service/data_source_manager.dart';
 
 class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
+  final _dataSource = DataSourceManager();
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];
@@ -25,8 +26,8 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       _savedWealths = [];
 
       if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
-        _cachedGoldPrices = await fetchGoldPrices();
-        _cachedCurrencyPrices = await fetchCurrencyPrices();
+        _cachedGoldPrices = await _dataSource.fetchGoldPrices();
+        _cachedCurrencyPrices = await _dataSource.fetchCurrencyPrices();
       }
 
       emit(_createLoadedState());

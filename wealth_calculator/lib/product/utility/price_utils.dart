@@ -1,20 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
-import 'package:wealth_calculator/product/service/firebase_data_service.dart';
+import 'package:wealth_calculator/product/service/data_source_manager.dart';
 import 'package:wealth_calculator/product/service/wealth_prices_dao.dart';
 
 class PriceFetcher {
   final WealthPricesDao _wealthPricesDao = WealthPricesDao();
+  final _dataSource = DataSourceManager();
 
   // Fetch all prices from the internet and save them to the database if successful
   // and return the prices from the database if there is an internet connection error
   Future<List<List<WealthPrice>>> fetchPrices() async {
     try {
       // Fetch prices from different sources
-      final goldPrices = await fetchGoldPrices();
-      final currencyPrices = await fetchCurrencyPrices();
-      final equityPrices = await fetchEquityData();
-      final commodityPrices = await fetchCommodityPrices();
+      final goldPrices = await _dataSource.fetchGoldPrices();
+      final currencyPrices = await _dataSource.fetchCurrencyPrices();
+      final equityPrices = await _dataSource.fetchEquityData();
+      final commodityPrices = await _dataSource.fetchCommodityPrices();
 
       // Combine all prices into one list
       List<WealthPrice> allPrices = [

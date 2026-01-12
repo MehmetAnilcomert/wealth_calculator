@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
+import 'package:wealth_calculator/product/service/data_source_strategy.dart';
 
 /// Firebase Firestore'dan veri çeken servis
 /// market_assets collection'ından verileri okur
-class FirebaseDataService {
+class FirebaseDataService extends DataSourceStrategy {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionName = 'market_assets';
 
-  /// Altın fiyatlarını Firestore'dan çeker
+  @override
   Future<List<WealthPrice>> fetchGoldPrices() async {
     try {
       final querySnapshot = await _firestore
@@ -43,7 +44,7 @@ class FirebaseDataService {
     }
   }
 
-  /// Döviz fiyatlarını Firestore'dan çeker
+  @override
   Future<List<WealthPrice>> fetchCurrencyPrices() async {
     try {
       final querySnapshot = await _firestore
@@ -78,7 +79,7 @@ class FirebaseDataService {
     }
   }
 
-  /// Emtia fiyatlarını Firestore'dan çeker
+  @override
   Future<List<WealthPrice>> fetchCommodityPrices() async {
     try {
       final querySnapshot = await _firestore
@@ -113,7 +114,7 @@ class FirebaseDataService {
     }
   }
 
-  /// Hisse senedi verilerini Firestore'dan çeker
+  @override
   Future<List<WealthPrice>> fetchEquityData() async {
     try {
       final querySnapshot = await _firestore
@@ -158,15 +159,3 @@ class FirebaseDataService {
     return timestamp.toString();
   }
 }
-
-// Global fonksiyonlar - eski API'yi korumak için
-final _firebaseService = FirebaseDataService();
-
-Future<List<WealthPrice>> fetchGoldPrices() =>
-    _firebaseService.fetchGoldPrices();
-Future<List<WealthPrice>> fetchCurrencyPrices() =>
-    _firebaseService.fetchCurrencyPrices();
-Future<List<WealthPrice>> fetchCommodityPrices() =>
-    _firebaseService.fetchCommodityPrices();
-Future<List<WealthPrice>> fetchEquityData() =>
-    _firebaseService.fetchEquityData();
