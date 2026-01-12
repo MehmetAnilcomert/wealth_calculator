@@ -851,6 +851,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
+  shield_view:
+    dependency: "direct main"
+    description:
+      name: shield_view
+      sha256: d8ea8d90d2c9e591ad08709505ebbb1d2a2976e78ea75924beaff4d6ac1514ae
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   sky_engine:
     dependency: transitive
     description: flutter

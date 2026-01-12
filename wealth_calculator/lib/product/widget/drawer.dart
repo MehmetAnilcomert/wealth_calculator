@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shield_view/shield_view.dart';
 import 'package:wealth_calculator/feature/inventory/view/inventory_view.dart';
 import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
 import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
@@ -85,7 +86,8 @@ class AppDrawer extends StatelessWidget {
                       context,
                       icon: Icons.inventory_2_outlined,
                       title: LocaleKeys.inventory.tr(),
-                      onTap: () => _navigateTo(context, const InventoryView()),
+                      onTap: () => _navigateTo(
+                          context, const ShieldView(child: InventoryView())),
                     ),
                     _buildMenuItem(
                       context,
