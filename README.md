@@ -71,11 +71,10 @@ A comprehensive financial management solution for Turkish markets with real-time
   <!-- Wealth Calculator Row -->
   <tr>
     <td>
-      <h3>4. Wealth Calculator</h3>
+      <h3>4. Portfolio Tracker</h3>
       <ul>
         <li>Quick asset addition and calculation</li>
-        <li>Multiple asset type support (gold, currency)</li>
-        <li>Interactive calculation interface</li>
+        <li>Multiple asset type support (gold, currency, bist100, commodity)</li>
       </ul>
     </td>
     <td>
