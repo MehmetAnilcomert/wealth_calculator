@@ -29,6 +29,7 @@ dependencies:
   easy_logger: ^0.0.2
   get_it: ^9.2.0
   vexana: ^5.0.3
+  shield_view: ^1.0.0
 
   # Modules 
   gen:
