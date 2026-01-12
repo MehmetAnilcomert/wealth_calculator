@@ -9,6 +9,7 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
 import 'package:wealth_calculator/feature/splash/viewmodel/splash_cubit.dart';
 import 'package:wealth_calculator/feature/splash/viewmodel/splash_state.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
 part 'splash_view_mixin.dart';
 
@@ -38,7 +39,7 @@ class _SplashViewState extends State<SplashView> with SplashViewMixin {
         ),
       ],
       child: Scaffold(
-        backgroundColor: Colors.blue,
+        backgroundColor: context.general.colorScheme.primary,
         body: Center(
           child: SizedBox(
             width: MediaQuery.sizeOf(context).width * 0.7,

@@ -4,6 +4,8 @@ import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/product/service/wealths_dao.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class ItemDialogs {
   static void showSelectItemDialog(
@@ -36,6 +38,7 @@ class ItemDialogs {
     MapEntry<SavedWealths, int> entry,
     Function(SavedWealths, int) onSave,
   ) {
+    final colorScheme = context.general.colorScheme;
     TextEditingController controller = TextEditingController(
       text: entry.value.toString(),
     );
@@ -47,20 +50,20 @@ class ItemDialogs {
           backgroundColor: Colors.transparent,
           child: Container(
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF2C3E50),
-                  Color(0xFF3498DB),
+                  colorScheme.gradientStart,
+                  colorScheme.gradientEnd,
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
-                  color: Colors.black26,
+                  color: colorScheme.blackOverlay10,
                   blurRadius: 10,
-                  offset: Offset(0, 5),
+                  offset: const Offset(0, 5),
                 ),
               ],
             ),
@@ -70,8 +73,8 @@ class ItemDialogs {
               children: [
                 Text(
                   LocaleKeys.enterAmount.tr(),
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colorScheme.onPrimaryContainer,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -80,17 +83,20 @@ class ItemDialogs {
                 TextField(
                   controller: controller,
                   keyboardType: TextInputType.number,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: colorScheme.onPrimaryContainer),
                   decoration: InputDecoration(
                     labelText: LocaleKeys.amount.tr(),
-                    labelStyle: const TextStyle(color: Colors.white70),
+                    labelStyle: TextStyle(
+                        color: colorScheme.onPrimaryContainer.withAlpha(179)),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.white30),
+                      borderSide: BorderSide(
+                          color: colorScheme.onPrimaryContainer.withAlpha(77)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.white),
+                      borderSide:
+                          BorderSide(color: colorScheme.onPrimaryContainer),
                     ),
                   ),
                 ),
@@ -102,7 +108,9 @@ class ItemDialogs {
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
                         LocaleKeys.cancel.tr(),
-                        style: const TextStyle(color: Colors.white70),
+                        style: TextStyle(
+                            color:
+                                colorScheme.onPrimaryContainer.withAlpha(179)),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -113,8 +121,8 @@ class ItemDialogs {
                         Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: const Color(0xFF3498DB),
+                        foregroundColor: colorScheme.onPrimary,
+                        backgroundColor: colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -170,22 +178,23 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF2C3E50),
-            Color(0xFF3498DB),
+            colorScheme.gradientStart,
+            colorScheme.gradientEnd,
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Colors.black26,
+            color: colorScheme.blackOverlay10,
             blurRadius: 10,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -195,7 +204,7 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(26),
+              color: colorScheme.whiteOverlay10,
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(20)),
             ),
@@ -206,14 +215,15 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
                   selectedOption == 'selectGold'
                       ? LocaleKeys.selectGold.tr()
                       : LocaleKeys.selectCurrency.tr(),
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colorScheme.onPrimaryContainer,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, color: Colors.white),
+                  icon: Icon(Icons.more_vert,
+                      color: colorScheme.onPrimaryContainer),
                   onSelected: (String result) {
                     setState(() {
                       selectedOption = result;
@@ -257,11 +267,12 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
 
   PopupMenuItem<String> _buildPopupMenuItem(
       String value, IconData icon, String text) {
+    final colorScheme = context.general.colorScheme;
     return PopupMenuItem<String>(
       value: value,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: const Color(0xFF3498DB)),
+          Icon(icon, size: 20, color: colorScheme.primary),
           const SizedBox(width: 12),
           Text(text),
         ],
@@ -270,19 +281,24 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
   }
 
   Widget _buildListItem(WealthPrice price, BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     final isDisabled = widget.disabledItems.contains(price.title);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(isDisabled ? 13 : 26),
+        color: isDisabled
+            ? colorScheme.whiteOverlay05
+            : colorScheme.whiteOverlay10,
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListTile(
         title: Text(
           price.title,
           style: TextStyle(
-            color: isDisabled ? Colors.white38 : Colors.white,
+            color: isDisabled
+                ? colorScheme.onPrimaryContainer.withAlpha(97)
+                : colorScheme.onPrimaryContainer,
             fontSize: 16,
           ),
         ),
@@ -310,7 +326,9 @@ class _SelectItemDialogState extends State<SelectItemDialog> {
               },
         trailing: Icon(
           Icons.arrow_forward_ios,
-          color: isDisabled ? Colors.white38 : Colors.white70,
+          color: isDisabled
+              ? colorScheme.onPrimaryContainer.withAlpha(97)
+              : colorScheme.onPrimaryContainer.withAlpha(179),
           size: 16,
         ),
       ),

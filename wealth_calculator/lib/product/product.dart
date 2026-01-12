@@ -3,3 +3,4 @@ export 'init/state_initialize.dart';
 export 'navigation/app_router.dart';
 export 'utility/constants/app_constants.dart';
 export 'init/product_localization.dart';
+export 'state/state.dart';

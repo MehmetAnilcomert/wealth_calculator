@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealth_history_model.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class PriceHistoryChart extends StatelessWidget {
   final List<WealthHistory> pricesHistory;
@@ -12,19 +14,20 @@ class PriceHistoryChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     final sortedHistory = List<WealthHistory>.from(pricesHistory)
       ..sort((a, b) => a.date.compareTo(b.date));
 
     return Container(
       padding: const EdgeInsets.only(
           top: 50.0, left: 18.0, right: 24.0, bottom: 30.0),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF2C3E50),
-            Color(0xFF3498DB),
+            colorScheme.gradientStart,
+            colorScheme.gradientEnd,
           ],
         ),
       ),
@@ -34,14 +37,14 @@ class PriceHistoryChart extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: LineChart(
             LineChartData(
-              backgroundColor: const Color(0xFF1B2838),
+              backgroundColor: colorScheme.primaryContainer.withAlpha(204),
               gridData: FlGridData(
                 show: true,
                 drawVerticalLine: false,
                 horizontalInterval: 50000,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: Colors.white.withAlpha(26),
+                    color: colorScheme.whiteOverlay10,
                     strokeWidth: 1,
                   );
                 },
@@ -60,8 +63,8 @@ class PriceHistoryChart extends StatelessWidget {
                       }
                       return Text(
                         text,
-                        style: const TextStyle(
-                          color: Colors.white70,
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer.withAlpha(179),
                           fontSize: 12,
                         ),
                       );
@@ -86,9 +89,10 @@ class PriceHistoryChart extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             "${date.day}/${date.month}",
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white70,
+                              color:
+                                  colorScheme.onPrimaryContainer.withAlpha(179),
                             ),
                           ),
                         );
@@ -109,16 +113,16 @@ class PriceHistoryChart extends StatelessWidget {
                     ),
                   ),
                   isCurved: true,
-                  color: const Color(0xFF3498DB),
+                  color: colorScheme.primary,
                   barWidth: 3,
                   dotData: FlDotData(
                     show: true,
                     getDotPainter: (spot, percent, barData, index) {
                       return FlDotCirclePainter(
                         radius: 4,
-                        color: Colors.white,
+                        color: colorScheme.onPrimaryContainer,
                         strokeWidth: 2,
-                        strokeColor: const Color(0xFF3498DB),
+                        strokeColor: colorScheme.primary,
                       );
                     },
                   ),
@@ -126,7 +130,7 @@ class PriceHistoryChart extends StatelessWidget {
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF3498DB).withAlpha(51),
+                        colorScheme.primary.withAlpha(51),
                         Colors.transparent,
                       ],
                       begin: Alignment.topCenter,
@@ -143,7 +147,9 @@ class PriceHistoryChart extends StatelessWidget {
                       final date = sortedHistory[touchedSpot.x.toInt()].date;
                       return LineTooltipItem(
                         '${touchedSpot.y.toStringAsFixed(2)} TL\n${date.day}/${date.month}/${date.year}',
-                        const TextStyle(color: Colors.white, fontSize: 12),
+                        TextStyle(
+                            color: colorScheme.onPrimaryContainer,
+                            fontSize: 12),
                       );
                     }).toList();
                   },

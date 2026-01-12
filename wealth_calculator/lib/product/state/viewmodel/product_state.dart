@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// This class holds various state properties related to the product,
 class ProductState extends Equatable {
   /// Creates an instance of [ProductState] with the given parameters.
-  const ProductState({this.locale, this.themeMode = ThemeMode.light});
+  const ProductState({this.locale, this.themeMode = ThemeMode.system});
 
   /// The current theme mode of the application.
   final ThemeMode themeMode;

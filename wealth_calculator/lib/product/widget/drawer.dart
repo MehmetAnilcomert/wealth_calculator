@@ -6,21 +6,24 @@ import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
 import 'package:wealth_calculator/feature/calculator/view/calculator_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return Drawer(
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF2C3E50),
-              Color(0xFF3498DB),
+              colorScheme.gradientStart,
+              colorScheme.gradientEnd,
             ],
           ),
         ),
@@ -36,23 +39,23 @@ class AppDrawer extends StatelessWidget {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
+                      color: colorScheme.surface,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withAlpha(51),
+                          color: colorScheme.blackOverlay20,
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
                       ],
                     ),
-                    child: const Icon(Icons.person,
-                        size: 50, color: Color(0xFF3498DB)),
+                    child: Icon(Icons.person,
+                        size: 50, color: colorScheme.primary),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     LocaleKeys.profile.tr(),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onPrimaryContainer,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -62,9 +65,9 @@ class AppDrawer extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
                   ),
@@ -92,7 +95,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Divider(color: Colors.grey.withAlpha(77)),
+                      child: Divider(color: colorScheme.outline),
                     ),
                     _buildMenuItem(
                       context,
@@ -102,7 +105,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Divider(color: Colors.grey.withAlpha(77)),
+                      child: Divider(color: colorScheme.blackOverlay30),
                     ),
                     _buildMenuItem(
                       context,
@@ -128,11 +131,12 @@ class AppDrawer extends StatelessWidget {
     required VoidCallback onTap,
     bool isDestructive = false,
   }) {
+    final colorScheme = context.general.colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.withAlpha(26),
+        color: colorScheme.blackOverlay10,
       ),
       child: ListTile(
         onTap: onTap,
@@ -140,25 +144,26 @@ class AppDrawer extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isDestructive
-                ? Colors.red.withAlpha(26)
-                : const Color(0xFF3498DB).withAlpha(26),
+                ? colorScheme.error.withAlpha(26)
+                : colorScheme.primary.withAlpha(26),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            color: isDestructive ? Colors.red : const Color(0xFF3498DB),
+            color: isDestructive ? colorScheme.error : colorScheme.primary,
           ),
         ),
         title: Text(
           title,
           style: TextStyle(
-            color: isDestructive ? Colors.red : Colors.black87,
+            color: isDestructive ? colorScheme.error : colorScheme.onSurface,
             fontWeight: FontWeight.w500,
           ),
         ),
         trailing: Icon(
           Icons.chevron_right,
-          color: isDestructive ? Colors.red : Colors.grey,
+          color:
+              isDestructive ? colorScheme.error : colorScheme.onSurfaceVariant,
           size: 20,
         ),
       ),

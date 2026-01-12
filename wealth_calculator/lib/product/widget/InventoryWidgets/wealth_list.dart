@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
 class WealthList extends StatelessWidget {
   final Map<SavedWealths, int> selectedItems;
@@ -15,23 +16,24 @@ class WealthList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return ListView(
       children: selectedItems.entries.map((entry) {
         return ListTile(
           title: Text(
             entry.key.type,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: colorScheme.onSurface),
           ),
           subtitle: Text(
             'Miktar: ${entry.value}',
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
           ),
-          tileColor: Colors.blueGrey,
+          tileColor: colorScheme.surfaceContainerHigh,
           onTap: () => onEdit(entry),
           trailing: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.delete,
-              color: Colors.black87,
+              color: colorScheme.error,
             ),
             iconSize: 35,
             onPressed: () => onDelete(entry.key.id),

@@ -13,6 +13,8 @@ import 'package:wealth_calculator/product/widget/custom_list.dart';
 import 'package:wealth_calculator/product/widget/drawer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class PricesView extends StatefulWidget {
   const PricesView({super.key});
@@ -31,13 +33,14 @@ class _PricesViewState extends State<PricesView>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     return BlocListener<PricesBloc, PricesState>(
       listener: (context, state) {
         if (state is PricesError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${LocaleKeys.error.tr()}: ${state.message}'),
-              backgroundColor: Colors.red,
+              backgroundColor: colorScheme.error,
               duration: const Duration(seconds: 2),
             ),
           );
@@ -45,7 +48,7 @@ class _PricesViewState extends State<PricesView>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${LocaleKeys.error.tr()}: ${state.message}'),
-              backgroundColor: Colors.red,
+              backgroundColor: colorScheme.error,
               duration: const Duration(seconds: 2),
             ),
           );
@@ -56,7 +59,7 @@ class _PricesViewState extends State<PricesView>
           final cubit = context.read<PricesScreenCubit>();
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF5F7FA),
+            backgroundColor: colorScheme.surfaceContainerLow,
             appBar: AppBar(
               elevation: 0,
               leading: Padding(
@@ -64,8 +67,7 @@ class _PricesViewState extends State<PricesView>
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border:
-                        Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                    border: Border.all(color: colorScheme.whiteOverlay20),
                   ),
                   child: Assets.images.imgLogoNoBackground.image(
                     package: "gen",
@@ -73,13 +75,13 @@ class _PricesViewState extends State<PricesView>
                 ),
               ),
               flexibleSpace: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF2C3E50),
-                      Color(0xFF3498DB),
+                      colorScheme.gradientStart,
+                      colorScheme.gradientEnd,
                     ],
                   ),
                 ),
@@ -90,8 +92,8 @@ class _PricesViewState extends State<PricesView>
                   Text(
                     PricesScreenUtils.getAppBarTitle(
                         screenState.currentTabIndex),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onPrimaryContainer,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -99,7 +101,7 @@ class _PricesViewState extends State<PricesView>
                   Text(
                     LocaleKeys.marketData.tr(),
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: colorScheme.onPrimaryContainer.withAlpha(179),
                       fontSize: 12,
                     ),
                   ),
@@ -115,8 +117,6 @@ class _PricesViewState extends State<PricesView>
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         ),
                       );
@@ -126,9 +126,10 @@ class _PricesViewState extends State<PricesView>
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: colorScheme.whiteOverlay20,
                         ),
-                        child: const Icon(Icons.menu, color: Colors.white),
+                        child: Icon(Icons.menu,
+                            color: colorScheme.onPrimaryContainer),
                       ),
                       onPressed: () => Scaffold.of(context).openEndDrawer(),
                     );
@@ -144,11 +145,11 @@ class _PricesViewState extends State<PricesView>
                   Container(
                     margin: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: colorScheme.surface,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: colorScheme.blackOverlay10.withAlpha(13),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -160,9 +161,10 @@ class _PricesViewState extends State<PricesView>
                       },
                       decoration: InputDecoration(
                         hintText: LocaleKeys.search.tr(),
-                        hintStyle: const TextStyle(color: Colors.grey),
+                        hintStyle:
+                            TextStyle(color: colorScheme.onSurfaceVariant),
                         prefixIcon:
-                            const Icon(Icons.search, color: Color(0xFF3498DB)),
+                            Icon(Icons.search, color: colorScheme.primary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
@@ -197,10 +199,9 @@ class _PricesViewState extends State<PricesView>
                               },
                             );
                           }
-                          return const Center(
+                          return Center(
                             child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF3498DB)),
+                              color: colorScheme.primary,
                             ),
                           );
                         },
@@ -212,10 +213,10 @@ class _PricesViewState extends State<PricesView>
             ),
             bottomNavigationBar: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: colorScheme.blackOverlay10.withAlpha(13),
                     blurRadius: 10,
                     offset: const Offset(0, -4),
                   ),
@@ -224,10 +225,10 @@ class _PricesViewState extends State<PricesView>
               child: SafeArea(
                 child: TabBar(
                   controller: cubit.tabController,
-                  indicator: const BoxDecoration(
+                  indicator: BoxDecoration(
                     border: Border(
                       top: BorderSide(
-                        color: Color(0xFF3498DB),
+                        color: colorScheme.primary,
                         width: 3,
                       ),
                     ),
@@ -243,8 +244,8 @@ class _PricesViewState extends State<PricesView>
                     buildTab(Icons.account_balance_wallet_outlined,
                         LocaleKeys.portfolio.tr(), context),
                   ],
-                  labelColor: const Color(0xFF3498DB),
-                  unselectedLabelColor: Colors.grey,
+                  labelColor: colorScheme.primary,
+                  unselectedLabelColor: colorScheme.onSurfaceVariant,
                 ),
               ),
             ),

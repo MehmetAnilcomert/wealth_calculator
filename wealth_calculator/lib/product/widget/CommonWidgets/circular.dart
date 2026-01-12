@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wealth_calculator/product/widget/CommonWidgets/circular_painter.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 class CircularMoneyState extends StatelessWidget {
   final double totalAmount;
@@ -42,6 +44,7 @@ class CircularMoneyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.general.colorScheme;
     final formattedAmount = _formatAmount(totalAmount);
     final numberFormat = NumberFormat('#,##0.00', 'tr_TR');
     final detailedAmount = numberFormat.format(totalAmount);
@@ -55,13 +58,13 @@ class CircularMoneyState extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF2C3E50).withAlpha(204),
-            const Color(0xFF3498DB).withAlpha(204),
+            colorScheme.gradientStart.withAlpha(204),
+            colorScheme.gradientEnd.withAlpha(204),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(51),
+            color: colorScheme.blackOverlay20,
             blurRadius: 10,
             spreadRadius: 5,
           ),
@@ -88,7 +91,7 @@ class CircularMoneyState extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withAlpha(204),
+                      color: colorScheme.onPrimaryContainer.withAlpha(204),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -97,11 +100,11 @@ class CircularMoneyState extends StatelessWidget {
                     style: TextStyle(
                       fontSize: _calculateFontSize(context, formattedAmount),
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: colorScheme.onPrimaryContainer,
                       shadows: [
                         Shadow(
                           blurRadius: 4,
-                          color: Colors.black.withAlpha(77),
+                          color: colorScheme.blackOverlay30,
                           offset: const Offset(0, 2),
                         ),
                       ],
@@ -114,7 +117,7 @@ class CircularMoneyState extends StatelessWidget {
                       detailedAmount,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withAlpha(153),
+                        color: colorScheme.onPrimaryContainer.withAlpha(153),
                       ),
                     ),
                 ],
