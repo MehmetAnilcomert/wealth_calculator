@@ -68,12 +68,10 @@ Türkiye pazarları için gerçek zamanlı varlık takibi ve servet analizi suna
   <!-- Servet Hesaplayıcı Satırı -->
   <tr>
     <td>
-      <h3>4. Servet Hesaplayıcı</h3>
+      <h3>4. Portföy Takibi</h3>
       <ul>
-        <li>Hızlı varlık ekleme ve hesaplama</li>
-        <li>Çoklu varlık türü desteği (altın, döviz)</li>
-        <li>Anlık toplam servet görüntüleme</li>
-        <li>İnteraktif hesaplama arayüzü</li>
+        <li>Hızlı varlık ekleme</li>
+        <li>Çoklu varlık türü desteği (altın, döviz, bist100, emtia)</li>
       </ul>
     </td>
     <td>
