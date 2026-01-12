@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
-import 'package:wealth_calculator/product/service/data_scraping.dart';
+import 'package:wealth_calculator/product/service/firebase_data_service.dart';
 import 'package:wealth_calculator/product/service/wealth_prices_dao.dart';
 
 class PriceFetcher {

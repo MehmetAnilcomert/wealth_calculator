@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // market_assets collection kuralları
+    match /market_assets/{document} {
+      // Herkes okuyabilir (public data)
+      allow read: if true;
+      
+      // Sadece authenticated kullanıcılar yazabilir
+      // Production'da admin kontrolü eklenebilir
+      allow write: if request.auth != null;
+      
+      // Veri doğrulama
+      allow create, update: if request.auth != null && 
+        request.resource.data.keys().hasAll(['title', 'buyingPrice', 'sellingPrice', 'change', 'time', 'type']) &&
+        request.resource.data.title is string &&
+        request.resource.data.buyingPrice is string &&
+        request.resource.data.sellingPrice is string &&
+        request.resource.data.change is string &&
+        request.resource.data.time is string &&
+        request.resource.data.type in ['gold', 'currency', 'equity', 'commodity'];
+    }
+    
+    // Varsayılan: Her şey kapalı
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

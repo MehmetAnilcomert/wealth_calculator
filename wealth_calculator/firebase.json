@@ -1,0 +1,31 @@
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "wealth-calculator-d7d63",
+          "appId": "1:810429791548:android:ff87f6e6cead2ffd66f239",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "wealth-calculator-d7d63",
+          "configurations": {
+            "android": "1:810429791548:android:ff87f6e6cead2ffd66f239",
+            "ios": "1:810429791548:ios:a4e59dc656b0811466f239",
+            "macos": "1:810429791548:ios:a4e59dc656b0811466f239",
+            "web": "1:810429791548:web:4041bb8fd3ceb1f966f239",
+            "windows": "1:810429791548:web:7f4854a64d7b9f3b66f239"
+          }
+        }
+      }
+    }
+  }
+}

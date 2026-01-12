@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:wealth_calculator/firebase_options.dart';
 import 'package:wealth_calculator/product/init/config/product_environment.dart';
 import 'package:wealth_calculator/product/service/database_helper.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
@@ -26,6 +28,11 @@ final class ApplicationInitialize {
     WidgetsFlutterBinding.ensureInitialized();
     await EasyLocalization.ensureInitialized();
     EasyLocalization.logger.enableLevels = [LevelMessages.error];
+
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
     _setupConfigAndGetit();
 

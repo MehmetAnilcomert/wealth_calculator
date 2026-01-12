@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "810429791548",
+    "project_id": "wealth-calculator-d7d63",
+    "storage_bucket": "wealth-calculator-d7d63.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810429791548:android:ff87f6e6cead2ffd66f239",
+        "android_client_info": {
+          "package_name": "com.example.wealth_calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArRtVKzj--lX9CFvJUnMzm31kAQmEXGF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
