@@ -5,14 +5,13 @@ import 'package:flutter/material.dart';
 /// This class holds various state properties related to the product,
 class ProductState extends Equatable {
   /// Creates an instance of [ProductState] with the given parameters.
-  const ProductState(
-      {this.locale = const Locale('tr'), this.themeMode = ThemeMode.light});
+  const ProductState({this.locale, this.themeMode = ThemeMode.light});
 
   /// The current theme mode of the application.
   final ThemeMode themeMode;
 
   /// The current locale of the application.
-  final Locale locale;
+  final Locale? locale;
 
   @override
   List<Object?> get props => [themeMode, locale];
