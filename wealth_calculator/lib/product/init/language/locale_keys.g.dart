@@ -102,5 +102,10 @@ abstract class  LocaleKeys {
   static const invoice_paid_message = 'invoice_paid_message';
   static const is_paid_invoice = 'is_paid_invoice';
   static const notification_schedule_error_past_date = 'notification_schedule_error_past_date';
+  static const helpAndSupport = 'helpAndSupport';
+  static const nameSurname = 'nameSurname';
+  static const email = 'email';
+  static const amount_pure = 'amount_pure';
+  static const tl = 'tl';
 
 }

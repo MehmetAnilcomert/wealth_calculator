@@ -5,6 +5,8 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_screen_cubit.d
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
 import 'package:wealth_calculator/feature/splash/viewmodel/splash_cubit.dart';
+import 'package:wealth_calculator/product/state/container/product_state_items.dart';
+import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart';
 
 /// State initialization for BLoC providers
 @immutable
@@ -17,6 +19,9 @@ final class StateInitialize extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ProductViewmodel>.value(
+          value: ProductStateItems.productViewModel,
+        ),
         // Feature states
         BlocProvider(create: (context) => SplashCubit()),
         BlocProvider(create: (context) => PricesScreenCubit()),

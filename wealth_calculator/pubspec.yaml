@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   easy_localization: ^3.0.7
-  http: ^0.13.4
+  http: ^1.6.0
   html: ^0.15.0
   path: ^1.9.0
   sqflite: ^2.3.3+1
@@ -27,6 +27,14 @@ dependencies:
   fl_chart: ^0.70.0
   logger: ^2.6.2
   easy_logger: ^0.0.2
+  get_it: ^9.2.0
+  vexana: ^5.0.3
+
+  # Modules 
+  gen:
+    path: ./module/gen
+  core: 
+    path: ./module/core
 
 flutter_native_splash:
   color: "#2196F3"
@@ -47,11 +55,5 @@ flutter:
 
   assets:
     - assets/translations/
-    - images/lira.png
-    - images/logo.json
-    - images/isim.json
-    - images/invoice.json
-    - images/bill.json
-    - images/logo.png
-    - images/logo2.png
     - database/inventory.db
+    - images/logo.png
