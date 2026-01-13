@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wealth_calculator/product/product.dart';
 
 // Prices screen`s state class
 class PricesScreenState {
@@ -23,7 +23,7 @@ class PricesScreenState {
 }
 
 // Prices screen`s cubit class to manage state
-class PricesScreenCubit extends Cubit<PricesScreenState> {
+class PricesScreenCubit extends BaseCubit<PricesScreenState> {
   late TabController _tabController;
 
   PricesScreenCubit() : super(PricesScreenState());

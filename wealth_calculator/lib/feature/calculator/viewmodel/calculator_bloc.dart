@@ -5,8 +5,9 @@ import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_state.
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 import 'package:wealth_calculator/product/service/data_scraping.dart';
+import 'package:wealth_calculator/product/state/base/base_bloc.dart';
 
-class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
+class CalculatorBloc extends BaseBloc<CalculatorEvent, CalculatorState> {
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];

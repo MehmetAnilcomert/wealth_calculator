@@ -2,8 +2,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/invoice_form/viewmodel/invoice_form_event.dart';
 import 'package:wealth_calculator/feature/invoice_form/viewmodel/invoice_form_state.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
+import 'package:wealth_calculator/product/state/base/base_bloc.dart';
 
-class InvoiceFormBloc extends Bloc<InvoiceFormEvent, InvoiceFormState> {
+class InvoiceFormBloc extends BaseBloc<InvoiceFormEvent, InvoiceFormState> {
   InvoiceFormBloc() : super(InvoiceFormState.initial()) {
     on<InitializeForm>(_onInitializeForm);
     on<DateChanged>(_onDateChanged);

@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/splash/viewmodel/splash_state.dart';
+import 'package:wealth_calculator/product/product.dart';
 
-class SplashCubit extends Cubit<SplashState> {
+class SplashCubit extends BaseCubit<SplashState> {
   SplashCubit() : super(const SplashInitial());
 
   Timer? _timeoutTimer;

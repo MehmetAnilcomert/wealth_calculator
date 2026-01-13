@@ -4,8 +4,9 @@ import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_state.dart';
 import 'package:wealth_calculator/feature/invoice/model/invoice_model.dart';
 import 'package:wealth_calculator/product/service/invoice_dao.dart';
 import 'package:wealth_calculator/product/service/notification_service.dart';
+import 'package:wealth_calculator/product/state/base/base_bloc.dart';
 
-class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
+class InvoiceBloc extends BaseBloc<InvoiceEvent, InvoiceState> {
   final InvoiceDao _invoiceDao = InvoiceDao();
 
   InvoiceBloc() : super(InvoiceInitial()) {
