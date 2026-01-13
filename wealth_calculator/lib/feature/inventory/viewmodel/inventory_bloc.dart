@@ -9,8 +9,9 @@ import 'package:wealth_calculator/product/service/price_history_dao.dart';
 import 'package:wealth_calculator/product/service/wealths_dao.dart';
 import 'package:wealth_calculator/product/utility/inventory_utils.dart';
 import 'package:wealth_calculator/product/utility/price_utils.dart';
+import 'package:wealth_calculator/product/state/base/base_bloc.dart';
 
-class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
+class InventoryBloc extends BaseBloc<InventoryEvent, InventoryState> {
   final SavedWealthsdao _wealthsDao = SavedWealthsdao();
   final PriceHistoryDao _priceHistoryDao = PriceHistoryDao();
 

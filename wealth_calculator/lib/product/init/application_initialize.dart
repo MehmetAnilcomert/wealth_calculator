@@ -63,7 +63,7 @@ final class ApplicationInitialize {
   }
 
   /// Burada çağırılma sıraları önemlidir. Env değişkenleri Getit içinde kullanılabilir olmalıdır.
-  void _setupConfigAndGetit() {
+  Future<void> _setupConfigAndGetit() async {
     /// Set up environment configurations
     ProductEnvironment.general();
 

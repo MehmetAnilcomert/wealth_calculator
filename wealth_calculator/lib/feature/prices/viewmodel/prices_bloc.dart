@@ -4,8 +4,9 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/utility/price_utils.dart';
 import 'package:wealth_calculator/product/service/custom_list_dao.dart';
+import 'package:wealth_calculator/product/state/base/base_bloc.dart';
 
-class PricesBloc extends Bloc<PricesEvent, PricesState> {
+class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
   final PriceFetcher _priceFetcher = PriceFetcher();
   final CustomListDao _customListDao = CustomListDao();
 

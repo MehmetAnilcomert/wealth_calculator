@@ -3,8 +3,9 @@ import 'package:wealth_calculator/feature/profile/model/user_model.dart';
 import 'package:wealth_calculator/feature/profile/viewmodel/profile_event.dart';
 import 'package:wealth_calculator/feature/profile/viewmodel/profile_state.dart';
 import 'package:wealth_calculator/product/utility/constants/enums/profile_status.dart';
+import 'package:wealth_calculator/product/state/base/base_bloc.dart';
 
-class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
+class ProfileBloc extends BaseBloc<ProfileEvent, ProfileState> {
   // TODO: Inject AuthService and UserRepository when implemented
   ProfileBloc() : super(ProfileState.initial()) {
     on<LoadProfile>(_onLoadProfile);
