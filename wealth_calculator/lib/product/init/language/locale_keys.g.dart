@@ -108,5 +108,8 @@ abstract class  LocaleKeys {
   static const amount_pure = 'amount_pure';
   static const tl = 'tl';
   static const amount_inventory = 'amount_inventory';
+  static const tlConverter = 'tlConverter';
+  static const enterTLAmount = 'enterTLAmount';
+  static const enterAmountToConvert = 'enterAmountToConvert';
 
 }

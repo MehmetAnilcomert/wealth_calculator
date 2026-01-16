@@ -5,6 +5,7 @@ import 'package:wealth_calculator/feature/inventory/view/inventory_view.dart';
 import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
 import 'package:wealth_calculator/feature/invoice_form/view/invoice_adding_view.dart';
 import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
+import 'package:wealth_calculator/feature/converter/view/converter_view.dart';
 
 /// Application route names
 enum AppRoutes {
@@ -13,7 +14,8 @@ enum AppRoutes {
   inventory('/inventory'),
   invoice('/invoice'),
   invoiceAdd('/invoice/add'),
-  settings('/settings');
+  settings('/settings'),
+  converter('/converter');
 
   const AppRoutes(this.path);
   final String path;
@@ -53,6 +55,10 @@ final class AppRouter {
       case '/settings':
         return MaterialPageRoute<void>(
           builder: (_) => const SettingsView(),
+        );
+      case '/converter':
+        return MaterialPageRoute<void>(
+          builder: (_) => const ConverterView(),
         );
       default:
         return null;

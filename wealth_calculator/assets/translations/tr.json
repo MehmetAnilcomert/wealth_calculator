@@ -103,6 +103,9 @@
     "email": "E-posta",
     "amount_pure": "Miktar",
     "tl": "TL",
-    "amount_inventory": "Miktar"
+    "amount_inventory": "Miktar",
+    "tlConverter": "TL Dönüştürücü",
+    "enterTLAmount": "TL Miktarı Giriniz",
+    "enterAmountToConvert": "Dönüştürmek için TL miktarı giriniz"
 
 }
