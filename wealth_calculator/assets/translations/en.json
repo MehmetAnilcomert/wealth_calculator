@@ -103,5 +103,8 @@
     "email": "Email",
     "amount_pure": "Amount",
     "tl": "TL",
-    "amount_inventory": "Quantity"
+    "amount_inventory": "Quantity",
+    "tlConverter": "TL Converter",
+    "enterTLAmount": "Enter TL Amount",
+    "enterAmountToConvert": "Enter TL amount to convert"
 }

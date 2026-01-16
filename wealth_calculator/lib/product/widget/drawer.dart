@@ -5,6 +5,7 @@ import 'package:wealth_calculator/feature/inventory/view/inventory_view.dart';
 import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
 import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
 import 'package:wealth_calculator/feature/calculator/view/calculator_view.dart';
+import 'package:wealth_calculator/feature/converter/view/converter_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
@@ -94,6 +95,12 @@ class AppDrawer extends StatelessWidget {
                       icon: Icons.calculate_outlined,
                       title: LocaleKeys.wealthCalculator.tr(),
                       onTap: () => _navigateTo(context, const CalculatorView()),
+                    ),
+                    _buildMenuItem(
+                      context,
+                      icon: Icons.currency_exchange_outlined,
+                      title: LocaleKeys.tlConverter.tr(),
+                      onTap: () => _navigateTo(context, const ConverterView()),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),

@@ -55,6 +55,7 @@ extension CustomColors on ColorScheme {
   Color get whiteOverlay80 => Colors.white.withAlpha(204); // ~80%
 
   /// Semi-transparent black overlays
+  Color get blackOverlay5 => Colors.black.withAlpha(13); // ~5%
   Color get blackOverlay10 => Colors.black.withAlpha(26); // ~10%
   Color get blackOverlay20 => Colors.black.withAlpha(51); // ~20%
   Color get blackOverlay30 => Colors.black.withAlpha(77); // ~30%
