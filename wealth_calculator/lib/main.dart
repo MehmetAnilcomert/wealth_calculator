@@ -10,12 +10,12 @@ Future<void> main() async {
   // Initialize all required services
   await ApplicationInitialize().startApplication();
 
-  runApp(ProductLocalization(child: const StateInitialize(child: MyApp())));
+  runApp(ProductLocalization(child: const StateInitialize(child: WealthCalculator())));
 }
 
 /// Root application widget with clean architecture
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class WealthCalculator extends StatelessWidget {
+  const WealthCalculator({super.key});
 
   @override
   Widget build(BuildContext context) {
