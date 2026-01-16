@@ -111,5 +111,9 @@ abstract class  LocaleKeys {
   static const tlConverter = 'tlConverter';
   static const enterTLAmount = 'enterTLAmount';
   static const enterAmountToConvert = 'enterAmountToConvert';
+  static const appInfo = 'appInfo';
+  static const appName = 'appName';
+  static const version = 'version';
+  static const appDescription = 'appDescription';
 
 }

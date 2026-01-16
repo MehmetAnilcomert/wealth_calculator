@@ -106,6 +106,10 @@
     "amount_inventory": "Miktar",
     "tlConverter": "TL Dönüştürücü",
     "enterTLAmount": "TL Miktarı Giriniz",
-    "enterAmountToConvert": "Dönüştürmek için TL miktarı giriniz"
+    "enterAmountToConvert": "Dönüştürmek için TL miktarı giriniz",
+    "appInfo": "Uygulama Bilgisi",
+    "appName": "Varlık Hesaplayıcı",
+    "version": "Versiyon",
+    "appDescription": "Bu uygulama finansal yatırımlarınızın olası güncel karşılıklarını görebilmek için tasarlanmıştır. Yatırım tavsiyesi vermemektedir."
 
 }

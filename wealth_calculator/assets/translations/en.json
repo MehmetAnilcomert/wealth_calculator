@@ -106,5 +106,9 @@
     "amount_inventory": "Quantity",
     "tlConverter": "TL Converter",
     "enterTLAmount": "Enter TL Amount",
-    "enterAmountToConvert": "Enter TL amount to convert"
+    "enterAmountToConvert": "Enter TL amount to convert",
+    "appInfo": "App Information",
+    "appName": "Wealth Calculator",
+    "version": "Version",
+    "appDescription": "This application is designed to view the current potential equivalents of your financial investments. It does not provide investment advice."
 }

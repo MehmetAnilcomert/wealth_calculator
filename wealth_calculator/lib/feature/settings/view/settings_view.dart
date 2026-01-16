@@ -4,68 +4,76 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_state.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
-class SettingsView extends StatelessWidget {
+part 'mixin/settings_view_mixin.dart';
+
+class SettingsView extends StatelessWidget with SettingsViewMixin {
   const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.general.colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.primaryContainer,
       appBar: AppBar(
-        title: Text(LocaleKeys.settings.tr()),
+        elevation: 0,
+        backgroundColor: colorScheme.transparent,
+        leading: IconButton(
+          icon:
+              Icon(Icons.arrow_back_ios, color: colorScheme.onPrimaryContainer),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          LocaleKeys.settings.tr(),
+          style: TextStyle(
+            color: colorScheme.onPrimaryContainer,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       body: BlocBuilder<ProductViewmodel, ProductState>(
         builder: (context, state) {
-          return ListView(
-            children: [
-              ListTile(
-                leading: Icon(
-                  Icons.language,
-                  color: colorScheme.primary,
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Appearance Section
+                buildSectionTitle(
+                  context,
+                  LocaleKeys.theme.tr(),
+                  Icons.palette_outlined,
+                  colorScheme,
                 ),
-                title: Text(LocaleKeys.language.tr()),
-                trailing: DropdownButton<String>(
-                  value: context.locale.languageCode,
-                  items: [
-                    DropdownMenuItem(
-                      value: 'en',
-                      child: const Text(LocaleKeys.english).tr(),
-                    ),
-                    DropdownMenuItem(
-                      value: 'tr',
-                      child: const Text(LocaleKeys.turkish).tr(),
-                    ),
-                  ],
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      context.read<ProductViewmodel>().changeLanguage(
-                            locale: Locale(newValue),
-                            context: context,
-                          );
-                    }
-                  },
+                const SizedBox(height: 12),
+                buildThemeCard(context, state, colorScheme),
+                const SizedBox(height: 24),
+
+                // Language Section
+                buildSectionTitle(
+                  context,
+                  LocaleKeys.language.tr(),
+                  Icons.language_outlined,
+                  colorScheme,
                 ),
-              ),
-              ListTile(
-                leading: Icon(
-                  state.themeMode == ThemeMode.dark
-                      ? Icons.dark_mode
-                      : Icons.light_mode,
-                  color: colorScheme.primary,
+                const SizedBox(height: 12),
+                buildLanguageCard(context, colorScheme),
+                const SizedBox(height: 24),
+
+                // App Info Section
+                buildSectionTitle(
+                  context,
+                  LocaleKeys.appInfo.tr(),
+                  Icons.info_outline,
+                  colorScheme,
                 ),
-                title: Text(LocaleKeys.theme.tr()),
-                trailing: Switch(
-                  value: state.themeMode == ThemeMode.dark,
-                  onChanged: (bool value) {
-                    context.read<ProductViewmodel>().changeThemeMode(
-                          themeMode: value ? ThemeMode.dark : ThemeMode.light,
-                        );
-                  },
-                ),
-              ),
-            ],
+                const SizedBox(height: 12),
+                buildAppInfoCard(colorScheme, "1.0.0"),
+              ],
+            ),
           );
         },
       ),
