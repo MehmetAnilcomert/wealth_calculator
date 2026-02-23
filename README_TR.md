@@ -21,10 +21,10 @@ Türkiye pazarları için gerçek zamanlı varlık takibi ve servet analizi suna
     </td>
     <td>
       <div style="display: flex; gap: 10px; overflow-x: auto;">
-        <img src="screenshots/gold_prices.jpeg" width="150" alt="Altın Fiyatları">
-        <img src="screenshots/currency_prices.jpeg" width="150" alt="Döviz Fiyatları">
-        <img src="screenshots/bist.jpeg" width="150" alt="BIST100">
-        <img src="screenshots/commodity.jpeg" width="150" alt="Emtialar">
+        <img src="screenshots/gold.png" width="150" alt="Altın Fiyatları">
+        <img src="screenshots/currency.png" width="150" alt="Döviz Fiyatları">
+        <img src="screenshots/bist.png" width="150" alt="BIST100">
+        <img src="screenshots/commodity.png" width="150" alt="Emtialar">
       </div>
     </td>
   </tr>

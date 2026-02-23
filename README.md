@@ -21,10 +21,10 @@ A comprehensive financial management solution for Turkish markets with real-time
     </td>
     <td>
       <div style="display: flex; gap: 10px; overflow-x: auto;">
-        <img src="screenshots/gold_prices.jpeg" width="150" alt="Gold Prices">
-        <img src="screenshots/currency_prices.jpeg" width="150" alt="Currency Prices">
-        <img src="screenshots/bist.jpeg" width="150" alt="BIST100">
-        <img src="screenshots/commodity.jpeg" width="150" alt="Commodities">
+        <img src="screenshots/gold.png" width="150" alt="Gold Prices">
+        <img src="screenshots/currency.png" width="150" alt="Currency Prices">
+        <img src="screenshots/bist.png" width="150" alt="BIST100">
+        <img src="screenshots/commodity.png" width="150" alt="Commodities">
       </div>
     </td>
   </tr>
