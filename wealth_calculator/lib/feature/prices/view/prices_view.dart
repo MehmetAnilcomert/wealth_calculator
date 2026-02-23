@@ -15,6 +15,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
+import 'package:wealth_calculator/product/utility/padding/product_padding.dart';
 
 part 'widget/top_price_card.dart';
 part 'widget/prices_app_bar.dart';

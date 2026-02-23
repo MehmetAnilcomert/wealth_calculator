@@ -72,8 +72,8 @@ class _PricesAppBar extends StatelessWidget {
           // Toolbar row
           Positioned(
             top: topPadding + 4,
-            left: 12,
-            right: 12,
+            left: const ProductPadding.symmetricHorizontalSmall().left,
+            right: const ProductPadding.symmetricHorizontalSmall().right,
             height: kToolbarHeight,
             child: Row(
               children: [
@@ -88,16 +88,16 @@ class _PricesAppBar extends StatelessWidget {
           if (showSearchBar)
             Positioned(
               top: topPadding + kToolbarHeight + 8,
-              left: 24,
-              right: 24,
+              left: const ProductPadding.symmetricHorizontalNormal().left,
+              right: const ProductPadding.symmetricHorizontalNormal().right,
               child: _buildSearchBar(colorScheme),
             ),
           // Top price card — overlapping bottom edge of gradient
           if (hasCard)
             Positioned(
               top: toolbarAndSearchHeight + 4,
-              left: 16,
-              right: 16,
+              left: const ProductPadding.symmetricHorizontalMedium().left,
+              right: const ProductPadding.symmetricHorizontalMedium().right,
               child: _TopPriceCard(
                 price: highlightedPrice!,
                 iconLabel: iconLabel ?? '',

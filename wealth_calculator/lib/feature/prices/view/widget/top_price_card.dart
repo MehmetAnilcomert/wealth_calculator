@@ -77,7 +77,7 @@ class _TopPriceCardState extends State<_TopPriceCard>
         isNegativeChange ? Icons.trending_down : Icons.trending_up;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const ProductPadding.allMedium(),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
