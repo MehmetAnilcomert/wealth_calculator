@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
@@ -65,7 +67,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
     'Hisse Senetleri': [],
     'Emtia': [],
   };
-  String _selectedOption = 'Altın';
+  String _selectedOption = LocaleKeys.gold.tr();
 
   List<WealthPrice> getSelectedList() {
     switch (_selectedOption) {
@@ -121,7 +123,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Seçim Yapın',
+                  LocaleKeys.selectItems.tr(),
                   style: TextStyle(
                     color: colorScheme.onPrimaryContainer,
                     fontSize: 20,
@@ -156,10 +158,14 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                   },
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    _buildPopupMenuItem('Altın', Icons.monetization_on),
-                    _buildPopupMenuItem('Döviz', Icons.currency_exchange),
-                    _buildPopupMenuItem('Hisse Senetleri', Icons.show_chart),
-                    _buildPopupMenuItem('Emtia', Icons.diamond),
+                    _buildPopupMenuItem(
+                        LocaleKeys.gold.tr(), Icons.monetization_on),
+                    _buildPopupMenuItem(
+                        LocaleKeys.currency.tr(), Icons.currency_exchange),
+                    _buildPopupMenuItem(
+                        LocaleKeys.stocks.tr(), Icons.show_chart),
+                    _buildPopupMenuItem(
+                        LocaleKeys.commodities.tr(), Icons.diamond),
                   ],
                 ),
               ],
@@ -193,7 +199,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
-                    'İptal',
+                    LocaleKeys.cancel.tr(),
                     style: TextStyle(
                         color: colorScheme.onPrimaryContainer.withAlpha(179)),
                   ),
@@ -215,7 +221,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: const Text('Tamam'),
+                  child: Text(LocaleKeys.ok.tr()),
                 ),
               ],
             ),

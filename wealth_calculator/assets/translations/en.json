@@ -110,5 +110,8 @@
     "appInfo": "App Information",
     "appName": "Wealth Calculator",
     "version": "Version",
-    "appDescription": "This application is designed to view the current potential equivalents of your financial investments. It does not provide investment advice."
+    "appDescription": "This application is designed to view the current potential equivalents of your financial investments. It does not provide investment advice.",
+    "noSelection": "There is no data to list.",
+    "selectItems": "Select Items",
+    "ok": "Ok"
 }
