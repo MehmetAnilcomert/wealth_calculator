@@ -72,13 +72,6 @@ class _TopPriceCard extends StatelessWidget {
                             color: colorScheme.onSurface,
                           ),
                         ),
-                        Text(
-                          'TL/GR',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
                       ],
                     ),
                   ],

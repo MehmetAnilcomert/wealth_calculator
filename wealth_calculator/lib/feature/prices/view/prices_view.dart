@@ -18,6 +18,7 @@ import 'package:wealth_calculator/product/utility/extensions/context_extension.d
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
 part 'widget/top_price_card.dart';
+part 'widget/prices_app_bar.dart';
 
 class PricesView extends StatefulWidget {
   const PricesView({super.key});
@@ -60,101 +61,21 @@ class _PricesViewState extends State<PricesView>
       child: BlocBuilder<PricesScreenCubit, PricesScreenState>(
         builder: (context, screenState) {
           final cubit = context.read<PricesScreenCubit>();
+          final showSearch = screenState.currentTabIndex != 4;
 
           return Scaffold(
             backgroundColor: colorScheme.surfaceContainerLow,
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: AppBar(
-                elevation: 0,
-                leading: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: colorScheme.whiteOverlay20),
-                    ),
-                    child: Assets.images.imgLogoNoBackground.image(
-                      package: "gen",
-                    ),
-                  ),
-                ),
-                flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        colorScheme.gradientStart,
-                        colorScheme.gradientEnd,
-                      ],
-                    ),
-                  ),
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(24),
-                  ),
-                ),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      PricesScreenUtils.getAppBarTitle(
-                          screenState.currentTabIndex),
-                      style: TextStyle(
-                        color: colorScheme.onPrimaryContainer,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      LocaleKeys.marketData.tr(),
-                      style: TextStyle(
-                        color: colorScheme.onPrimaryContainer.withAlpha(179),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                actions: [
-                  BlocBuilder<PricesBloc, PricesState>(
-                    builder: (context, state) {
-                      if (state is PricesLoading) {
-                        return const Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        );
-                      }
-                      return IconButton(
-                        icon: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colorScheme.whiteOverlay20,
-                          ),
-                          child: Icon(Icons.menu,
-                              color: colorScheme.onPrimaryContainer),
-                        ),
-                        onPressed: () => Scaffold.of(context).openEndDrawer(),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                ],
-              ),
-            ),
             endDrawer: const AppDrawer(),
             body: Column(
               children: [
-                // Search bar — visible on all tabs except portfolio (index 4)
-                if (screenState.currentTabIndex != 4)
-                  _buildSearchBar(context, cubit, colorScheme),
+                // Custom AppBar with embedded search bar
+                _PricesAppBar(
+                  currentTabIndex: screenState.currentTabIndex,
+                  onSearchChanged: (query) {
+                    cubit.updateSearchQuery(query);
+                  },
+                  showSearchBar: showSearch,
+                ),
                 // Tab content
                 Expanded(
                   child: TabBarView(
@@ -240,44 +161,6 @@ class _PricesViewState extends State<PricesView>
     );
   }
 
-  /// Overlapping-style search bar matching the reference design
-  Widget _buildSearchBar(
-    BuildContext context,
-    PricesScreenCubit cubit,
-    ColorScheme colorScheme,
-  ) {
-    return Transform.translate(
-      offset: const Offset(0, -12),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.blackOverlay10.withAlpha(20),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: TextField(
-          onChanged: (query) {
-            cubit.updateSearchQuery(query);
-          },
-          decoration: InputDecoration(
-            hintText: LocaleKeys.search.tr(),
-            hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-            prefixIcon: Icon(Icons.search, color: colorScheme.primary),
-            border: InputBorder.none,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          ),
-        ),
-      ),
-    );
-  }
-
   /// Gold section with the top price card followed by the grid of
   /// remaining gold prices.
   Widget _buildGoldSection(BuildContext context, String query) {
@@ -321,7 +204,7 @@ class _PricesViewState extends State<PricesView>
                 // Top price card for Gram Altın
                 _TopPriceCard(gramGoldPrice: gramGold),
                 const SizedBox(height: 20),
-                // "Popular Commodities" section header
+                // Section header
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
