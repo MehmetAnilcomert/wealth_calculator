@@ -1,18 +1,28 @@
 part of '../prices_view.dart';
 
-/// A card widget that displays the highlighted "Gram Altın" price at the top
-/// of the gold prices section. Receives a [WealthPrice] from the parent and
-/// shows the current price, lowest, highest, time and a percentage change
-/// indicator (instead of a chart).
+/// A reusable card widget that displays a highlighted price at the top of each
+/// tab section. Accepts dynamic data so it can show Gram Altın, USD, BIST 100,
+/// Gümüş, etc. depending on the active tab.
 class _TopPriceCard extends StatelessWidget {
-  const _TopPriceCard({required this.gramGoldPrice});
+  const _TopPriceCard({
+    required this.price,
+    required this.iconLabel,
+    required this.iconColor,
+  });
 
-  final WealthPrice gramGoldPrice;
+  /// The [WealthPrice] data to display.
+  final WealthPrice price;
+
+  /// Short label shown inside the icon badge (e.g. "Au", "USD", "$", "Ag").
+  final String iconLabel;
+
+  /// Background tint color for the icon badge.
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.general.colorScheme;
-    final isNegativeChange = gramGoldPrice.change.startsWith('-');
+    final isNegativeChange = price.change.startsWith('-');
     final changeColor =
         isNegativeChange ? colorScheme.error : colorScheme.tertiary;
     final changeIcon =
@@ -40,39 +50,38 @@ class _TopPriceCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Gold icon badge + title
+                // Icon badge + title
                 Row(
                   children: [
                     Container(
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: colorScheme.gold.withAlpha(40),
+                        color: iconColor.withAlpha(40),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        'Au',
+                        iconLabel,
                         style: TextStyle(
-                          color: colorScheme.gold,
+                          color: iconColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: iconLabel.length > 2 ? 10 : 14,
                         ),
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          gramGoldPrice.title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
-                          ),
+                    Expanded(
+                      child: Text(
+                        price.title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface,
                         ),
-                      ],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
@@ -86,16 +95,20 @@ class _TopPriceCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // Large price
+                // Large price value
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      gramGoldPrice.buyingPrice,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
+                    Flexible(
+                      child: Text(
+                        price.currentPrice ?? price.buyingPrice,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -119,26 +132,26 @@ class _TopPriceCard extends StatelessWidget {
                     _buildDetailItem(
                       context,
                       LocaleKeys.lowest.tr(),
-                      gramGoldPrice.sellingPrice,
+                      price.sellingPrice,
                     ),
                     const SizedBox(width: 16),
                     _buildDetailItem(
                       context,
                       LocaleKeys.highest.tr(),
-                      gramGoldPrice.buyingPrice,
+                      price.buyingPrice,
                     ),
                     const SizedBox(width: 16),
                     _buildDetailItem(
                       context,
                       LocaleKeys.time.tr(),
-                      gramGoldPrice.time,
+                      price.time,
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          // Right section: change percentage indicator (replaces chart)
+          // Right section: change percentage indicator
           Expanded(
             flex: 1,
             child: Column(
@@ -159,7 +172,7 @@ class _TopPriceCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // Change percentage
+                // Change percentage badge
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -168,7 +181,7 @@ class _TopPriceCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    gramGoldPrice.change,
+                    price.change,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -177,10 +190,10 @@ class _TopPriceCard extends StatelessWidget {
                   ),
                 ),
                 // Change amount if available
-                if (gramGoldPrice.changeAmount != null) ...[
+                if (price.changeAmount != null) ...[
                   const SizedBox(height: 4),
                   Text(
-                    gramGoldPrice.changeAmount!,
+                    price.changeAmount!,
                     style: TextStyle(
                       fontSize: 11,
                       color: changeColor,

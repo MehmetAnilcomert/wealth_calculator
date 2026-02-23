@@ -8,7 +8,6 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/utility/prices_screen_utils.dart';
 import 'package:wealth_calculator/product/widget/PricesWidgets/build_tab.dart';
-import 'package:wealth_calculator/product/widget/PricesWidgets/prices_section.dart';
 import 'package:wealth_calculator/product/widget/wealth_card.dart';
 import 'package:wealth_calculator/product/widget/custom_list.dart';
 import 'package:wealth_calculator/product/widget/drawer.dart';
@@ -82,14 +81,51 @@ class _PricesViewState extends State<PricesView>
                     physics: const NeverScrollableScrollPhysics(),
                     controller: cubit.tabController,
                     children: [
-                      // Gold tab — with top price card
-                      _buildGoldSection(context, screenState.searchQuery),
-                      buildPricesSection(
-                          context, 'currencyPrices', screenState.searchQuery),
-                      buildPricesSection(
-                          context, 'equityPrices', screenState.searchQuery),
-                      buildPricesSection(
-                          context, 'commodityPrices', screenState.searchQuery),
+                      // Gold tab
+                      _buildSectionWithCard(
+                        context: context,
+                        query: screenState.searchQuery,
+                        priceListSelector: (s) => s.goldPrices,
+                        highlightFinder: (prices) =>
+                            _findByKeyword(prices, 'gram'),
+                        iconLabel: 'Au',
+                        iconColor: colorScheme.gold,
+                        sectionTitle: LocaleKeys.goldPrices.tr(),
+                      ),
+                      // Currency tab
+                      _buildSectionWithCard(
+                        context: context,
+                        query: screenState.searchQuery,
+                        priceListSelector: (s) => s.currencyPrices,
+                        highlightFinder: (prices) =>
+                            _findByKeyword(prices, 'dolar'),
+                        iconLabel: 'USD',
+                        iconColor: colorScheme.dollar,
+                        sectionTitle: LocaleKeys.currencyPrices.tr(),
+                      ),
+                      // Stocks tab
+                      _buildSectionWithCard(
+                        context: context,
+                        query: screenState.searchQuery,
+                        priceListSelector: (s) => s.equityPrices,
+                        highlightFinder: (prices) =>
+                            prices.isNotEmpty ? prices.first : null,
+                        iconLabel: 'BIST',
+                        iconColor: colorScheme.primary,
+                        sectionTitle: LocaleKeys.stocksBist.tr(),
+                      ),
+                      // Commodities tab
+                      _buildSectionWithCard(
+                        context: context,
+                        query: screenState.searchQuery,
+                        priceListSelector: (s) => s.commodityPrices,
+                        highlightFinder: (prices) =>
+                            _findByKeyword(prices, 'gümüş'),
+                        iconLabel: 'Ag',
+                        iconColor: colorScheme.blueGrey,
+                        sectionTitle: LocaleKeys.commoditiesPrices.tr(),
+                      ),
+                      // Portfolio tab
                       BlocBuilder<PricesBloc, PricesState>(
                         builder: (context, state) {
                           if (state is PricesLoaded) {
@@ -161,9 +197,26 @@ class _PricesViewState extends State<PricesView>
     );
   }
 
-  /// Gold section with the top price card followed by the grid of
-  /// remaining gold prices.
-  Widget _buildGoldSection(BuildContext context, String query) {
+  // ── Helpers ────────────────────────────────────────────────────────────
+
+  /// Find a price by keyword in the title. Returns null if not found.
+  WealthPrice? _findByKeyword(List<WealthPrice> prices, String keyword) {
+    final idx =
+        prices.indexWhere((p) => p.title.toLowerCase().contains(keyword));
+    return idx != -1 ? prices[idx] : (prices.isNotEmpty ? prices.first : null);
+  }
+
+  /// Generic section builder: top card + grid list.
+  /// Works for Gold, Currency, Stocks, Commodities tabs.
+  Widget _buildSectionWithCard({
+    required BuildContext context,
+    required String query,
+    required List<WealthPrice> Function(PricesLoaded state) priceListSelector,
+    required WealthPrice? Function(List<WealthPrice> prices) highlightFinder,
+    required String iconLabel,
+    required Color iconColor,
+    required String sectionTitle,
+  }) {
     return BlocBuilder<PricesBloc, PricesState>(
       builder: (context, state) {
         if (state is PricesLoading) {
@@ -173,27 +226,19 @@ class _PricesViewState extends State<PricesView>
             child: Text('${LocaleKeys.error.tr()}: ${state.message}'),
           );
         } else if (state is PricesLoaded) {
-          final allGoldPrices = state.goldPrices;
-          if (allGoldPrices.isEmpty) {
+          final allPrices = priceListSelector(state);
+          if (allPrices.isEmpty) {
             return Center(child: Text(LocaleKeys.noDataAvailable.tr()));
           }
 
-          // Find "Gram Altın" for the top card
-          final gramGoldIndex = allGoldPrices
-              .indexWhere((p) => p.title.toLowerCase().contains('gram'));
-          final gramGold = gramGoldIndex != -1
-              ? allGoldPrices[gramGoldIndex]
-              : allGoldPrices.first;
+          final highlighted = highlightFinder(allPrices);
 
-          // Build remaining list (filtered by search)
-          final remainingPrices = allGoldPrices
-              .where((price) =>
-                  price.title.toLowerCase().contains(query.toLowerCase()))
+          // Filtered list for grid
+          final filteredPrices = allPrices
+              .where((p) => p.title.toLowerCase().contains(query.toLowerCase()))
               .toList();
 
-          // Noop for long press (gold prices are not deletable)
           dynamic noop(WealthPrice price) => 0;
-
           final colorScheme = context.general.colorScheme;
 
           return SingleChildScrollView(
@@ -201,14 +246,19 @@ class _PricesViewState extends State<PricesView>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8),
-                // Top price card for Gram Altın
-                _TopPriceCard(gramGoldPrice: gramGold),
+                // Highlighted top card
+                if (highlighted != null)
+                  _TopPriceCard(
+                    price: highlighted,
+                    iconLabel: iconLabel,
+                    iconColor: iconColor,
+                  ),
                 const SizedBox(height: 20),
                 // Section header
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    LocaleKeys.goldPrices.tr(),
+                    sectionTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -217,8 +267,8 @@ class _PricesViewState extends State<PricesView>
                   ),
                 ),
                 const SizedBox(height: 8),
-                // Grid of remaining gold prices
-                buildEquityPricesTab(remainingPrices, noop),
+                // Grid of prices
+                buildEquityPricesTab(filteredPrices, noop),
                 const SizedBox(height: 20),
               ],
             ),
