@@ -3,33 +3,80 @@ part of '../prices_view.dart';
 /// A reusable card widget that displays a highlighted price at the top of each
 /// tab section. Accepts dynamic data so it can show Gram Altın, USD, BIST 100,
 /// Gümüş, etc. depending on the active tab.
-class _TopPriceCard extends StatelessWidget {
+///
+/// Includes animated change indicator with pulsing glow and bounce effects.
+class _TopPriceCard extends StatefulWidget {
   const _TopPriceCard({
     required this.price,
     required this.iconLabel,
     required this.iconColor,
   });
 
-  /// The [WealthPrice] data to display.
   final WealthPrice price;
-
-  /// Short label shown inside the icon badge (e.g. "Au", "USD", "$", "Ag").
   final String iconLabel;
-
-  /// Background tint color for the icon badge.
   final Color iconColor;
+
+  @override
+  State<_TopPriceCard> createState() => _TopPriceCardState();
+}
+
+class _TopPriceCardState extends State<_TopPriceCard>
+    with TickerProviderStateMixin {
+  late final AnimationController _pulseController;
+  late final AnimationController _bounceController;
+  late final Animation<double> _pulseAnimation;
+  late final Animation<double> _bounceAnimation;
+  late final Animation<double> _arrowSlide;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Pulsing glow ring — repeats forever
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1800),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _pulseAnimation = Tween<double>(begin: 0.0, end: 3.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    // Bounce-in for the badge + arrow slide
+    _bounceController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    )..forward();
+
+    _bounceAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _bounceController, curve: Curves.elasticOut),
+    );
+
+    _arrowSlide = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _bounceController,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeOutBack),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _bounceController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.general.colorScheme;
-    final isNegativeChange = price.change.startsWith('-');
+    final isNegativeChange = widget.price.change.startsWith('-');
     final changeColor =
         isNegativeChange ? colorScheme.error : colorScheme.tertiary;
     final changeIcon =
         isNegativeChange ? Icons.trending_down : Icons.trending_up;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -57,23 +104,23 @@ class _TopPriceCard extends StatelessWidget {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: iconColor.withAlpha(40),
+                        color: widget.iconColor.withAlpha(40),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        iconLabel,
+                        widget.iconLabel,
                         style: TextStyle(
-                          color: iconColor,
+                          color: widget.iconColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: iconLabel.length > 2 ? 10 : 14,
+                          fontSize: widget.iconLabel.length > 2 ? 10 : 14,
                         ),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        price.title,
+                        widget.price.title,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -101,7 +148,7 @@ class _TopPriceCard extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        price.currentPrice ?? price.buyingPrice,
+                        widget.price.currentPrice ?? widget.price.buyingPrice,
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -132,79 +179,155 @@ class _TopPriceCard extends StatelessWidget {
                     _buildDetailItem(
                       context,
                       LocaleKeys.lowest.tr(),
-                      price.sellingPrice,
+                      widget.price.sellingPrice,
                     ),
                     const SizedBox(width: 16),
                     _buildDetailItem(
                       context,
                       LocaleKeys.highest.tr(),
-                      price.buyingPrice,
+                      widget.price.buyingPrice,
                     ),
                     const SizedBox(width: 16),
                     _buildDetailItem(
                       context,
                       LocaleKeys.time.tr(),
-                      price.time,
+                      widget.price.time,
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          // Right section: change percentage indicator
+          // Right section: animated change indicator
           Expanded(
             flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Change icon
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: changeColor.withAlpha(30),
-                    shape: BoxShape.circle,
+            child: _buildAnimatedChangeIndicator(changeColor, changeIcon),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Animated change indicator with:
+  /// - Pulsing glow ring around the circle
+  /// - Bouncing arrow icon
+  /// - Scale-in percentage badge
+  Widget _buildAnimatedChangeIndicator(Color changeColor, IconData changeIcon) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Pulsing glow ring + trend icon
+        AnimatedBuilder(
+          animation: _pulseAnimation,
+          builder: (context, child) {
+            return Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: changeColor
+                        .withAlpha((40 * _pulseAnimation.value).toInt()),
+                    blurRadius: 12 + (8 * _pulseAnimation.value),
+                    spreadRadius: 2 * _pulseAnimation.value,
                   ),
+                ],
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: changeColor.withAlpha(30),
+                  border: Border.all(
+                    color: changeColor.withAlpha(
+                      (60 * _pulseAnimation.value).toInt() + 20,
+                    ),
+                    width: 1.5,
+                  ),
+                ),
+                child: AnimatedBuilder(
+                  animation: _arrowSlide,
+                  builder: (context, child) {
+                    final isNeg = widget.price.change.startsWith('-');
+                    final slideOffset = isNeg
+                        ? Offset(0, 0.15 * (1 - _arrowSlide.value))
+                        : Offset(0, -0.15 * (1 - _arrowSlide.value));
+                    return FractionalTranslation(
+                      translation: slideOffset,
+                      child: child,
+                    );
+                  },
                   child: Icon(
                     changeIcon,
                     color: changeColor,
                     size: 28,
                   ),
                 ),
-                const SizedBox(height: 8),
-                // Change percentage badge
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: changeColor.withAlpha(26),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    price.change,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: changeColor,
-                    ),
-                  ),
-                ),
-                // Change amount if available
-                if (price.changeAmount != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    price.changeAmount!,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: changeColor,
-                    ),
-                  ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 10),
+        // Bounce-in percentage badge
+        AnimatedBuilder(
+          animation: _bounceAnimation,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _bounceAnimation.value,
+              child: Opacity(
+                opacity: _bounceAnimation.value.clamp(0.0, 1.0),
+                child: child,
+              ),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  changeColor.withAlpha(35),
+                  changeColor.withAlpha(20),
                 ],
-              ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: changeColor.withAlpha(50),
+                width: 0.5,
+              ),
+            ),
+            child: Text(
+              widget.price.change,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: changeColor,
+              ),
+            ),
+          ),
+        ),
+        // Change amount if available
+        if (widget.price.changeAmount != null) ...[
+          const SizedBox(height: 4),
+          AnimatedBuilder(
+            animation: _bounceAnimation,
+            builder: (context, child) {
+              return Opacity(
+                opacity: _bounceAnimation.value.clamp(0.0, 1.0),
+                child: child,
+              );
+            },
+            child: Text(
+              widget.price.changeAmount!,
+              style: TextStyle(
+                fontSize: 11,
+                color: changeColor,
+              ),
             ),
           ),
         ],
-      ),
+      ],
     );
   }
 

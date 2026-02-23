@@ -2,41 +2,59 @@ part of '../prices_view.dart';
 
 /// Custom AppBar header for the Prices screen.
 ///
-/// Renders a gradient blue header with rounded bottom corners, the app logo,
-/// tab title, subtitle, drawer menu button, and an overlapping search bar
-/// at the bottom edge — matching the reference design.
+/// Renders a tall gradient blue header with rounded bottom corners containing:
+/// 1. Toolbar row — app logo, tab title/subtitle, drawer menu button
+/// 2. Search bar — pill-shaped, inside the blue area
+/// 3. Top price card — stacked below, overlapping the bottom edge
+///
+/// The card and search bar sit within the blue area, with the card's bottom
+/// half protruding below the gradient into the content area.
 class _PricesAppBar extends StatelessWidget {
   const _PricesAppBar({
     required this.currentTabIndex,
     required this.onSearchChanged,
     required this.showSearchBar,
+    this.highlightedPrice,
+    this.iconLabel,
+    this.iconColor,
   });
 
-  /// Current tab index to determine the title.
   final int currentTabIndex;
-
-  /// Callback when the search query changes.
   final ValueChanged<String> onSearchChanged;
-
-  /// Whether to show the search bar (hidden on Portfolio tab).
   final bool showSearchBar;
+
+  /// The highlighted price to show in the card. If null, no card is rendered.
+  final WealthPrice? highlightedPrice;
+
+  /// Icon badge label for the card (e.g. "Au", "USD").
+  final String? iconLabel;
+
+  /// Icon badge color for the card.
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.general.colorScheme;
     final topPadding = MediaQuery.of(context).padding.top;
+    final hasCard = highlightedPrice != null && showSearchBar;
 
-    // Total header height: status bar + toolbar + optional search overlap
-    final headerHeight = topPadding + kToolbarHeight + (showSearchBar ? 28 : 0);
+    // Blue gradient height — toolbar + search bar area
+    // The card will overlap: top half inside gradient, bottom half outside
+    final toolbarAndSearchHeight =
+        topPadding + kToolbarHeight + 16 + (showSearchBar ? 52 : 0);
+    final cardOverlap = hasCard ? 205.0 : 0.0; // full card height reservation
+
+    // Total widget height
+    final totalHeight = toolbarAndSearchHeight + cardOverlap;
 
     return SizedBox(
-      height: headerHeight,
+      height: totalHeight,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // Blue gradient background with rounded bottom
+          // Blue gradient background — extends to cover toolbar + search + top of card
           Container(
-            height: headerHeight - (showSearchBar ? 20 : 0),
+            height: toolbarAndSearchHeight + (hasCard ? 60 : 0),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -50,31 +68,41 @@ class _PricesAppBar extends StatelessWidget {
                 bottom: Radius.circular(28),
               ),
             ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
-                  children: [
-                    // App logo
-                    _buildLogo(colorScheme),
-                    const SizedBox(width: 12),
-                    // Title + subtitle
-                    Expanded(child: _buildTitle(colorScheme)),
-                    // Drawer menu / loading indicator
-                    _buildMenuButton(context, colorScheme),
-                  ],
-                ),
-              ),
+          ),
+          // Toolbar row
+          Positioned(
+            top: topPadding + 4,
+            left: 12,
+            right: 12,
+            height: kToolbarHeight,
+            child: Row(
+              children: [
+                _buildLogo(colorScheme),
+                const SizedBox(width: 12),
+                Expanded(child: _buildTitle(colorScheme)),
+                _buildMenuButton(context, colorScheme),
+              ],
             ),
           ),
-          // Overlapping search bar
+          // Search bar
           if (showSearchBar)
             Positioned(
+              top: topPadding + kToolbarHeight + 8,
               left: 24,
               right: 24,
-              bottom: 0,
               child: _buildSearchBar(colorScheme),
+            ),
+          // Top price card — overlapping bottom edge of gradient
+          if (hasCard)
+            Positioned(
+              top: toolbarAndSearchHeight + 4,
+              left: 16,
+              right: 16,
+              child: _TopPriceCard(
+                price: highlightedPrice!,
+                iconLabel: iconLabel ?? '',
+                iconColor: iconColor ?? colorScheme.primary,
+              ),
             ),
         ],
       ),
@@ -83,8 +111,8 @@ class _PricesAppBar extends StatelessWidget {
 
   Widget _buildLogo(ColorScheme colorScheme) {
     return Container(
-      width: 40,
-      height: 40,
+      width: 48,
+      height: 48,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(color: colorScheme.whiteOverlay20),
@@ -104,7 +132,7 @@ class _PricesAppBar extends StatelessWidget {
           PricesScreenUtils.getAppBarTitle(currentTabIndex),
           style: TextStyle(
             color: colorScheme.onPrimaryContainer,
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -112,7 +140,7 @@ class _PricesAppBar extends StatelessWidget {
           LocaleKeys.marketData.tr(),
           style: TextStyle(
             color: colorScheme.onPrimaryContainer.withAlpha(179),
-            fontSize: 12,
+            fontSize: 13,
           ),
         ),
       ],
