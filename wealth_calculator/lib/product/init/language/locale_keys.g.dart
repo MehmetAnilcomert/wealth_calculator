@@ -115,5 +115,8 @@ abstract class  LocaleKeys {
   static const appName = 'appName';
   static const version = 'version';
   static const appDescription = 'appDescription';
+  static const noSelection = 'noSelection';
+  static const selectItems = 'selectItems';
+  static const ok = 'ok';
 
 }

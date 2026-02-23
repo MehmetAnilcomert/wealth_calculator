@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/widget/wealth_card.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
@@ -25,7 +27,7 @@ class CustomPricesWidget extends StatelessWidget {
             const SizedBox(height: 5),
             Expanded(
               child: customPrices.isEmpty
-                  ? const Center(child: Text('Henüz bir seçim yapılmadı.'))
+                  ? Center(child: const Text(LocaleKeys.noSelection).tr())
                   : buildCustomPrices(customPrices, query),
             ),
           ],

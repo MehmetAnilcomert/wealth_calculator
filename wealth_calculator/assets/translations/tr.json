@@ -110,6 +110,8 @@
     "appInfo": "Uygulama Bilgisi",
     "appName": "Varlık Hesaplayıcı",
     "version": "Versiyon",
-    "appDescription": "Bu uygulama finansal yatırımlarınızın olası güncel karşılıklarını görebilmek için tasarlanmıştır. Yatırım tavsiyesi vermemektedir."
-
+    "appDescription": "Bu uygulama finansal yatırımlarınızın olası güncel karşılıklarını görebilmek için tasarlanmıştır. Yatırım tavsiyesi vermemektedir.",
+    "noSelection": "Henüz bir seçim yapılmadı.",
+    "selectItems": "Seçim Yapın",
+    "ok": "Tamam"
 }
