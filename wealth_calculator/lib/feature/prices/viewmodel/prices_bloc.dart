@@ -19,17 +19,80 @@ class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
   Future<void> _onLoadPrices(
       LoadPrices event, Emitter<PricesState> emit) async {
     emit(PricesLoading());
-
     try {
       final allPrices = await _priceFetcher.fetchPrices();
       final customPrices = await _customListDao.getSelectedWealthPrices();
 
+      List<WealthPrice> gold = allPrices[0];
+      List<WealthPrice> currency = allPrices[1];
+      List<WealthPrice> equity = allPrices[2];
+      List<WealthPrice> commodity = List<WealthPrice>.from(allPrices[3]);
+      List<WealthPrice> customLists = List<WealthPrice>.from(customPrices);
+
+      // --- Silver conversion logic ---
+      // 1. Find USD rate
+      final usdPrice = currency.firstWhere(
+        (p) => p.title.toLowerCase().contains('dolar'),
+        orElse: () => WealthPrice(
+            title: '',
+            buyingPrice: '1',
+            sellingPrice: '1',
+            change: '',
+            time: '',
+            type: PriceType.currency),
+      );
+
+      double usdRate = double.tryParse(
+              usdPrice.sellingPrice.replaceAll('.', '').replaceAll(',', '.')) ??
+          1.0;
+
+      // 2. Convert Silver Ounce to Gram TL
+      const double ounceToGram = 31.1034768;
+
+      WealthPrice? silverInCommodity;
+      int silverIdx =
+          commodity.indexWhere((p) => p.title.toLowerCase().contains('gümüş'));
+
+      if (silverIdx != -1) {
+        final silver = commodity[silverIdx];
+        double ouncePrice = double.tryParse(
+                silver.currentPrice?.replaceAll('.', '').replaceAll(',', '.') ??
+                    '') ??
+            0.0;
+
+        if (ouncePrice > 0) {
+          double gramTL = (ouncePrice * usdRate) / ounceToGram;
+          String gramTLStr = gramTL.toStringAsFixed(2).replaceAll('.', ',');
+
+          silverInCommodity = WealthPrice(
+            title: 'Gümüş (TL/GR)',
+            buyingPrice: gramTLStr,
+            sellingPrice: gramTLStr,
+            currentPrice: gramTLStr,
+            change: silver.change,
+            time: silver.time,
+            type: silver.type,
+            changeAmount: silver.changeAmount,
+          );
+          commodity[silverIdx] = silverInCommodity;
+        }
+      }
+
+      // 3. Update Silver in custom lists if present
+      if (silverInCommodity != null) {
+        for (int i = 0; i < customLists.length; i++) {
+          if (customLists[i].title.toLowerCase().contains('gümüş')) {
+            customLists[i] = silverInCommodity;
+          }
+        }
+      }
+
       emit(PricesLoaded(
-        commodityPrices: allPrices[3],
-        goldPrices: allPrices[0],
-        currencyPrices: allPrices[1],
-        equityPrices: allPrices[2],
-        customPrices: customPrices,
+        commodityPrices: commodity,
+        goldPrices: gold,
+        currencyPrices: currency,
+        equityPrices: equity,
+        customPrices: customLists,
       ));
     } catch (e) {
       emit(PricesError('Failed to load prices.'));
