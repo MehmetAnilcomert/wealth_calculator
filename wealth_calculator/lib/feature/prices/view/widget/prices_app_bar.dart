@@ -98,7 +98,7 @@ class _PricesAppBar extends StatelessWidget {
               top: toolbarAndSearchHeight + 4,
               left: const ProductPadding.symmetricHorizontalMedium().left,
               right: const ProductPadding.symmetricHorizontalMedium().right,
-              child: _TopPriceCard(
+              child: TopPriceCard(
                 price: highlightedPrice!,
                 iconLabel: iconLabel ?? '',
                 iconColor: iconColor ?? colorScheme.primary,

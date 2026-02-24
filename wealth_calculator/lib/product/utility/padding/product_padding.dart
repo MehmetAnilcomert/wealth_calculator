@@ -50,15 +50,31 @@ class ProductPadding extends EdgeInsets {
   const ProductPadding.symmetricVerticalLarge()
       : super.symmetric(horizontal: 0, vertical: 32);
 
+  /// [ProductPadding.symmetricVerticalExtraLarge] is 0.0 horizontally and 48.0 vertically.
+  const ProductPadding.symmetricVerticalExtraLarge()
+      : super.symmetric(horizontal: 0, vertical: 48);
+
+  /// [ProductPadding.onlyTopExtraSmall] is 4.0 on the top side.
+  const ProductPadding.onlyTopExtraSmall() : super.only(top: 4);
+
+  /// [ProductPadding.onlyBottomExtraSmall] is 4.0 on the bottom side.
+  const ProductPadding.onlyBottomExtraSmall() : super.only(bottom: 4);
+
+  /// [ProductPadding.onlyTopSmall] is 8.0 on the top side.
+  const ProductPadding.onlyTopSmall() : super.only(top: 8);
+
+  /// [ProductPadding.onlyBottomSmall] is 8.0 on the bottom side.
+  const ProductPadding.onlyBottomSmall() : super.only(bottom: 8);
+
+  /// [ProductPadding.onlyTopMedium] is 16.0 on the top side.
+  const ProductPadding.onlyTopMedium() : super.only(top: 16);
+
+  /// [ProductPadding.onlyBottomMedium] is 16.0 on the bottom side.
+  const ProductPadding.onlyBottomMedium() : super.only(bottom: 16);
+
   /// [ProductPadding.onlyTopNormal] is 24.0 on the top side.
   const ProductPadding.onlyTopNormal() : super.only(top: 24);
 
   /// [ProductPadding.onlyBottomNormal] is 24.0 on the bottom side.
-  const ProductPadding.onlyBottomNormal() : super.only(bottom: 24);
-
-  /// [ProductPadding.onlyLeftNormal] is 24.0 on the left side.
-  const ProductPadding.onlyLeftNormal() : super.only(left: 24);
-
-  /// [ProductPadding.onlyRightNormal] is 24.0 on the right side.
   const ProductPadding.onlyRightNormal() : super.only(right: 24);
 }
