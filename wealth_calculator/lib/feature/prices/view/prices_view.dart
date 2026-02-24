@@ -9,7 +9,7 @@ import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/utility/mixin/top_price_card_mixin.dart';
 import 'package:wealth_calculator/product/utility/padding/product_sizes.dart';
 import 'package:wealth_calculator/product/utility/prices_screen_utils.dart';
-import 'package:wealth_calculator/feature/prices/view/widget/build_tab.dart';
+import 'package:wealth_calculator/feature/prices/view/widget/custom_bottom_nav_bar.dart';
 import 'package:wealth_calculator/product/widget/PricesWidgets/icon_badge.dart';
 import 'package:wealth_calculator/product/widget/PricesWidgets/large_price_value.dart';
 import 'package:wealth_calculator/product/widget/wealth_card.dart';
@@ -66,16 +66,19 @@ class _PricesViewState extends State<PricesView>
         builder: (context, screenState) {
           final cubit = context.read<PricesScreenCubit>();
           final tabIdx = screenState.currentTabIndex;
-          final showSearch = tabIdx != 4;
+          final isPortfolio = screenState.isPortfolioActive;
+          final showSearch = !isPortfolio;
 
           return BlocBuilder<PricesBloc, PricesState>(
             builder: (context, pricesState) {
               // Resolve the highlighted price for the current tab
-              final cardInfo = _resolveCardInfo(
-                pricesState,
-                tabIdx,
-                colorScheme,
-              );
+              final cardInfo = isPortfolio
+                  ? null
+                  : _resolveCardInfo(
+                      pricesState,
+                      tabIdx,
+                      colorScheme,
+                    );
 
               return Scaffold(
                 backgroundColor: colorScheme.surfaceContainerLow,
@@ -95,83 +98,54 @@ class _PricesViewState extends State<PricesView>
                     ),
                     // Tab content — grid only (card is in AppBar now)
                     Expanded(
-                      child: TabBarView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        controller: cubit.tabController,
-                        children: [
-                          _buildGridSection(
-                            pricesState,
-                            (s) => s.goldPrices,
-                            screenState.searchQuery,
-                            LocaleKeys.goldPrices.tr(),
-                          ),
-                          _buildGridSection(
-                            pricesState,
-                            (s) => s.currencyPrices,
-                            screenState.searchQuery,
-                            LocaleKeys.currencyPrices.tr(),
-                          ),
-                          _buildGridSection(
-                            pricesState,
-                            (s) => s.equityPrices,
-                            screenState.searchQuery,
-                            LocaleKeys.stocksBist.tr(),
-                          ),
-                          _buildGridSection(
-                            pricesState,
-                            (s) => s.commodityPrices,
-                            screenState.searchQuery,
-                            LocaleKeys.commoditiesPrices.tr(),
-                          ),
-                          // Portfolio tab
-                          _buildPortfolioSection(
-                            pricesState,
-                            screenState.searchQuery,
-                            colorScheme,
-                          ),
-                        ],
-                      ),
+                      child: screenState.isPortfolioActive
+                          ? _buildPortfolioSection(
+                              pricesState,
+                              screenState.searchQuery,
+                              colorScheme,
+                            )
+                          : TabBarView(
+                              controller: cubit.tabController,
+                              children: [
+                                _buildGridSection(
+                                  pricesState,
+                                  (s) => s.goldPrices,
+                                  screenState.searchQuery,
+                                  LocaleKeys.goldPrices.tr(),
+                                ),
+                                _buildGridSection(
+                                  pricesState,
+                                  (s) => s.currencyPrices,
+                                  screenState.searchQuery,
+                                  LocaleKeys.currencyPrices.tr(),
+                                ),
+                                _buildGridSection(
+                                  pricesState,
+                                  (s) => s.equityPrices,
+                                  screenState.searchQuery,
+                                  LocaleKeys.stocksBist.tr(),
+                                ),
+                                _buildGridSection(
+                                  pricesState,
+                                  (s) => s.commodityPrices,
+                                  screenState.searchQuery,
+                                  LocaleKeys.commoditiesPrices.tr(),
+                                ),
+                              ],
+                            ),
                     ),
                   ],
                 ),
-                bottomNavigationBar: Container(
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorScheme.blackOverlay10.withAlpha(13),
-                        blurRadius: 10,
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    child: TabBar(
-                      controller: cubit.tabController,
-                      indicator: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: colorScheme.primary,
-                            width: 3,
-                          ),
-                        ),
-                      ),
-                      tabs: [
-                        buildTab(Icons.monetization_on_outlined,
-                            LocaleKeys.gold.tr(), context),
-                        buildTab(Icons.currency_exchange,
-                            LocaleKeys.currency.tr(), context),
-                        buildTab(
-                            Icons.show_chart, LocaleKeys.stocks.tr(), context),
-                        buildTab(Icons.diamond_outlined,
-                            LocaleKeys.commodities.tr(), context),
-                        buildTab(Icons.account_balance_wallet_outlined,
-                            LocaleKeys.portfolio.tr(), context),
-                      ],
-                      labelColor: colorScheme.primary,
-                      unselectedLabelColor: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
+                bottomNavigationBar: CustomBottomNavBar(
+                  currentIndex: screenState.currentTabIndex,
+                  isPortfolioActive: screenState.isPortfolioActive,
+                  onTabSelected: (index) {
+                    cubit.tabController.animateTo(index);
+                    cubit.setPortfolioActive(false);
+                  },
+                  onPortfolioSelected: () {
+                    cubit.setPortfolioActive(true);
+                  },
                 ),
               );
             },

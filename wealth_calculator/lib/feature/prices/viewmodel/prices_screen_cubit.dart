@@ -5,19 +5,23 @@ import 'package:wealth_calculator/product/product.dart';
 class PricesScreenState {
   final int currentTabIndex;
   final String searchQuery;
+  final bool isPortfolioActive;
 
   PricesScreenState({
     this.currentTabIndex = 0,
     this.searchQuery = '',
+    this.isPortfolioActive = false,
   });
 
   PricesScreenState copyWith({
     int? currentTabIndex,
     String? searchQuery,
+    bool? isPortfolioActive,
   }) {
     return PricesScreenState(
       currentTabIndex: currentTabIndex ?? this.currentTabIndex,
       searchQuery: searchQuery ?? this.searchQuery,
+      isPortfolioActive: isPortfolioActive ?? this.isPortfolioActive,
     );
   }
 }
@@ -29,14 +33,21 @@ class PricesScreenCubit extends BaseCubit<PricesScreenState> {
   PricesScreenCubit() : super(PricesScreenState());
 
   void initTabController(TickerProvider vsync) {
-    _tabController = TabController(length: 5, vsync: vsync);
+    _tabController = TabController(length: 4, vsync: vsync);
     _tabController.addListener(_handleTabChange);
   }
 
   void _handleTabChange() {
-    if (_tabController.indexIsChanging) {
-      emit(state.copyWith(currentTabIndex: _tabController.index));
+    if (state.currentTabIndex != _tabController.index) {
+      emit(state.copyWith(
+        currentTabIndex: _tabController.index,
+        isPortfolioActive: false,
+      ));
     }
+  }
+
+  void setPortfolioActive(bool active) {
+    emit(state.copyWith(isPortfolioActive: active));
   }
 
   void updateSearchQuery(String query) {
