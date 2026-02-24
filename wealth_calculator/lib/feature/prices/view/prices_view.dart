@@ -81,6 +81,7 @@ class _PricesViewState extends State<PricesView>
                     );
 
               return Scaffold(
+                extendBody: true,
                 backgroundColor: colorScheme.surfaceContainerLow,
                 endDrawer: const AppDrawer(),
                 body: Column(
