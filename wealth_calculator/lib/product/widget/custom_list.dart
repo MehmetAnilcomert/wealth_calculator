@@ -34,7 +34,7 @@ class CustomPricesWidget extends StatelessWidget {
         ),
         Positioned(
           right: 16,
-          bottom: 16,
+          bottom: 100,
           child: IconButton(
             onPressed: onAddPressed,
             icon: Icon(Icons.add, color: colorScheme.onSecondaryContainer),

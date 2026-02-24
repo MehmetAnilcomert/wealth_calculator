@@ -243,7 +243,7 @@ class _PricesViewState extends State<PricesView>
             ),
             const SizedBox(height: 8),
             buildEquityPricesTab(filteredPrices, noop),
-            const SizedBox(height: 20),
+            const SizedBox(height: 100),
           ],
         ),
       );
