@@ -76,7 +76,7 @@ Türkiye pazarları için gerçek zamanlı varlık takibi ve servet analizi suna
     </td>
     <td>
       <div style="display: flex; gap: 10px;">
-        <img src="screenshots/portfolio.jpeg" width="150" alt="Portföy">
+        <img src="screenshots/portfolio.png" width="150" alt="Portföy">
       </div>
     </td>
   </tr>

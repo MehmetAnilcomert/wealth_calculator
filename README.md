@@ -79,7 +79,7 @@ A comprehensive financial management solution for Turkish markets with real-time
     </td>
     <td>
       <div style="display: flex; gap: 10px;">
-        <img src="screenshots/portfolio.jpeg" width="150" alt="Portfolio">
+        <img src="screenshots/portfolio.png" width="150" alt="Portfolio">
       </div>
     </td>
   </tr>
