@@ -1,4 +1,127 @@
-Write-Host "=== Wealth Calculator Android Build Script ===" -ForegroundColor Cyan
+# Proje dizinini al (parametre, script parent veya current directory)
+param(
+    [string]$ProjectPath = ""
+)
+
+Write-Host "=== Flutter Android Build Script ===" -ForegroundColor Cyan
+Write-Host ""
+
+if ([string]::IsNullOrEmpty($ProjectPath)) {
+    # Eger parametre verilmemisse, script'in parent klasorunu dene
+    if ($MyInvocation.MyCommand.Path) {
+        $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+        $ProjectPath = Split-Path -Parent $scriptDir
+    } else {
+        # Script yolu bulunamazsa current directory kullan
+        $ProjectPath = (Get-Location).Path
+    }
+}
+
+# Flutter projesini dogrula
+if (-not (Test-Path "$ProjectPath\pubspec.yaml")) {
+    Write-Host "HATA: Bu bir Flutter projesi degil!" -ForegroundColor Red
+    Write-Host "pubspec.yaml bulunamadi: $ProjectPath" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "Kullanim: .\android_build.ps1 [-ProjectPath <path>]" -ForegroundColor Cyan
+    exit 1
+}
+
+$projectName = (Get-Item $ProjectPath).Name
+Write-Host ">>> Proje: $projectName" -ForegroundColor Green
+Write-Host ">>> Dizin: $ProjectPath" -ForegroundColor Gray
+Write-Host ""
+
+# Google Play yükleme kontrolü ve version artırma
+Write-Host "Google Play'e yuklenecek mi? (Version otomatik artacak)" -ForegroundColor Yellow
+$uploadToPlay = Read-Host "Google Play'e yukle? (E/H)"
+
+if ($uploadToPlay -eq "E" -or $uploadToPlay -eq "e") {
+    Write-Host ""
+    Write-Host ">>> Version artiriliyor..." -ForegroundColor Cyan
+    
+    # pubspec.yaml'i oku
+    $pubspecPath = "$ProjectPath\pubspec.yaml"
+    $pubspecContent = Get-Content $pubspecPath -Raw -Encoding UTF8
+    
+    # Mevcut versiyonu bul (format: version: 1.0.0+1)
+    if ($pubspecContent -match 'version:\s+(\d+)\.(\d+)\.(\d+)\+(\d+)') {
+        $major = [int]$Matches[1]
+        $minor = [int]$Matches[2]
+        $patch = [int]$Matches[3]
+        $buildNumber = [int]$Matches[4]
+        
+        $oldVersion = "$major.$minor.$patch+$buildNumber"
+        
+        # Version artırma seçenekleri
+        Write-Host "Mevcut version: $oldVersion" -ForegroundColor White
+        Write-Host ""
+        Write-Host "Hangi versiyonu artirmak istersiniz?" -ForegroundColor Yellow
+        Write-Host "1. Build Number (+1) -> $major.$minor.$patch+$($buildNumber + 1) [Kucuk duzeltmeler]" -ForegroundColor Gray
+        Write-Host "2. Patch (0.0.+1) -> $major.$minor.$($patch + 1)+$($buildNumber + 1) [Bug fix]" -ForegroundColor Gray
+        Write-Host "3. Minor (0.+1.0) -> $major.$($minor + 1).0+$($buildNumber + 1) [Yeni ozellikler]" -ForegroundColor Gray
+        Write-Host "4. Major (+1.0.0) -> $($major + 1).0.0+$($buildNumber + 1) [Buyuk degisiklikler]" -ForegroundColor Gray
+        Write-Host ""
+        
+        $versionChoice = Read-Host "Seciminiz (1-4, Enter=1)"
+        if ([string]::IsNullOrEmpty($versionChoice)) { $versionChoice = "1" }
+        
+        switch ($versionChoice) {
+            "1" {
+                # Sadece build number artır
+                $buildNumber++
+            }
+            "2" {
+                # Patch artır, build number artır
+                $patch++
+                $buildNumber++
+            }
+            "3" {
+                # Minor artır, patch sıfırla, build number artır
+                $minor++
+                $patch = 0
+                $buildNumber++
+            }
+            "4" {
+                # Major artır, minor ve patch sıfırla, build number artır
+                $major++
+                $minor = 0
+                $patch = 0
+                $buildNumber++
+            }
+            default {
+                # Default: sadece build number
+                $buildNumber++
+            }
+        }
+        
+        $newVersion = "$major.$minor.$patch+$buildNumber"
+        
+        # pubspec.yaml'i güncelle (regex ile)
+        $newContent = $pubspecContent -replace "version:\s+\d+\.\d+\.\d+\+\d+", "version: $newVersion"
+        
+        # Dosyaya yaz (UTF8 encoding ile)
+        [System.IO.File]::WriteAllText($pubspecPath, $newContent, [System.Text.UTF8Encoding]::new($false))
+        
+        Write-Host ""
+        Write-Host "OK: Version guncellendi: $oldVersion -> $newVersion" -ForegroundColor Green
+        Write-Host ""
+        
+        # Doğrulama
+        Start-Sleep -Milliseconds 500
+        $verifyContent = Get-Content $pubspecPath -Raw
+        if ($verifyContent -match "version:\s+$newVersion") {
+            Write-Host "OK: Degisiklik dogrulandi!" -ForegroundColor Green
+        } else {
+            Write-Host "UYARI: Version guncellemesi dogrulanamadi!" -ForegroundColor Yellow
+        }
+        Write-Host ""
+    } else {
+        Write-Host "UYARI: Version bulunamadi veya format hatali!" -ForegroundColor Yellow
+        Write-Host "Beklenen format: version: 1.0.0+1" -ForegroundColor Gray
+        Write-Host ""
+    }
+}
+
 Write-Host ""
 
 # Build tipi secimi
@@ -10,13 +133,8 @@ Write-Host ""
 
 $choice = Read-Host "Seciminiz (1-3)"
 
-# Script'in bulundugu yeri bul ve proje dizinine git
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$projectPath = Split-Path -Parent $scriptDir
-Set-Location $projectPath
+Set-Location $ProjectPath
 
-Write-Host ""
-Write-Host ">>> Proje dizini: $projectPath" -ForegroundColor Gray
 Write-Host ""
 Write-Host ">>> Flutter Clean yapiliyor..." -ForegroundColor Yellow
 flutter clean
@@ -57,30 +175,30 @@ $fileName = ""
 switch ($choice) {
     "1" {
         Write-Host "AAB build yapiliyor..." -ForegroundColor Cyan
-        flutter build appbundle --release --no-tree-shake-icons
+        flutter build appbundle --release
         if ($LASTEXITCODE -eq 0) {
             $buildSuccess = $true
-            $outputFile = "$projectPath\build\app\outputs\bundle\release\app-release.aab"
-            $fileName = "wealth-calculator-$(Get-Date -Format 'yyyy-MM-dd').aab"
+            $outputFile = "$ProjectPath\build\app\outputs\bundle\release\app-release.aab"
+            $fileName = "$projectName-$(Get-Date -Format 'yyyy-MM-dd').aab"
         }
     }
     "2" {
         Write-Host "APK build yapiliyor..." -ForegroundColor Cyan
-        flutter build apk --release --no-tree-shake-icons
+        flutter build apk --release
         if ($LASTEXITCODE -eq 0) {
             $buildSuccess = $true
-            $outputFile = "$projectPath\build\app\outputs\flutter-apk\app-release.apk"
-            $fileName = "wealth-calculator-$(Get-Date -Format 'yyyy-MM-dd').apk"
+            $outputFile = "$ProjectPath\build\app\outputs\flutter-apk\app-release.apk"
+            $fileName = "$projectName-$(Get-Date -Format 'yyyy-MM-dd').apk"
         }
     }
     "3" {
         Write-Host "Split APK build yapiliyor..." -ForegroundColor Cyan
-        flutter build apk --split-per-abi --release --no-tree-shake-icons
+        flutter build apk --split-per-abi --release
         if ($LASTEXITCODE -eq 0) {
             $buildSuccess = $true
             # Split icin klasor kopyalayacagiz
-            $outputFile = "$projectPath\build\app\outputs\flutter-apk\"
-            $fileName = "wealth-calculator-split-$(Get-Date -Format 'yyyy-MM-dd')"
+            $outputFile = "$ProjectPath\build\app\outputs\flutter-apk\"
+            $fileName = "$projectName-split-$(Get-Date -Format 'yyyy-MM-dd')"
         }
     }
     default {
