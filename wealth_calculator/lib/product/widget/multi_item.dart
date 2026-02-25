@@ -5,6 +5,9 @@ import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
 
+/// Locale-independent category keys for the multi-select dialog.
+enum _Category { gold, currency, stocks, commodities }
+
 class MultiItemDialogs {
   static void showMultiSelectItemDialog(
     BuildContext context,
@@ -57,29 +60,41 @@ class MultiSelectItemDialog extends StatefulWidget {
   });
 
   @override
-  _MultiSelectItemDialogState createState() => _MultiSelectItemDialogState();
+  State<MultiSelectItemDialog> createState() => _MultiSelectItemDialogState();
 }
 
 class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
-  final Map<String, List<WealthPrice>> _selectedItemsByCategory = {
-    'Altın': [],
-    'Döviz': [],
-    'Hisse Senetleri': [],
-    'Emtia': [],
+  final Map<_Category, List<WealthPrice>> _selectedItemsByCategory = {
+    _Category.gold: [],
+    _Category.currency: [],
+    _Category.stocks: [],
+    _Category.commodities: [],
   };
-  String _selectedOption = LocaleKeys.gold.tr();
+  _Category _selectedCategory = _Category.gold;
 
   List<WealthPrice> getSelectedList() {
-    switch (_selectedOption) {
-      case 'Döviz':
+    switch (_selectedCategory) {
+      case _Category.currency:
         return widget.futureCurrencyPrices;
-      case 'Hisse Senetleri':
+      case _Category.stocks:
         return widget.futureEquityPrices;
-      case 'Emtia':
+      case _Category.commodities:
         return widget.futureCommodityPrices;
-      case 'Altın':
-      default:
+      case _Category.gold:
         return widget.futureGoldPrices;
+    }
+  }
+
+  String _categoryLabel(_Category cat) {
+    switch (cat) {
+      case _Category.gold:
+        return LocaleKeys.gold.tr();
+      case _Category.currency:
+        return LocaleKeys.currency.tr();
+      case _Category.stocks:
+        return LocaleKeys.stocks.tr();
+      case _Category.commodities:
+        return LocaleKeys.commodities.tr();
     }
   }
 
@@ -130,7 +145,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                PopupMenuButton<String>(
+                PopupMenuButton<_Category>(
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -142,7 +157,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          _selectedOption,
+                          _categoryLabel(_selectedCategory),
                           style:
                               TextStyle(color: colorScheme.onPrimaryContainer),
                         ),
@@ -151,21 +166,21 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                       ],
                     ),
                   ),
-                  onSelected: (String result) {
+                  onSelected: (_Category result) {
                     setState(() {
-                      _selectedOption = result;
+                      _selectedCategory = result;
                     });
                   },
                   itemBuilder: (BuildContext context) =>
-                      <PopupMenuEntry<String>>[
+                      <PopupMenuEntry<_Category>>[
                     _buildPopupMenuItem(
-                        LocaleKeys.gold.tr(), Icons.monetization_on),
+                        _Category.gold, Icons.monetization_on, LocaleKeys.gold.tr()),
                     _buildPopupMenuItem(
-                        LocaleKeys.currency.tr(), Icons.currency_exchange),
+                        _Category.currency, Icons.currency_exchange, LocaleKeys.currency.tr()),
                     _buildPopupMenuItem(
-                        LocaleKeys.stocks.tr(), Icons.show_chart),
+                        _Category.stocks, Icons.show_chart, LocaleKeys.stocks.tr()),
                     _buildPopupMenuItem(
-                        LocaleKeys.commodities.tr(), Icons.diamond),
+                        _Category.commodities, Icons.diamond, LocaleKeys.commodities.tr()),
                   ],
                 ),
               ],
@@ -182,7 +197,7 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
                   children: allItems
                       .map((price) => _buildListItem(
                             price,
-                            _selectedItemsByCategory[_selectedOption]
+                            _selectedItemsByCategory[_selectedCategory]
                                     ?.contains(price) ??
                                 false,
                           ))
@@ -231,15 +246,16 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
     );
   }
 
-  PopupMenuItem<String> _buildPopupMenuItem(String value, IconData icon) {
+  PopupMenuItem<_Category> _buildPopupMenuItem(
+      _Category value, IconData icon, String label) {
     final colorScheme = context.general.colorScheme;
-    return PopupMenuItem<String>(
+    return PopupMenuItem<_Category>(
       value: value,
       child: Row(
         children: [
           Icon(icon, size: 20, color: colorScheme.primary),
           const SizedBox(width: 12),
-          Text(value),
+          Text(label),
         ],
       ),
     );
@@ -273,9 +289,9 @@ class _MultiSelectItemDialogState extends State<MultiSelectItemDialog> {
             : () {
                 setState(() {
                   if (isSelected) {
-                    _selectedItemsByCategory[_selectedOption]?.remove(price);
+                    _selectedItemsByCategory[_selectedCategory]?.remove(price);
                   } else {
-                    _selectedItemsByCategory[_selectedOption]?.add(price);
+                    _selectedItemsByCategory[_selectedCategory]?.add(price);
                   }
                 });
               },
