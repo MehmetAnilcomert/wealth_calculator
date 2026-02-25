@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:wealth_calculator/feature/splash/view/splash_view.dart';
-import 'package:wealth_calculator/feature/prices/view/prices_view.dart';
+import 'package:shield_view/shield_view.dart';
+import 'package:wealth_calculator/feature/calculator/view/calculator_view.dart';
+import 'package:wealth_calculator/feature/converter/view/converter_view.dart';
 import 'package:wealth_calculator/feature/inventory/view/inventory_view.dart';
 import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
 import 'package:wealth_calculator/feature/invoice_form/view/invoice_adding_view.dart';
+import 'package:wealth_calculator/feature/prices/view/prices_view.dart';
+import 'package:wealth_calculator/feature/profile/view/profile_edit_view.dart';
 import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
-import 'package:wealth_calculator/feature/converter/view/converter_view.dart';
+import 'package:wealth_calculator/feature/splash/view/splash_view.dart';
 
 /// Application route names
 enum AppRoutes {
@@ -15,7 +18,9 @@ enum AppRoutes {
   invoice('/invoice'),
   invoiceAdd('/invoice/add'),
   settings('/settings'),
-  converter('/converter');
+  converter('/converter'),
+  calculator('/calculator'),
+  profileEdit('/profile/edit');
 
   const AppRoutes(this.path);
   final String path;
@@ -42,7 +47,7 @@ final class AppRouter {
         );
       case '/inventory':
         return MaterialPageRoute<void>(
-          builder: (_) => const InventoryView(),
+          builder: (_) => const ShieldView(child: InventoryView()),
         );
       case '/invoice':
         return MaterialPageRoute<void>(
@@ -59,6 +64,14 @@ final class AppRouter {
       case '/converter':
         return MaterialPageRoute<void>(
           builder: (_) => const ConverterView(),
+        );
+      case '/calculator':
+        return MaterialPageRoute<void>(
+          builder: (_) => const CalculatorView(),
+        );
+      case '/profile/edit':
+        return MaterialPageRoute<void>(
+          builder: (_) => const ProfileEditView(),
         );
       default:
         return null;

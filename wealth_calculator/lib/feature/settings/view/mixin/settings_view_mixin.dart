@@ -304,12 +304,7 @@ mixin SettingsViewMixin {
     return BlocBuilder<UserProfileCubit, UserProfileState>(
       builder: (context, state) {
         return InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ProfileEditView()),
-            );
-          },
+          onTap: () => AppRouter.push(context, AppRoutes.profileEdit),
           borderRadius: BorderRadius.circular(16),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

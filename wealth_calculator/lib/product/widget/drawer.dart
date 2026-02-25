@@ -1,19 +1,15 @@
+import 'dart:io';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shield_view/shield_view.dart';
-import 'package:wealth_calculator/feature/inventory/view/inventory_view.dart';
-import 'package:wealth_calculator/feature/invoice/view/invoice_view.dart';
-import 'package:wealth_calculator/feature/settings/view/settings_view.dart';
-import 'package:wealth_calculator/feature/calculator/view/calculator_view.dart';
-import 'package:wealth_calculator/feature/converter/view/converter_view.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
-import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
-import 'package:wealth_calculator/product/theme/custom_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_cubit.dart';
 import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_state.dart';
-import 'dart:io';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/navigation/app_router.dart';
+import 'package:wealth_calculator/product/theme/custom_colors.dart';
+import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -107,26 +103,28 @@ class AppDrawer extends StatelessWidget {
                       context,
                       icon: Icons.receipt_outlined,
                       title: LocaleKeys.invoice.tr(),
-                      onTap: () => _navigateTo(context, const InvoiceView()),
+                      onTap: () => _navigateToRoute(context, AppRoutes.invoice),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.inventory_2_outlined,
                       title: LocaleKeys.inventory.tr(),
-                      onTap: () => _navigateTo(
-                          context, const ShieldView(child: InventoryView())),
+                      onTap: () =>
+                          _navigateToRoute(context, AppRoutes.inventory),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.calculate_outlined,
                       title: LocaleKeys.wealthCalculator.tr(),
-                      onTap: () => _navigateTo(context, const CalculatorView()),
+                      onTap: () =>
+                          _navigateToRoute(context, AppRoutes.calculator),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.currency_exchange_outlined,
                       title: LocaleKeys.tlConverter.tr(),
-                      onTap: () => _navigateTo(context, const ConverterView()),
+                      onTap: () =>
+                          _navigateToRoute(context, AppRoutes.converter),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -136,7 +134,8 @@ class AppDrawer extends StatelessWidget {
                       context,
                       icon: Icons.settings_outlined,
                       title: LocaleKeys.settings.tr(),
-                      onTap: () => _navigateTo(context, const SettingsView()),
+                      onTap: () =>
+                          _navigateToRoute(context, AppRoutes.settings),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -205,11 +204,8 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  void _navigateTo(BuildContext context, Widget screen) {
+  void _navigateToRoute(BuildContext context, AppRoutes route) {
     Navigator.of(context).pop();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => screen),
-    );
+    AppRouter.push(context, route);
   }
 }

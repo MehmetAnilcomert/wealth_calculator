@@ -6,9 +6,9 @@ import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart
 import 'package:wealth_calculator/product/state/viewmodel/product_state.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
-import 'package:wealth_calculator/feature/profile/view/profile_edit_view.dart';
 import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_cubit.dart';
 import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_state.dart';
+import 'package:wealth_calculator/product/navigation/app_router.dart';
 import 'dart:io';
 
 part 'mixin/settings_view_mixin.dart';
