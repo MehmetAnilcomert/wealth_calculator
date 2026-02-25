@@ -10,6 +10,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_cubit.dart';
+import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_state.dart';
+import 'dart:io';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -34,35 +38,57 @@ class AppDrawer extends StatelessWidget {
             Container(
               padding: EdgeInsets.only(
                   top: MediaQuery.of(context).padding.top + 20, bottom: 20),
-              child: Column(
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: colorScheme.surface,
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.blackOverlay20,
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
+              child: BlocBuilder<UserProfileCubit, UserProfileState>(
+                builder: (context, profileState) {
+                  return Column(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorScheme.surface,
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorScheme.blackOverlay20,
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Icon(Icons.person,
-                        size: 50, color: colorScheme.primary),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    LocaleKeys.profile.tr(),
-                    style: TextStyle(
-                      color: colorScheme.onPrimaryContainer,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+                        child: profileState.hasProfile &&
+                                profileState.profile.imagePath != null &&
+                                profileState.profile.imagePath!.isNotEmpty
+                            ? ClipOval(
+                                child: Image.file(
+                                  File(profileState.profile.imagePath!),
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Icon(
+                                    Icons.person,
+                                    size: 50,
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                              )
+                            : Icon(Icons.person,
+                                size: 50, color: colorScheme.primary),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        profileState.hasProfile
+                            ? profileState.profile.fullName
+                            : LocaleKeys.profile.tr(),
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             Expanded(

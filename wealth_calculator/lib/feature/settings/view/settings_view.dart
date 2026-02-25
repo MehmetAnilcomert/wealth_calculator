@@ -6,6 +6,10 @@ import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart
 import 'package:wealth_calculator/product/state/viewmodel/product_state.dart';
 import 'package:wealth_calculator/product/theme/custom_colors.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
+import 'package:wealth_calculator/feature/profile/view/profile_edit_view.dart';
+import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_cubit.dart';
+import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_state.dart';
+import 'dart:io';
 
 part 'mixin/settings_view_mixin.dart';
 
@@ -41,6 +45,17 @@ class SettingsView extends StatelessWidget with SettingsViewMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Profile Section
+                buildSectionTitle(
+                  context,
+                  LocaleKeys.profileInfo.tr(),
+                  Icons.person_outlined,
+                  colorScheme,
+                ),
+                const SizedBox(height: 12),
+                buildProfileCard(context, colorScheme),
+                const SizedBox(height: 24),
+
                 // Appearance Section
                 buildSectionTitle(
                   context,

@@ -118,5 +118,20 @@ abstract class  LocaleKeys {
   static const noSelection = 'noSelection';
   static const selectItems = 'selectItems';
   static const ok = 'ok';
+  static const profileInfo = 'profileInfo';
+  static const name = 'name';
+  static const surname = 'surname';
+  static const enterName = 'enterName';
+  static const enterSurname = 'enterSurname';
+  static const selectPhoto = 'selectPhoto';
+  static const changePhoto = 'changePhoto';
+  static const deletePhoto = 'deletePhoto';
+  static const gallery = 'gallery';
+  static const camera = 'camera';
+  static const photoSource = 'photoSource';
+  static const profileSaved = 'profileSaved';
+  static const profileDeleted = 'profileDeleted';
+  static const removeProfile = 'removeProfile';
+  static const removeProfileConfirm = 'removeProfileConfirm';
 
 }

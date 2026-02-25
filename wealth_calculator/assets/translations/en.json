@@ -113,5 +113,20 @@
     "appDescription": "This application is designed to view the current potential equivalents of your financial investments. It does not provide investment advice.",
     "noSelection": "There is no data to list.",
     "selectItems": "Select Items",
-    "ok": "Ok"
+    "ok": "Ok",
+    "profileInfo": "Profile Information",
+    "name": "Name",
+    "surname": "Surname",
+    "enterName": "Enter your name",
+    "enterSurname": "Enter your surname",
+    "selectPhoto": "Select Photo",
+    "changePhoto": "Change Photo",
+    "deletePhoto": "Delete Photo",
+    "gallery": "Gallery",
+    "camera": "Camera",
+    "photoSource": "Photo Source",
+    "profileSaved": "Profile saved successfully",
+    "profileDeleted": "Profile deleted",
+    "removeProfile": "Remove Profile",
+    "removeProfileConfirm": "Are you sure you want to remove your profile?"
 }

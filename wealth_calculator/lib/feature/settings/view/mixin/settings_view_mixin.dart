@@ -298,4 +298,100 @@ mixin SettingsViewMixin {
       ),
     );
   }
+
+  /// Build profile settings card with mini preview
+  Widget buildProfileCard(BuildContext context, ColorScheme colorScheme) {
+    return BlocBuilder<UserProfileCubit, UserProfileState>(
+      builder: (context, state) {
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfileEditView()),
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.blackOverlay10,
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colorScheme.primaryContainer,
+                  ),
+                  child: state.hasProfile &&
+                          state.profile.imagePath != null &&
+                          state.profile.imagePath!.isNotEmpty
+                      ? ClipOval(
+                          child: Image.file(
+                            File(state.profile.imagePath!),
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Icon(
+                              Icons.person,
+                              size: 28,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        )
+                      : Icon(
+                          Icons.person,
+                          size: 28,
+                          color: colorScheme.primary,
+                        ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        state.hasProfile
+                            ? state.profile.fullName
+                            : LocaleKeys.editProfile.tr(),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        state.hasProfile
+                            ? LocaleKeys.editProfile.tr()
+                            : LocaleKeys.profileInfo.tr(),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

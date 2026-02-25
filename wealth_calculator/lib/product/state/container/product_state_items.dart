@@ -1,6 +1,7 @@
 import 'package:wealth_calculator/product/cache/product_cache.dart';
 import 'package:wealth_calculator/product/service/manager/product_network_manager.dart';
 import 'package:wealth_calculator/product/state/container/product_state_container.dart';
+import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_cubit.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart';
 
 /// A class that provides access to various product state items.
@@ -20,4 +21,8 @@ final class ProductStateItems {
 
   static ProductViewmodel get productViewModel =>
       ProductContainer.read<ProductViewmodel>();
+
+  /// Provides access to the [UserProfileCubit] instance.
+  static UserProfileCubit get userProfileCubit =>
+      ProductContainer.read<UserProfileCubit>();
 }

@@ -113,5 +113,20 @@
     "appDescription": "Bu uygulama finansal yatırımlarınızın olası güncel karşılıklarını görebilmek için tasarlanmıştır. Yatırım tavsiyesi vermemektedir.",
     "noSelection": "Henüz bir seçim yapılmadı.",
     "selectItems": "Seçim Yapın",
-    "ok": "Tamam"
+    "ok": "Tamam",
+    "profileInfo": "Profil Bilgileri",
+    "name": "Ad",
+    "surname": "Soyad",
+    "enterName": "Adınızı girin",
+    "enterSurname": "Soyadınızı girin",
+    "selectPhoto": "Fotoğraf Seç",
+    "changePhoto": "Fotoğrafı Değiştir",
+    "deletePhoto": "Fotoğrafı Sil",
+    "gallery": "Galeri",
+    "camera": "Kamera",
+    "photoSource": "Fotoğraf Kaynağı",
+    "profileSaved": "Profil başarıyla kaydedildi",
+    "profileDeleted": "Profil silindi",
+    "removeProfile": "Profili Kaldır",
+    "removeProfileConfirm": "Profilinizi kaldırmak istediğinize emin misiniz?"
 }

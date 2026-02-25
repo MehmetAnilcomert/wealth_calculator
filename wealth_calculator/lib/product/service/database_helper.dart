@@ -23,13 +23,14 @@ class DbHelper {
     String dbPath = join(await getDatabasesPath(), 'app_database.db');
     return await openDatabase(
       dbPath,
-      version: 7,
+      version: 8,
       onCreate: (db, version) async {
         await db.execute(_createFaturaTable);
         await db.execute(_createInventoryTable);
         await db.execute(_createCachedWealthPricesTable);
         await db.execute(_createCustomWealthPricesTable);
         await db.execute(_createWealthPricesHistoryTable);
+        await db.execute(_createUserProfileTable);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -66,6 +67,9 @@ class DbHelper {
             await db.execute('DROP TABLE IF EXISTS inventory');
             await db.execute('ALTER TABLE inventory_new RENAME TO inventory');
           }
+        }
+        if (oldVersion < 8) {
+          await db.execute(_createUserProfileTable);
         }
       },
     );
@@ -126,6 +130,15 @@ class DbHelper {
         totalPrice REAL NOT NULL,
         UNIQUE(date)
       )
+  ''';
+
+  static const _createUserProfileTable = '''
+    CREATE TABLE IF NOT EXISTS user_profile (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      surname TEXT NOT NULL,
+      imagePath TEXT
+    )
   ''';
 
   Future<void> closeDatabase() async {

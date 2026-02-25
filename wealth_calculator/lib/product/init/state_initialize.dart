@@ -4,6 +4,7 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_bloc.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_screen_cubit.dart';
 import 'package:wealth_calculator/feature/inventory/viewmodel/inventory_bloc.dart';
 import 'package:wealth_calculator/feature/invoice/viewmodel/invoice_bloc.dart';
+import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_cubit.dart';
 import 'package:wealth_calculator/feature/splash/viewmodel/splash_cubit.dart';
 import 'package:wealth_calculator/product/state/container/product_state_items.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart';
@@ -21,6 +22,9 @@ final class StateInitialize extends StatelessWidget {
       providers: [
         BlocProvider<ProductViewmodel>.value(
           value: ProductStateItems.productViewModel,
+        ),
+        BlocProvider<UserProfileCubit>.value(
+          value: ProductStateItems.userProfileCubit,
         ),
         // Feature states
         BlocProvider(create: (context) => SplashCubit()),
