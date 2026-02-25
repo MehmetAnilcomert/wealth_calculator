@@ -1,5 +1,5 @@
 ---
-name: Wealth Calculator — Project Development Guide
+name: clean_flutter_development
 description: Complete project-specific guide for AI agents to develop features in this Flutter application. Covers architecture, conventions, file patterns, DI, routing, database, state management, theming, localization, and step-by-step feature implementation checklist.
 ---
 
@@ -11,23 +11,23 @@ description: Complete project-specific guide for AI agents to develop features i
 
 ## Table of Contents
 
-1. [Project Overview](#1-project-overview)
-2. [Directory Structure](#2-directory-structure)
-3. [Feature Implementation Checklist](#3-feature-implementation-checklist)
-4. [Model Layer](#4-model-layer)
-5. [Database Layer (SQLite)](#5-database-layer-sqlite)
-6. [DAO (Data Access Object) Layer](#6-dao-data-access-object-layer)
-7. [State Management (Cubit / Bloc)](#7-state-management-cubit--bloc)
-8. [Dependency Injection (GetIt)](#8-dependency-injection-getit)
-9. [BlocProvider Registration](#9-blocprovider-registration)
-10. [Routing (Navigation)](#10-routing-navigation)
-11. [View Layer (part/part-of Mixin Pattern)](#11-view-layer-partpart-of-mixin-pattern)
-12. [Theming & Styling](#12-theming--styling)
-13. [Localization (i18n)](#13-localization-i18n)
-14. [Shared Widgets](#14-shared-widgets)
-15. [Naming & Coding Conventions](#15-naming--coding-conventions)
-16. [Common Pitfalls & Rules](#16-common-pitfalls--rules)
-17. [Git Workflow](#17-git-workflow)
+1. Project Overview
+2. Directory Structure
+3. Feature Implementation Checklist
+4. Model Layer
+5. Database Layer (SQLite)
+6. DAO (Data Access Object) Layer
+7. State Management (Cubit / Bloc)
+8. Dependency Injection (GetIt)
+9. BlocProvider Registration
+10. Routing (Navigation)
+11. View Layer (part/part-of Mixin Pattern)
+12. Theming & Styling
+13. Localization (i18n)
+14. Shared Widgets
+15. Naming & Coding Conventions
+16. Common Pitfalls & Rules
+17. Git Workflow
 
 ---
 
@@ -126,23 +126,23 @@ lib/
 When adding a new feature, follow these steps **in order**. Each step references the corresponding section below.
 
 ### Phase 1 — Data Layer
-- [ ] **Step 1: Model** — Create `lib/feature/<name>/model/<name>_model.dart` ([Section 4](#4-model-layer))
-- [ ] **Step 2: Database Migration** — Add table DDL + bump version in `database_helper.dart` ([Section 5](#5-database-layer-sqlite))
-- [ ] **Step 3: DAO** — Create `lib/product/service/<name>_dao.dart` ([Section 6](#6-dao-data-access-object-layer))
+- [ ] **Step 1: Model** — Create `lib/feature/<name>/model/<name>_model.dart` (see Section 4)
+- [ ] **Step 2: Database Migration** — Add table DDL + bump version in `database_helper.dart` (see Section 5)
+- [ ] **Step 3: DAO** — Create `lib/product/service/<name>_dao.dart` (see Section 6)
 
 ### Phase 2 — State Layer
-- [ ] **Step 4: State** — Create `lib/feature/<name>/viewmodel/<name>_state.dart` ([Section 7](#7-state-management-cubit--bloc))
-- [ ] **Step 5: Cubit/Bloc** — Create `lib/feature/<name>/viewmodel/<name>_cubit.dart` ([Section 7](#7-state-management-cubit--bloc))
-- [ ] **Step 6: DI Registration** — Register DAO + Cubit in `product_state_container.dart` and `product_state_items.dart` ([Section 8](#8-dependency-injection-getit))
-- [ ] **Step 7: BlocProvider** — Add `BlocProvider` in `state_initialize.dart` ([Section 9](#9-blocprovider-registration))
+- [ ] **Step 4: State** — Create `lib/feature/<name>/viewmodel/<name>_state.dart` (see Section 7)
+- [ ] **Step 5: Cubit/Bloc** — Create `lib/feature/<name>/viewmodel/<name>_cubit.dart` (see Section 7)
+- [ ] **Step 6: DI Registration** — Register DAO + Cubit in `product_state_container.dart` and `product_state_items.dart` (see Section 8)
+- [ ] **Step 7: BlocProvider** — Add `BlocProvider` in `state_initialize.dart` (see Section 9)
 
 ### Phase 3 — Presentation Layer
-- [ ] **Step 8: View** — Create `lib/feature/<name>/view/<name>_view.dart` with `part` directive ([Section 11](#11-view-layer-partpart-of-mixin-pattern))
-- [ ] **Step 9: View Mixin** — Create `lib/feature/<name>/view/mixin/<name>_view_mixin.dart` with `part of` ([Section 11](#11-view-layer-partpart-of-mixin-pattern))
+- [ ] **Step 8: View** — Create `lib/feature/<name>/view/<name>_view.dart` with `part` directive (see Section 11)
+- [ ] **Step 9: View Mixin** — Create `lib/feature/<name>/view/mixin/<name>_view_mixin.dart` with `part of` (see Section 11)
 
 ### Phase 4 — Integration
-- [ ] **Step 10: Route** — Add enum value + switch case in `app_router.dart` ([Section 10](#10-routing-navigation))
-- [ ] **Step 11: Translations** — Add keys to `en.json` and `tr.json`, then regenerate ([Section 13](#13-localization-i18n))
+- [ ] **Step 10: Route** — Add enum value + switch case in `app_router.dart` (see Section 10)
+- [ ] **Step 11: Translations** — Add keys to `en.json` and `tr.json`, then regenerate (see Section 13)
 - [ ] **Step 12: Wire Up** — Add navigation trigger (drawer menu item, settings card, etc.)
 - [ ] **Step 13: Dependencies** — Add any new packages to `pubspec.yaml` and run `flutter pub get`
 
@@ -1033,7 +1033,7 @@ chore: bump AGP to 8.9.3 and Gradle to 8.11.1
 ### Development Flow
 1. Create issue describing the task.
 2. Create branch from `main`.
-3. Implement following the [Feature Checklist](#3-feature-implementation-checklist).
+3. Implement following the Feature Checklist (Section 3).
 4. Run `flutter analyze` — fix all new warnings.
 5. Commit incrementally after each working step.
 6. Open PR with description of changes.
