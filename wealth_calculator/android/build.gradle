@@ -6,9 +6,24 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+    
+    afterEvaluate {
+        if (it.hasProperty("android")) {
+            android {
+                // Set compileSdk to 34 for isar_flutter_libs, 36 for others
+                if (project.name == 'isar_flutter_libs') {
+                    compileSdkVersion 34
+                } else {
+                    compileSdkVersion 36
+                }
+            }
+        }
+    }
 }
+
 subprojects {
     project.evaluationDependsOn(':app')
 }
