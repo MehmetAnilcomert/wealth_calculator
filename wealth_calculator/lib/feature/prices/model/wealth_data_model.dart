@@ -61,6 +61,34 @@ class WealthPrice {
     );
   }
 
+  WealthPrice copyWith({
+    String? title,
+    String? buyingPrice,
+    String? sellingPrice,
+    String? change,
+    String? time,
+    PriceType? type,
+    String? currentPrice,
+    String? volume,
+    String? changeAmount,
+    String? lastUpdatedDate,
+    String? lastUpdatedTime,
+  }) {
+    return WealthPrice(
+      title: title ?? this.title,
+      buyingPrice: buyingPrice ?? this.buyingPrice,
+      sellingPrice: sellingPrice ?? this.sellingPrice,
+      change: change ?? this.change,
+      time: time ?? this.time,
+      type: type ?? this.type,
+      currentPrice: currentPrice ?? this.currentPrice,
+      volume: volume ?? this.volume,
+      changeAmount: changeAmount ?? this.changeAmount,
+      lastUpdatedDate: lastUpdatedDate ?? this.lastUpdatedDate,
+      lastUpdatedTime: lastUpdatedTime ?? this.lastUpdatedTime,
+    );
+  }
+
   // equals methods to compare the objects
   @override
   bool operator ==(Object other) =>
