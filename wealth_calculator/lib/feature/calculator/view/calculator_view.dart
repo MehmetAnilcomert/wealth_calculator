@@ -7,6 +7,7 @@ import 'package:wealth_calculator/product/widget/CommonWidgets/custom_sliver_app
 import 'package:wealth_calculator/product/widget/CommonWidgets/total_price.dart';
 import 'package:wealth_calculator/product/widget/InventoryWidgets/item_dialogs.dart';
 import 'package:wealth_calculator/product/widget/calculator_list.dart';
+import 'package:wealth_calculator/product/state/container/product_state_items.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
@@ -19,7 +20,9 @@ class CalculatorView extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = context.general.colorScheme;
     return BlocProvider(
-      create: (context) => CalculatorBloc()..add(const LoadCalculatorData()),
+      create: (context) => CalculatorBloc(
+        dataScrapingService: ProductStateItems.dataScrapingService,
+      )..add(const LoadCalculatorData()),
       child: Scaffold(
         backgroundColor: colorScheme.primaryContainer,
         appBar: AppBar(

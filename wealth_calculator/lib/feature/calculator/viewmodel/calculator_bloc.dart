@@ -4,15 +4,18 @@ import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
-import 'package:wealth_calculator/product/service/data_scraping.dart';
+import 'package:wealth_calculator/product/service/data_scraping_service.dart';
 import 'package:wealth_calculator/product/state/base/base_bloc.dart';
 
 class CalculatorBloc extends BaseBloc<CalculatorEvent, CalculatorState> {
+  final DataScrapingService _dataScrapingService;
   List<WealthPrice> _cachedGoldPrices = [];
   List<WealthPrice> _cachedCurrencyPrices = [];
   List<SavedWealths> _savedWealths = [];
 
-  CalculatorBloc() : super(CalculatorInitial()) {
+  CalculatorBloc({DataScrapingService? dataScrapingService})
+      : _dataScrapingService = dataScrapingService ?? DataScrapingService(),
+        super(CalculatorInitial()) {
     on<LoadCalculatorData>(_onLoadCalculatorData);
     on<AddOrUpdateCalculatorWealth>(_onAddOrUpdateWealth);
     on<DeleteCalculatorWealth>(_onDeleteWealth);
@@ -26,8 +29,8 @@ class CalculatorBloc extends BaseBloc<CalculatorEvent, CalculatorState> {
       _savedWealths = [];
 
       if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
-        _cachedGoldPrices = await fetchGoldPrices();
-        _cachedCurrencyPrices = await fetchCurrencyPrices();
+        _cachedGoldPrices = await _dataScrapingService.fetchGoldPrices();
+        _cachedCurrencyPrices = await _dataScrapingService.fetchCurrencyPrices();
       }
 
       emit(_createLoadedState());
@@ -107,16 +110,16 @@ class CalculatorBloc extends BaseBloc<CalculatorEvent, CalculatorState> {
       double price = 0.0;
       for (var gold in goldPrices) {
         if (gold.title == wealth.type) {
-          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
+          final cleanPrice = gold.buyingPrice.replaceAll('.', '').replaceAll(',', '.').trim();
+          price = double.parse(cleanPrice);
           break;
         }
       }
       if (price == 0.0) {
         for (var currency in currencyPrices) {
           if (currency.title == wealth.type) {
-            price = double.parse(
-              currency.buyingPrice.replaceAll(',', '.').trim(),
-            );
+            final cleanPrice = currency.buyingPrice.replaceAll('.', '').replaceAll(',', '.').trim();
+            price = double.parse(cleanPrice);
             break;
           }
         }
@@ -137,16 +140,16 @@ class CalculatorBloc extends BaseBloc<CalculatorEvent, CalculatorState> {
       double price = 0.0;
       for (var gold in goldPrices) {
         if (gold.title == wealth.type) {
-          price = double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
+          final cleanPrice = gold.buyingPrice.replaceAll('.', '').replaceAll(',', '.').trim();
+          price = double.parse(cleanPrice);
           break;
         }
       }
       if (price == 0.0) {
         for (var currency in currencyPrices) {
           if (currency.title == wealth.type) {
-            price = double.parse(
-              currency.buyingPrice.replaceAll(',', '.').trim(),
-            );
+            final cleanPrice = currency.buyingPrice.replaceAll('.', '').replaceAll(',', '.').trim();
+            price = double.parse(cleanPrice);
             break;
           }
         }
