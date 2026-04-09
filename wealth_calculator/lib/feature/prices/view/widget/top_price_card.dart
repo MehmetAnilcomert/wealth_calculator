@@ -101,13 +101,23 @@ class _TopPriceCardState extends State<TopPriceCard>
       borderRadius: widget.isFlatBottom
           ? const BorderRadius.vertical(top: Radius.circular(20))
           : BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: colorScheme.blackOverlay10.withAlpha(20),
-          blurRadius: ProductSizes.medium,
-          offset: const Offset(0, 6),
-        ),
-      ],
+      border: (widget.isFlatBottom == false &&
+              Theme.of(context).brightness == Brightness.dark)
+          ? Border.all(
+              color: colorScheme.outline.withAlpha(40),
+              width: 1,
+            )
+          : null,
+      boxShadow: (widget.isFlatBottom == false &&
+              Theme.of(context).brightness == Brightness.light)
+          ? [
+              BoxShadow(
+                color: colorScheme.blackOverlay10.withAlpha(20),
+                blurRadius: ProductSizes.medium,
+                offset: const Offset(0, 6),
+              ),
+            ]
+          : null,
     );
   }
 

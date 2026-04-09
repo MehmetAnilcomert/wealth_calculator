@@ -105,16 +105,41 @@ class _PricesAppBar extends StatelessWidget {
               top: toolbarAndSearchHeight + 4,
               left: const ProductPadding.symmetricHorizontalMedium().left,
               right: const ProductPadding.symmetricHorizontalMedium().right,
-              child: Column(
-                children: [
-                  TopPriceCard(
-                    price: highlightedPrice!,
-                    iconLabel: iconLabel ?? '',
-                    iconColor: iconColor ?? colorScheme.primary,
-                    isFlatBottom: showBanner,
-                  ),
-                  if (showBanner) _buildBannerExtension(context, colorScheme),
-                ],
+              child: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: showBanner
+                    ? BoxDecoration(
+                        color: colorScheme.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Theme.of(context).brightness == Brightness.dark
+                            ? Border.all(
+                                color: colorScheme.outline.withAlpha(40),
+                                width: 1,
+                              )
+                            : null,
+                        boxShadow:
+                            Theme.of(context).brightness == Brightness.light
+                                ? [
+                                    BoxShadow(
+                                      color: colorScheme.shadow.withAlpha(20),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ]
+                                : null,
+                      )
+                    : null,
+                child: Column(
+                  children: [
+                    TopPriceCard(
+                      price: highlightedPrice!,
+                      iconLabel: iconLabel ?? '',
+                      iconColor: iconColor ?? colorScheme.primary,
+                      isFlatBottom: showBanner,
+                    ),
+                    if (showBanner) _buildBannerExtension(context, colorScheme),
+                  ],
+                ),
               ),
             ),
         ],
@@ -224,18 +249,11 @@ class _PricesAppBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.errorContainer,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.blackOverlay10.withAlpha(10),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.sync_problem,
+          Icon(Icons.signal_wifi_off,
               color: colorScheme.onErrorContainer, size: 16),
           const SizedBox(width: 8),
           Expanded(
