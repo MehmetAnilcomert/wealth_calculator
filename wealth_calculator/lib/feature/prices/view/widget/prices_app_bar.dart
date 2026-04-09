@@ -106,7 +106,7 @@ class _PricesAppBar extends StatelessWidget {
               left: const ProductPadding.symmetricHorizontalMedium().left,
               right: const ProductPadding.symmetricHorizontalMedium().right,
               child: Container(
-                clipBehavior: Clip.antiAlias,
+                clipBehavior: showBanner ? Clip.antiAlias : Clip.none,
                 decoration: showBanner
                     ? BoxDecoration(
                         color: colorScheme.surface,
