@@ -273,12 +273,10 @@ Widget buildEquityPricesTab(
     );
   }
 
-  return SingleChildScrollView(
-    child: Padding(
-      padding: const EdgeInsets.only(bottom: 20, top: 20),
-      child: Column(
-        children: rows,
-      ),
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 20, top: 20),
+    child: Column(
+      children: rows,
     ),
   );
 }

@@ -226,6 +226,7 @@ class _PricesViewState extends State<PricesView>
       final colorScheme = context.general.colorScheme;
 
       return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
