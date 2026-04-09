@@ -29,7 +29,11 @@ final class StateInitialize extends StatelessWidget {
         // Feature states
         BlocProvider(create: (context) => SplashCubit()),
         BlocProvider(create: (context) => PricesScreenCubit()),
-        BlocProvider(create: (context) => PricesBloc()),
+        BlocProvider(
+          create: (context) => PricesBloc(
+            priceRepository: ProductStateItems.priceRepository,
+          ),
+        ),
         BlocProvider(create: (context) => InventoryBloc()),
         BlocProvider(
           create: (context) => InvoiceBloc(),

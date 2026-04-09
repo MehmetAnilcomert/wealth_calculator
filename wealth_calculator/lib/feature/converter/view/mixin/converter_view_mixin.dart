@@ -17,7 +17,7 @@ mixin ConverterViewMixin on State<_ConverterViewBody> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.blackOverlay10,
+            color: colorScheme.onSurface.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -157,7 +157,7 @@ mixin ConverterViewMixin on State<_ConverterViewBody> {
                 ]
               : [
                   BoxShadow(
-                    color: colorScheme.blackOverlay5,
+                    color: colorScheme.onSurface.withOpacity(0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -232,7 +232,7 @@ mixin ConverterViewMixin on State<_ConverterViewBody> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.blackOverlay5,
+                color: colorScheme.onSurface.withOpacity(0.05),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),

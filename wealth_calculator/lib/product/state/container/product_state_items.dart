@@ -4,6 +4,7 @@ import 'package:wealth_calculator/product/state/container/product_state_containe
 import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_cubit.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart';
 import 'package:wealth_calculator/product/service/data_scraping_service.dart';
+import 'package:wealth_calculator/product/service/price_repository.dart';
 
 /// A class that provides access to various product state items.
 /// This class acts as a centralized point to retrieve instances
@@ -30,4 +31,8 @@ final class ProductStateItems {
   /// Provides access to the [DataScrapingService] instance.
   static DataScrapingService get dataScrapingService =>
       ProductContainer.read<DataScrapingService>();
+
+  /// Provides access to the [PriceRepository] instance.
+  static PriceRepository get priceRepository =>
+      ProductContainer.read<PriceRepository>();
 }

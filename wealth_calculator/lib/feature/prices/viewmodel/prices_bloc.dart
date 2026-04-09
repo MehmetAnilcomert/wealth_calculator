@@ -3,99 +3,65 @@ import 'package:wealth_calculator/feature/prices/viewmodel/prices_event.dart';
 import 'package:wealth_calculator/feature/prices/viewmodel/prices_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/state/base/base_bloc.dart';
-import 'package:wealth_calculator/product/utility/price_utils.dart';
 import 'package:wealth_calculator/product/service/custom_list_dao.dart';
+import 'package:wealth_calculator/product/service/price_repository.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
-  final PriceFetcher _priceFetcher = PriceFetcher();
-  final CustomListDao _customListDao = CustomListDao();
-
-  PricesBloc() : super(PricesLoading()) {
+  PricesBloc({
+    required PriceRepository priceRepository,
+  })  : _priceRepository = priceRepository,
+        super(PricesLoading()) {
     on<LoadPrices>(_onLoadPrices);
     on<AddCustomPrice>(_onAddCustomPrice);
     on<DeleteCustomPrice>(_onDeleteCustomPrice);
   }
 
+  final PriceRepository _priceRepository;
+  final CustomListDao _customListDao = CustomListDao();
+
   Future<void> _onLoadPrices(
       LoadPrices event, Emitter<PricesState> emit) async {
-    emit(PricesLoading());
+    // Show loading only if it's the first load or explicit refresh
+    if (state is! PricesLoaded) {
+      emit(PricesLoading());
+    }
+
     try {
-      final allPrices = await _priceFetcher.fetchPrices();
+      // Repository handles fetching from internet or fallback to DB
+      await _priceRepository.refresh();
+
       final customPrices = await _customListDao.getSelectedWealthPrices();
-
-      List<WealthPrice> gold = allPrices[0];
-      List<WealthPrice> currency = allPrices[1];
-      List<WealthPrice> equity = allPrices[2];
-      List<WealthPrice> commodity = List<WealthPrice>.from(allPrices[3]);
+      
+      // Update custom prices if we have any processed derived prices (like silver)
       List<WealthPrice> customLists = List<WealthPrice>.from(customPrices);
-
-      // --- Silver conversion logic ---
-      // 1. Find USD rate
-      final usdPrice = currency.firstWhere(
-        (p) => p.title.toLowerCase().contains('dolar'),
-        orElse: () => WealthPrice(
-            title: '',
-            buyingPrice: '1',
-            sellingPrice: '1',
-            change: '',
-            time: '',
-            type: PriceType.currency),
+      
+      // Check if silver is in custom lists and update it from the fresh repository data
+      final silverInRepo = _priceRepository.commodityPrices.firstWhere(
+        (p) => p.title.toLowerCase().contains('gümüş'),
+        orElse: () => _priceRepository.commodityPrices.first, // fallback
       );
 
-      double usdRate = double.tryParse(
-              usdPrice.sellingPrice.replaceAll('.', '').replaceAll(',', '.')) ??
-          1.0;
-
-      // 2. Convert Silver Ounce to Gram TL
-      const double ounceToGram = 31.1034768;
-
-      WealthPrice? silverInCommodity;
-      int silverIdx =
-          commodity.indexWhere((p) => p.title.toLowerCase().contains('gümüş'));
-
-      if (silverIdx != -1) {
-        final silver = commodity[silverIdx];
-        double ouncePrice = double.tryParse(
-                silver.currentPrice?.replaceAll('.', '').replaceAll(',', '.') ??
-                    '') ??
-            0.0;
-
-        if (ouncePrice > 0) {
-          double gramTL = (ouncePrice * usdRate) / ounceToGram;
-          String gramTLStr = gramTL.toStringAsFixed(2).replaceAll('.', ',');
-
-          silverInCommodity = WealthPrice(
-            title: 'Gümüş (TL/GR)',
-            buyingPrice: gramTLStr,
-            sellingPrice: gramTLStr,
-            currentPrice: gramTLStr,
-            change: silver.change,
-            time: silver.time,
-            type: silver.type,
-            changeAmount: silver.changeAmount,
-          );
-          commodity[silverIdx] = silverInCommodity;
-        }
-      }
-
-      // 3. Update Silver in custom lists if present
-      if (silverInCommodity != null) {
-        for (int i = 0; i < customLists.length; i++) {
-          if (customLists[i].title.toLowerCase().contains('gümüş')) {
-            customLists[i] = silverInCommodity;
+      if (silverInRepo.title.contains('Gümüş (TL/GR)')) {
+          for (int i = 0; i < customLists.length; i++) {
+            if (customLists[i].title.toLowerCase().contains('gümüş')) {
+              customLists[i] = silverInRepo;
+            }
           }
-        }
       }
 
       emit(PricesLoaded(
-        commodityPrices: commodity,
-        goldPrices: gold,
-        currencyPrices: currency,
-        equityPrices: equity,
+        commodityPrices: _priceRepository.commodityPrices,
+        goldPrices: _priceRepository.goldPrices,
+        currencyPrices: _priceRepository.currencyPrices,
+        equityPrices: _priceRepository.equityPrices,
         customPrices: customLists,
+        lastUpdatedAt: _priceRepository.lastUpdatedAt,
+        isFromCache: _priceRepository.isFromCache,
       ));
     } catch (e) {
-      emit(PricesError('Failed to load prices.'));
+      emit(PricesError(LocaleKeys.failedToLoadPrices.tr(namedArgs: {'error': e.toString()})));
     }
   }
 
@@ -105,7 +71,6 @@ class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
       final currentState = state as PricesLoaded;
       List<WealthPrice> updatedCustomPrices =
           List<WealthPrice>.from(currentState.customPrices);
-      // To keep track of duplicates.
       List<String> duplicates = [];
 
       for (var wealthPrice in event.wealthPrices) {
@@ -113,17 +78,13 @@ class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
           await _customListDao.insertWealthPrice(wealthPrice);
           updatedCustomPrices.add(wealthPrice);
         } else {
-          // If the item is already in the list, add it to the duplicates list.
           duplicates.add(wealthPrice.title);
         }
       }
 
-      // If there are duplicates, emit an error message.
       if (duplicates.isNotEmpty) {
-        emit(CustomPriceDuplicateError(
-            'Aşağıdaki öğeler zaten var: ${duplicates.join(', ')}.'));
+        emit(CustomPriceDuplicateError(LocaleKeys.itemsAlreadyExist.tr(namedArgs: {'items': duplicates.join(', ')})));
       }
-      // Otherwise, update the state with the new custom prices.
       emit(currentState.copyWith(customPrices: updatedCustomPrices));
     }
   }

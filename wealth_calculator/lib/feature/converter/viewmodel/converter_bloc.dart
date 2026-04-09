@@ -3,13 +3,14 @@ import 'package:wealth_calculator/feature/converter/model/conversion_result_mode
 import 'package:wealth_calculator/feature/converter/viewmodel/converter_event.dart';
 import 'package:wealth_calculator/feature/converter/viewmodel/converter_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
-import 'package:wealth_calculator/product/service/data_scraping.dart';
+import 'package:wealth_calculator/product/service/price_repository.dart';
 import 'package:wealth_calculator/product/state/base/base_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
 /// BLoC for handling TL to wealth conversion logic
 class ConverterBloc extends BaseBloc<ConverterEvent, ConverterState> {
-  List<WealthPrice> _cachedGoldPrices = [];
-  List<WealthPrice> _cachedCurrencyPrices = [];
+  final PriceRepository _priceRepository;
 
   /// Items to exclude from converter calculations
   static const List<String> _hiddenItems = [
@@ -19,7 +20,10 @@ class ConverterBloc extends BaseBloc<ConverterEvent, ConverterState> {
     'Külçe Altın (\$)',
   ];
 
-  ConverterBloc() : super(ConverterInitial()) {
+  ConverterBloc({
+    required PriceRepository priceRepository,
+  })  : _priceRepository = priceRepository,
+        super(ConverterInitial()) {
     on<LoadConverterData>(_onLoadConverterData);
     on<ConvertTLAmount>(_onConvertTLAmount);
     on<ChangePriceTypeFilter>(_onChangePriceTypeFilter);
@@ -34,20 +38,19 @@ class ConverterBloc extends BaseBloc<ConverterEvent, ConverterState> {
     emit(ConverterLoading());
 
     try {
-      if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
-        _cachedGoldPrices = await fetchGoldPrices();
-        _cachedCurrencyPrices = await fetchCurrencyPrices();
-      }
+      // Get prices from repository cache
+      final goldPrices = _priceRepository.goldPrices;
+      final currencyPrices = _priceRepository.currencyPrices;
 
       emit(ConverterLoaded(
-        goldPrices: _cachedGoldPrices,
-        currencyPrices: _cachedCurrencyPrices,
+        goldPrices: goldPrices,
+        currencyPrices: currencyPrices,
         conversionResults: [],
         tlAmount: 0.0,
         selectedType: PriceType.gold,
       ));
     } catch (e) {
-      emit(ConverterError('Failed to load price data: ${e.toString()}'));
+      emit(ConverterError(LocaleKeys.failedToLoadPriceData.tr(namedArgs: {'error': e.toString()})));
     }
   }
 
@@ -62,8 +65,8 @@ class ConverterBloc extends BaseBloc<ConverterEvent, ConverterState> {
     try {
       final List<WealthPrice> selectedPrices =
           event.filterType == PriceType.gold
-              ? _cachedGoldPrices
-              : _cachedCurrencyPrices;
+              ? _priceRepository.goldPrices
+              : _priceRepository.currencyPrices;
 
       final conversionResults = _calculateConversions(
         event.tlAmount,
@@ -76,7 +79,7 @@ class ConverterBloc extends BaseBloc<ConverterEvent, ConverterState> {
         selectedType: event.filterType,
       ));
     } catch (e) {
-      emit(ConverterError('Failed to convert: ${e.toString()}'));
+      emit(ConverterError(LocaleKeys.failedToConvert.tr(namedArgs: {'error': e.toString()})));
     }
   }
 
@@ -90,8 +93,8 @@ class ConverterBloc extends BaseBloc<ConverterEvent, ConverterState> {
 
     try {
       final List<WealthPrice> selectedPrices = event.type == PriceType.gold
-          ? _cachedGoldPrices
-          : _cachedCurrencyPrices;
+          ? _priceRepository.goldPrices
+          : _priceRepository.currencyPrices;
 
       final conversionResults = currentState.tlAmount > 0
           ? _calculateConversions(currentState.tlAmount, selectedPrices)
@@ -102,7 +105,7 @@ class ConverterBloc extends BaseBloc<ConverterEvent, ConverterState> {
         selectedType: event.type,
       ));
     } catch (e) {
-      emit(ConverterError('Failed to change filter: ${e.toString()}'));
+      emit(ConverterError(LocaleKeys.failedToChangeFilter.tr(namedArgs: {'error': e.toString()})));
     }
   }
 
@@ -126,11 +129,10 @@ class ConverterBloc extends BaseBloc<ConverterEvent, ConverterState> {
     List<WealthPrice> prices,
   ) {
     return prices
-        .where((price) => !_hiddenItems.contains(price.title)) // Filter out hidden items
+        .where((price) => !_hiddenItems.contains(price.title))
         .map((price) => ConversionResult.fromTLAmount(price, tlAmount))
-        .where((result) => result.amount > 0) // Filter out invalid results
+        .where((result) => result.amount > 0)
         .toList()
-      ..sort(
-          (a, b) => b.amount.compareTo(a.amount)); // Sort by amount descending
+      ..sort((a, b) => b.amount.compareTo(a.amount));
   }
 }

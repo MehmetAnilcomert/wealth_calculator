@@ -71,7 +71,6 @@ class _PricesViewState extends State<PricesView>
 
           return BlocBuilder<PricesBloc, PricesState>(
             builder: (context, pricesState) {
-              // Resolve the highlighted price for the current tab
               final cardInfo = isPortfolio
                   ? null
                   : _resolveCardInfo(
@@ -86,7 +85,6 @@ class _PricesViewState extends State<PricesView>
                 endDrawer: const AppDrawer(),
                 body: Column(
                   children: [
-                    // Custom AppBar with search bar + top card stacked inside
                     _PricesAppBar(
                       currentTabIndex: tabIdx,
                       onSearchChanged: (query) {
@@ -97,43 +95,49 @@ class _PricesViewState extends State<PricesView>
                       iconLabel: cardInfo?.label,
                       iconColor: cardInfo?.color,
                     ),
-                    // Tab content — grid only (card is in AppBar now)
+                    if (pricesState is PricesLoaded && pricesState.isFromCache)
+                      _buildOfflineBanner(context, pricesState, colorScheme),
                     Expanded(
-                      child: screenState.isPortfolioActive
-                          ? _buildPortfolioSection(
-                              pricesState,
-                              screenState.searchQuery,
-                              colorScheme,
-                            )
-                          : TabBarView(
-                              controller: cubit.tabController,
-                              children: [
-                                _buildGridSection(
-                                  pricesState,
-                                  (s) => s.goldPrices,
-                                  screenState.searchQuery,
-                                  LocaleKeys.goldPrices.tr(),
-                                ),
-                                _buildGridSection(
-                                  pricesState,
-                                  (s) => s.currencyPrices,
-                                  screenState.searchQuery,
-                                  LocaleKeys.currencyPrices.tr(),
-                                ),
-                                _buildGridSection(
-                                  pricesState,
-                                  (s) => s.equityPrices,
-                                  screenState.searchQuery,
-                                  LocaleKeys.stocksBist.tr(),
-                                ),
-                                _buildGridSection(
-                                  pricesState,
-                                  (s) => s.commodityPrices,
-                                  screenState.searchQuery,
-                                  LocaleKeys.commoditiesPrices.tr(),
-                                ),
-                              ],
-                            ),
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<PricesBloc>().add(LoadPrices());
+                        },
+                        child: screenState.isPortfolioActive
+                            ? _buildPortfolioSection(
+                                pricesState,
+                                screenState.searchQuery,
+                                colorScheme,
+                              )
+                            : TabBarView(
+                                controller: cubit.tabController,
+                                children: [
+                                  _buildGridSection(
+                                    pricesState,
+                                    (s) => s.goldPrices,
+                                    screenState.searchQuery,
+                                    LocaleKeys.goldPrices.tr(),
+                                  ),
+                                  _buildGridSection(
+                                    pricesState,
+                                    (s) => s.currencyPrices,
+                                    screenState.searchQuery,
+                                    LocaleKeys.currencyPrices.tr(),
+                                  ),
+                                  _buildGridSection(
+                                    pricesState,
+                                    (s) => s.equityPrices,
+                                    screenState.searchQuery,
+                                    LocaleKeys.stocksBist.tr(),
+                                  ),
+                                  _buildGridSection(
+                                    pricesState,
+                                    (s) => s.commodityPrices,
+                                    screenState.searchQuery,
+                                    LocaleKeys.commoditiesPrices.tr(),
+                                  ),
+                                ],
+                              ),
+                      ),
                     ),
                   ],
                 ),
@@ -156,8 +160,6 @@ class _PricesViewState extends State<PricesView>
     );
   }
 
-  // ── Card info resolver ─────────────────────────────────────────────────
-
   _CardInfo? _resolveCardInfo(
     PricesState state,
     int tabIdx,
@@ -166,23 +168,23 @@ class _PricesViewState extends State<PricesView>
     if (state is! PricesLoaded || tabIdx == 4) return null;
 
     switch (tabIdx) {
-      case 0: // Gold
+      case 0:
         final p = _findByKeyword(state.goldPrices, 'gram');
         return p != null
             ? _CardInfo(price: p, label: 'Au', color: colorScheme.gold)
             : null;
-      case 1: // Currency
+      case 1:
         final p = _findByKeyword(state.currencyPrices, 'dolar');
         return p != null
             ? _CardInfo(price: p, label: 'USD', color: colorScheme.dollar)
             : null;
-      case 2: // Stocks
+      case 2:
         final prices = state.equityPrices;
         return prices.isNotEmpty
             ? _CardInfo(
                 price: prices.first, label: 'BIST', color: colorScheme.primary)
             : null;
-      case 3: // Commodities
+      case 3:
         final p = _findByKeyword(state.commodityPrices, 'gümüş');
         return p != null
             ? _CardInfo(price: p, label: 'Ag', color: colorScheme.blueGrey)
@@ -197,8 +199,6 @@ class _PricesViewState extends State<PricesView>
         prices.indexWhere((p) => p.title.toLowerCase().contains(keyword));
     return idx != -1 ? prices[idx] : (prices.isNotEmpty ? prices.first : null);
   }
-
-  // ── Grid-only section (card is now in AppBar) ──────────────────────────
 
   Widget _buildGridSection(
     PricesState state,
@@ -270,9 +270,32 @@ class _PricesViewState extends State<PricesView>
       child: CircularProgressIndicator(color: colorScheme.primary),
     );
   }
+
+  Widget _buildOfflineBanner(BuildContext context, PricesLoaded state, ColorScheme colorScheme) {
+    final lastUpdateStr = state.lastUpdatedAt != null 
+        ? DateFormat('HH:mm').format(state.lastUpdatedAt!) 
+        : '--:--';
+    
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      color: Colors.orange.withOpacity(0.9),
+      child: Row(
+        children: [
+          const Icon(Icons.wifi_off, color: Colors.white, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              LocaleKeys.offlineWarning.tr(namedArgs: {'time': lastUpdateStr}),
+              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-/// Simple data class to pass card configuration around.
 class _CardInfo {
   const _CardInfo({
     required this.price,

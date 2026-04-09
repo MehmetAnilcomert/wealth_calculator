@@ -133,5 +133,12 @@ abstract class  LocaleKeys {
   static const profileDeleted = 'profileDeleted';
   static const removeProfile = 'removeProfile';
   static const removeProfileConfirm = 'removeProfileConfirm';
+  static const offlineWarning = 'offlineWarning';
+  static const failedToLoadCalculatorData = 'failedToLoadCalculatorData';
+  static const failedToLoadPrices = 'failedToLoadPrices';
+  static const failedToLoadPriceData = 'failedToLoadPriceData';
+  static const failedToConvert = 'failedToConvert';
+  static const failedToChangeFilter = 'failedToChangeFilter';
+  static const itemsAlreadyExist = 'itemsAlreadyExist';
 
 }

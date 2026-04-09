@@ -6,6 +6,8 @@ import 'package:wealth_calculator/feature/profile/viewmodel/user_profile_cubit.d
 import 'package:wealth_calculator/product/service/user_profile_dao.dart';
 import 'package:wealth_calculator/product/state/viewmodel/product_viewmodel.dart';
 import 'package:wealth_calculator/product/service/data_scraping_service.dart';
+import 'package:wealth_calculator/product/service/price_repository.dart';
+import 'package:wealth_calculator/product/service/wealth_prices_dao.dart';
 
 /// A container class for managing product state instances.
 /// This class utilizes the GetIt package for dependency injection,
@@ -29,6 +31,13 @@ final class ProductContainer {
     _getit
       ..registerLazySingleton(ProductViewmodel.new)
       ..registerLazySingleton(DataScrapingService.new)
+      ..registerSingleton(WealthPricesDao())
+      ..registerLazySingleton(
+        () => PriceRepository(
+          dataScrapingService: _getit<DataScrapingService>(),
+          wealthPricesDao: _getit<WealthPricesDao>(),
+        ),
+      )
       ..registerSingleton(UserProfileDao())
       ..registerLazySingleton(
         () => UserProfileCubit(dao: _getit<UserProfileDao>()),

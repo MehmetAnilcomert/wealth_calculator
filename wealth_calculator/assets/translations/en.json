@@ -128,5 +128,12 @@
     "profileSaved": "Profile saved successfully",
     "profileDeleted": "Profile deleted",
     "removeProfile": "Remove Profile",
-    "removeProfileConfirm": "Are you sure you want to remove your profile?"
+    "removeProfileConfirm": "Are you sure you want to remove your profile?",
+    "offlineWarning": "Offline: Prices were last updated at {time}. Please check your connection.",
+    "failedToLoadCalculatorData": "Failed to load calculator data: {error}",
+    "failedToLoadPrices": "Failed to load prices: {error}",
+    "failedToLoadPriceData": "Failed to load price data: {error}",
+    "failedToConvert": "Failed to convert: {error}",
+    "failedToChangeFilter": "Failed to change filter: {error}",
+    "itemsAlreadyExist": "Following items already exist: {items}."
 }
