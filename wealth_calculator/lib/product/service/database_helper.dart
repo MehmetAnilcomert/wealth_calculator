@@ -101,7 +101,7 @@ class DbHelper {
       title TEXT NOT NULL,
       buyingPrice TEXT NOT NULL,
       sellingPrice TEXT NOT NULL,
-      change RETEXTAL NOT NULL,
+      change TEXT NOT NULL,
       time TEXT NOT NULL,
       type INTEGER NOT NULL, 
       currentPrice TEXT, 

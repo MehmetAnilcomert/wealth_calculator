@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 
 abstract class PricesState extends Equatable {
+  const PricesState();
+
   @override
   List<Object?> get props => [];
 }
@@ -9,32 +11,34 @@ abstract class PricesState extends Equatable {
 class PricesLoading extends PricesState {}
 
 class PricesLoaded extends PricesState {
+  final List<WealthPrice> commodityPrices;
   final List<WealthPrice> goldPrices;
   final List<WealthPrice> currencyPrices;
   final List<WealthPrice> equityPrices;
-  final List<WealthPrice> commodityPrices;
-  final List<WealthPrice> customPrices; // Eklenen özel fiyat listesi
+  final List<WealthPrice> customPrices;
+  
+  // New fields for the offline banner and sync info
+  final DateTime? lastUpdatedAt;
+  final bool isFromCache;
 
-  PricesLoaded({
+  const PricesLoaded({
     required this.commodityPrices,
     required this.goldPrices,
     required this.currencyPrices,
     required this.equityPrices,
     required this.customPrices,
+    this.lastUpdatedAt,
+    this.isFromCache = false,
   });
 
-  @override
-  List<Object?> get props =>
-      [goldPrices, currencyPrices, equityPrices, commodityPrices, customPrices];
-
-  // Copywith metodu, state nesnesinin kopyasını oluştururken, sadece değişen alanları güncellemek için kullanılır.
-  // The copywith method is used to create a copy of the state object and update only the changing fields.
   PricesLoaded copyWith({
+    List<WealthPrice>? commodityPrices,
     List<WealthPrice>? goldPrices,
     List<WealthPrice>? currencyPrices,
     List<WealthPrice>? equityPrices,
-    List<WealthPrice>? commodityPrices,
     List<WealthPrice>? customPrices,
+    DateTime? lastUpdatedAt,
+    bool? isFromCache,
   }) {
     return PricesLoaded(
       commodityPrices: commodityPrices ?? this.commodityPrices,
@@ -42,32 +46,36 @@ class PricesLoaded extends PricesState {
       currencyPrices: currencyPrices ?? this.currencyPrices,
       equityPrices: equityPrices ?? this.equityPrices,
       customPrices: customPrices ?? this.customPrices,
+      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
+      isFromCache: isFromCache ?? this.isFromCache,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        commodityPrices,
+        goldPrices,
+        currencyPrices,
+        equityPrices,
+        customPrices,
+        lastUpdatedAt,
+        isFromCache,
+      ];
 }
 
 class PricesError extends PricesState {
   final String message;
 
-  PricesError(this.message);
+  const PricesError(this.message);
 
   @override
   List<Object?> get props => [message];
 }
 
-class PricesSearchResult extends PricesState {
-  final List<WealthPrice> searchResults;
-
-  PricesSearchResult(this.searchResults);
-
-  @override
-  List<Object?> get props => [searchResults];
-}
-
 class CustomPriceDuplicateError extends PricesState {
   final String message;
 
-  CustomPriceDuplicateError(this.message);
+  const CustomPriceDuplicateError(this.message);
 
   @override
   List<Object?> get props => [message];

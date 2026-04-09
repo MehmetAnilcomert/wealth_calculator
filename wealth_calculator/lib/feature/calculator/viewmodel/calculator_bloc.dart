@@ -1,188 +1,142 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_event.dart';
 import 'package:wealth_calculator/feature/calculator/viewmodel/calculator_state.dart';
-import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
-import 'package:wealth_calculator/product/service/data_scraping_service.dart';
+import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
+import 'package:wealth_calculator/product/service/price_repository.dart';
 import 'package:wealth_calculator/product/state/base/base_bloc.dart';
+import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
 
+/// BLoC for handling total wealth calculation logic
 class CalculatorBloc extends BaseBloc<CalculatorEvent, CalculatorState> {
-  final DataScrapingService _dataScrapingService;
-  List<WealthPrice> _cachedGoldPrices = [];
-  List<WealthPrice> _cachedCurrencyPrices = [];
+  final PriceRepository _priceRepository;
+  
+  // Internal cache of user's saved wealths for this session
   List<SavedWealths> _savedWealths = [];
 
-  CalculatorBloc({DataScrapingService? dataScrapingService})
-      : _dataScrapingService = dataScrapingService ?? DataScrapingService(),
+  CalculatorBloc({
+    required PriceRepository priceRepository,
+  })  : _priceRepository = priceRepository,
         super(CalculatorInitial()) {
     on<LoadCalculatorData>(_onLoadCalculatorData);
-    on<AddOrUpdateCalculatorWealth>(_onAddOrUpdateWealth);
-    on<DeleteCalculatorWealth>(_onDeleteWealth);
+    on<AddOrUpdateCalculatorWealth>(_onAddOrUpdateCalculatorWealth);
+    on<DeleteCalculatorWealth>(_onDeleteCalculatorWealth);
   }
 
   Future<void> _onLoadCalculatorData(
-      LoadCalculatorData event, Emitter<CalculatorState> emit) async {
+    LoadCalculatorData event,
+    Emitter<CalculatorState> emit,
+  ) async {
     emit(CalculatorLoading());
 
     try {
-      _savedWealths = [];
+      final goldPrices = _priceRepository.goldPrices;
+      final currencyPrices = _priceRepository.currencyPrices;
 
-      if (_cachedGoldPrices.isEmpty || _cachedCurrencyPrices.isEmpty) {
-        _cachedGoldPrices = await _dataScrapingService.fetchGoldPrices();
-        _cachedCurrencyPrices = await _dataScrapingService.fetchCurrencyPrices();
+      if (goldPrices.isEmpty && currencyPrices.isEmpty) {
+        await _priceRepository.refresh();
       }
 
-      emit(_createLoadedState());
+      _calculateAndEmit(emit);
     } catch (e) {
-      emit(CalculatorError(e.toString()));
+      emit(CalculatorError(LocaleKeys.failedToLoadCalculatorData.tr(namedArgs: {'error': e.toString()})));
     }
   }
 
-  Future<void> _onAddOrUpdateWealth(
-      AddOrUpdateCalculatorWealth event, Emitter<CalculatorState> emit) async {
-    try {
-      final existingWealthIndex = _savedWealths.indexWhere(
-        (wealth) => wealth.type == event.wealth.type,
-      );
-
-      if (existingWealthIndex != -1) {
-        _savedWealths[existingWealthIndex] = SavedWealths(
-          id: _savedWealths[existingWealthIndex].id,
-          type: event.wealth.type,
-          amount: event.amount,
-        );
-      } else {
-        final newWealth = SavedWealths(
-          id: DateTime.now().millisecondsSinceEpoch,
-          type: event.wealth.type,
-          amount: event.amount,
-        );
-        _savedWealths.add(newWealth);
-      }
-
-      emit(_createLoadedState());
-    } catch (e) {
-      emit(const CalculatorError('Failed to edit wealth.'));
-    }
-  }
-
-  Future<void> _onDeleteWealth(
-      DeleteCalculatorWealth event, Emitter<CalculatorState> emit) async {
-    try {
-      _savedWealths.removeWhere((wealth) => wealth.id == event.id);
-      emit(_createLoadedState());
-    } catch (e) {
-      emit(const CalculatorError('Failed to delete wealth.'));
-    }
-  }
-
-  CalculatorLoaded _createLoadedState() {
-    return CalculatorLoaded(
-      totalPrice: _calculateTotalPrice(
-        _savedWealths,
-        _cachedGoldPrices,
-        _cachedCurrencyPrices,
-      ),
-      segments: _calculateSegments(
-        _savedWealths,
-        _cachedGoldPrices,
-        _cachedCurrencyPrices,
-      ),
-      colors: _calculateColors(
-        _savedWealths,
-        _cachedGoldPrices,
-        _cachedCurrencyPrices,
-      ),
-      goldPrices: _cachedGoldPrices,
-      currencyPrices: _cachedCurrencyPrices,
-      savedWealths: _savedWealths,
-    );
-  }
-
-  double _calculateTotalPrice(
-    List<SavedWealths> savedWealths,
-    List<WealthPrice> goldPrices,
-    List<WealthPrice> currencyPrices,
+  void _onAddOrUpdateCalculatorWealth(
+    AddOrUpdateCalculatorWealth event,
+    Emitter<CalculatorState> emit,
   ) {
-    double total = 0;
-    for (var wealth in savedWealths) {
-      double price = 0.0;
-      for (var gold in goldPrices) {
-        if (gold.title == wealth.type) {
-          final cleanPrice = gold.buyingPrice.replaceAll('.', '').replaceAll(',', '.').trim();
-          price = double.parse(cleanPrice);
-          break;
-        }
-      }
-      if (price == 0.0) {
-        for (var currency in currencyPrices) {
-          if (currency.title == wealth.type) {
-            final cleanPrice = currency.buyingPrice.replaceAll('.', '').replaceAll(',', '.').trim();
-            price = double.parse(cleanPrice);
-            break;
-          }
-        }
-      }
-      total += price * wealth.amount;
+    String type = '';
+    if (event.wealth is SavedWealths) {
+      type = (event.wealth as SavedWealths).type;
+    } else if (event.wealth is WealthPrice) {
+      type = (event.wealth as WealthPrice).title;
     }
-    return total;
+
+    final index = _savedWealths.indexWhere((w) => w.type == type);
+
+    if (index != -1) {
+      _savedWealths[index] = _savedWealths[index].copyWith(amount: event.amount);
+    } else {
+      _savedWealths.add(SavedWealths(
+        id: DateTime.now().millisecondsSinceEpoch,
+        type: type,
+        amount: event.amount,
+      ));
+    }
+
+    _calculateAndEmit(emit);
   }
 
-  List<double> _calculateSegments(
-    List<SavedWealths> savedWealths,
-    List<WealthPrice> goldPrices,
-    List<WealthPrice> currencyPrices,
+  void _onDeleteCalculatorWealth(
+    DeleteCalculatorWealth event,
+    Emitter<CalculatorState> emit,
   ) {
+    _savedWealths.removeWhere((w) => w.id == event.id);
+    _calculateAndEmit(emit);
+  }
+
+  void _calculateAndEmit(Emitter<CalculatorState> emit) {
+    final goldPrices = _priceRepository.goldPrices;
+    final currencyPrices = _priceRepository.currencyPrices;
+
+    double total = 0.0;
     List<double> segments = [];
-    double total = 0;
-    for (var wealth in savedWealths) {
-      double price = 0.0;
-      for (var gold in goldPrices) {
-        if (gold.title == wealth.type) {
-          final cleanPrice = gold.buyingPrice.replaceAll('.', '').replaceAll(',', '.').trim();
-          price = double.parse(cleanPrice);
-          break;
-        }
+    List<Color> colors = [];
+
+    final List<Color> chartColors = [
+      const Color(0xFFFFD700), // Gold
+      const Color(0xFFC0C0C0), // Silver
+      const Color(0xFF4CAF50), // Green for Currency
+      const Color(0xFF2196F3), // Blue
+      const Color(0xFFFF5722), // Orange
+    ];
+
+    int colorIdx = 0;
+
+    for (var wealth in _savedWealths) {
+      final priceInfo = _findPriceForWealth(wealth.type, goldPrices, currencyPrices);
+      if (priceInfo != null) {
+        String cleanPrice = priceInfo.buyingPrice.replaceAll('.', '').replaceAll(',', '.');
+        double priceValue = double.tryParse(cleanPrice) ?? 0.0;
+        
+        double subTotal = wealth.amount * priceValue;
+        total += subTotal;
+        
+        segments.add(subTotal);
+        colors.add(chartColors[colorIdx % chartColors.length]);
+        colorIdx++;
       }
-      if (price == 0.0) {
-        for (var currency in currencyPrices) {
-          if (currency.title == wealth.type) {
-            final cleanPrice = currency.buyingPrice.replaceAll('.', '').replaceAll(',', '.').trim();
-            price = double.parse(cleanPrice);
-            break;
-          }
-        }
-      }
-      double value = price * wealth.amount;
-      total += value;
-      segments.add(value);
     }
 
-    if (total > 0) {
-      segments = segments.map((segment) => (segment / total) * 360).toList();
-    }
-    return segments;
+    emit(CalculatorLoaded(
+      totalPrice: total,
+      segments: segments,
+      colors: colors,
+      goldPrices: goldPrices,
+      currencyPrices: currencyPrices,
+      savedWealths: List.from(_savedWealths),
+      lastUpdatedAt: _priceRepository.lastUpdatedAt,
+      isFromCache: _priceRepository.isFromCache,
+    ));
   }
 
-  List<Color> _calculateColors(
-    List<SavedWealths> savedWealths,
-    List<WealthPrice> goldPrices,
-    List<WealthPrice> currencyPrices,
+  WealthPrice? _findPriceForWealth(
+    String type,
+    List<WealthPrice> gold,
+    List<WealthPrice> currency,
   ) {
-    final colorMap = {
-      'Altın (TL/GR)': Colors.yellow,
-      'Cumhuriyet Altını': Colors.yellow,
-      'Yarım Altın': Colors.yellow,
-      'Çeyrek Altın': Colors.yellow,
-      'ABD Doları': Colors.green,
-      'Euro': Colors.blue[700],
-      'İngiliz Sterlini': Colors.purple,
-      'TL': Colors.red,
-    };
-
-    return [
-      for (var wealth in savedWealths) colorMap[wealth.type] ?? Colors.grey,
-    ];
+    try {
+      return gold.firstWhere((p) => p.title == type);
+    } catch (_) {
+      try {
+        return currency.firstWhere((p) => p.title == type);
+      } catch (_) {
+        return null;
+      }
+    }
   }
 }

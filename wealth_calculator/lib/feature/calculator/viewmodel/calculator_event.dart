@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:wealth_calculator/feature/inventory/model/wealths_model.dart';
 
 abstract class CalculatorEvent extends Equatable {
   const CalculatorEvent();
@@ -13,7 +12,7 @@ class LoadCalculatorData extends CalculatorEvent {
 }
 
 class AddOrUpdateCalculatorWealth extends CalculatorEvent {
-  final SavedWealths wealth;
+  final dynamic wealth; // Can be SavedWealths or WealthPrice
   final double amount;
 
   const AddOrUpdateCalculatorWealth(this.wealth, this.amount);

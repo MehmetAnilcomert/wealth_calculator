@@ -23,7 +23,7 @@ class CalculatorView extends StatelessWidget {
     return BaseView<CalculatorBloc, CalculatorState>(
       bloc: bloc,
       create: (context) => CalculatorBloc(
-        dataScrapingService: ProductStateItems.dataScrapingService,
+        priceRepository: ProductStateItems.priceRepository,
       )..add(const LoadCalculatorData()),
       onPageBuilder: (context, bloc) => const _CalculatorViewBody(),
     );

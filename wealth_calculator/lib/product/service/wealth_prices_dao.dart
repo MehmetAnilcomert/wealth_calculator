@@ -18,14 +18,10 @@ class WealthPricesDao {
     Batch batch = db.batch();
 
     // Get the current date and time for `lastUpdatedDate` and `lastUpdatedTime`
-    String currentDate =
-        DateTime.now().toIso8601String().split("T").first; // YYYY-MM-DD
-    String currentTime = DateTime.now()
-        .toIso8601String()
-        .split("T")
-        .last
-        .split(".")
-        .first; // HH:MM:SS
+    // Get current local date and time
+    final now = DateTime.now().toLocal();
+    final currentDate = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    final currentTime = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}";
 
     // Add each price to the batch
     for (var price in prices) {

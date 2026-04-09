@@ -128,5 +128,12 @@
     "profileSaved": "Profil başarıyla kaydedildi",
     "profileDeleted": "Profil silindi",
     "removeProfile": "Profili Kaldır",
-    "removeProfileConfirm": "Profilinizi kaldırmak istediğinize emin misiniz?"
+    "removeProfileConfirm": "Profilinizi kaldırmak istediğinize emin misiniz?",
+    "offlineWarning": "Çevrimdışı: Fiyatlar en son {time} itibariyle günceldir. Lütfen bağlantınızı kontrol edin.",
+    "failedToLoadCalculatorData": "Hesaplama verileri yüklenemedi: {error}",
+    "failedToLoadPrices": "Fiyatlar yüklenemedi: {error}",
+    "failedToLoadPriceData": "Fiyat verileri yüklenemedi: {error}",
+    "failedToConvert": "Dönüştürme başarısız: {error}",
+    "failedToChangeFilter": "Filtre değiştirilemedi: {error}",
+    "itemsAlreadyExist": "Aşağıdaki öğeler zaten var: {items}."
 }

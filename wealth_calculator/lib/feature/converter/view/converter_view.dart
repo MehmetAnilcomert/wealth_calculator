@@ -7,8 +7,9 @@ import 'package:wealth_calculator/feature/converter/viewmodel/converter_event.da
 import 'package:wealth_calculator/feature/converter/viewmodel/converter_state.dart';
 import 'package:wealth_calculator/feature/prices/model/wealth_data_model.dart';
 import 'package:wealth_calculator/product/init/language/locale_keys.g.dart';
+import 'package:wealth_calculator/product/state/base/base_view.dart';
+import 'package:wealth_calculator/product/state/container/product_state_items.dart';
 import 'package:wealth_calculator/product/utility/extensions/context_extension.dart';
-import 'package:wealth_calculator/product/theme/custom_colors.dart';
 import 'package:wealth_calculator/product/utility/padding/product_padding.dart';
 
 part 'mixin/converter_view_mixin.dart';
@@ -19,9 +20,11 @@ class ConverterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ConverterBloc()..add(const LoadConverterData()),
-      child: const _ConverterViewBody(),
+    return BaseView<ConverterBloc, ConverterState>(
+      create: (context) => ConverterBloc(
+        priceRepository: ProductStateItems.priceRepository,
+      )..add(const LoadConverterData()),
+      onPageBuilder: (context, bloc) => const _ConverterViewBody(),
     );
   }
 }
@@ -53,7 +56,7 @@ class _ConverterViewBodyState extends State<_ConverterViewBody>
       backgroundColor: colorScheme.primaryContainer,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: colorScheme.transparent,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           icon:
               Icon(Icons.arrow_back_ios, color: colorScheme.onPrimaryContainer),
@@ -74,7 +77,7 @@ class _ConverterViewBodyState extends State<_ConverterViewBody>
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('${LocaleKeys.error.tr()}: ${state.message}'),
-                backgroundColor: colorScheme.deleteBackground,
+                backgroundColor: Colors.redAccent,
                 behavior: SnackBarBehavior.floating,
                 margin: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(

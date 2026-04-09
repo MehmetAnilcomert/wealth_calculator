@@ -28,7 +28,10 @@ class CustomPricesWidget extends StatelessWidget {
             Expanded(
               child: customPrices.isEmpty
                   ? Center(child: const Text(LocaleKeys.noSelection).tr())
-                  : buildCustomPrices(customPrices, query),
+                  : SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: buildCustomPrices(customPrices, query),
+                    ),
             ),
           ],
         ),
