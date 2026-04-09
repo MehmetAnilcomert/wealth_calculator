@@ -10,11 +10,13 @@ class TopPriceCard extends StatefulWidget {
     required this.price,
     required this.iconLabel,
     required this.iconColor,
+    this.isFlatBottom = false,
   });
 
   final WealthPrice price;
   final String iconLabel;
   final Color iconColor;
+  final bool isFlatBottom;
 
   @override
   State<TopPriceCard> createState() => _TopPriceCardState();
@@ -96,7 +98,9 @@ class _TopPriceCardState extends State<TopPriceCard>
   BoxDecoration _BoxDecoration(ColorScheme colorScheme) {
     return BoxDecoration(
       color: colorScheme.surface,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: widget.isFlatBottom
+          ? const BorderRadius.vertical(top: Radius.circular(20))
+          : BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
           color: colorScheme.blackOverlay10.withAlpha(20),

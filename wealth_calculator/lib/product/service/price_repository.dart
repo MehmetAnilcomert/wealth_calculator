@@ -85,11 +85,17 @@ class PriceRepository {
     _equityPrices = allPrices.where((p) => p.type == PriceType.equity).toList();
     _commodityPrices = allPrices.where((p) => p.type == PriceType.commodity).toList();
 
-    // Extract last update time from the first record if available
-    final firstRecord = allPrices.first;
-    if (firstRecord.lastUpdatedDate != null && firstRecord.lastUpdatedTime != null) {
-      _lastUpdatedAt = DateTime.tryParse('${firstRecord.lastUpdatedDate}T${firstRecord.lastUpdatedTime}');
+    // Extract the latest update time from all records to be accurate
+    DateTime? latestTime;
+    for (var p in allPrices) {
+      if (p.lastUpdatedDate != null && p.lastUpdatedTime != null) {
+        final parsed = DateTime.tryParse('${p.lastUpdatedDate}T${p.lastUpdatedTime}');
+        if (parsed != null && (latestTime == null || parsed.isAfter(latestTime))) {
+          latestTime = parsed;
+        }
+      }
     }
+    _lastUpdatedAt = latestTime;
 
     _isFromCache = true;
   }

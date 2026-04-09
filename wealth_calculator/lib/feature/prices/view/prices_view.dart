@@ -94,9 +94,9 @@ class _PricesViewState extends State<PricesView>
                       highlightedPrice: cardInfo?.price,
                       iconLabel: cardInfo?.label,
                       iconColor: cardInfo?.color,
+                      isFromCache: pricesState is PricesLoaded && pricesState.isFromCache,
+                      lastUpdatedAt: pricesState is PricesLoaded ? pricesState.lastUpdatedAt : null,
                     ),
-                    if (pricesState is PricesLoaded && pricesState.isFromCache)
-                      _buildOfflineBanner(context, pricesState, colorScheme),
                     Expanded(
                       child: RefreshIndicator(
                         onRefresh: () async {
@@ -271,29 +271,6 @@ class _PricesViewState extends State<PricesView>
     );
   }
 
-  Widget _buildOfflineBanner(BuildContext context, PricesLoaded state, ColorScheme colorScheme) {
-    final lastUpdateStr = state.lastUpdatedAt != null 
-        ? DateFormat('HH:mm').format(state.lastUpdatedAt!) 
-        : '--:--';
-    
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: Colors.orange.withOpacity(0.9),
-      child: Row(
-        children: [
-          const Icon(Icons.wifi_off, color: Colors.white, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              LocaleKeys.offlineWarning.tr(namedArgs: {'time': lastUpdateStr}),
-              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _CardInfo {
