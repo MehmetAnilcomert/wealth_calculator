@@ -42,37 +42,63 @@ class PriceRepository {
   /// Updates memory cache and database on success.
   /// On failure, loads from database.
   Future<void> refresh() async {
-    try {
-      final results = await Future.wait([
-        _dataScrapingService.fetchGoldPrices(),
-        _dataScrapingService.fetchCurrencyPrices(),
-        _dataScrapingService.fetchEquityData(),
-        _dataScrapingService.fetchCommodityPrices(),
-      ]);
+    // Each source is independent — one failure does NOT fall back the whole app to offline mode.
+    final results = await Future.wait([
+      _dataScrapingService.fetchGoldPrices().catchError((e) {
+        debugPrint('PriceRepository: Gold fetch failed: $e');
+        return <WealthPrice>[];
+      }),
+      _dataScrapingService.fetchCurrencyPrices().catchError((e) {
+        debugPrint('PriceRepository: Currency fetch failed: $e');
+        return <WealthPrice>[];
+      }),
+      _dataScrapingService.fetchEquityData().catchError((e) {
+        debugPrint('PriceRepository: Equity fetch failed: $e');
+        return <WealthPrice>[];
+      }),
+      _dataScrapingService.fetchCommodityPrices().catchError((e) {
+        debugPrint('PriceRepository: Commodity fetch failed: $e');
+        return <WealthPrice>[];
+      }),
+    ]);
 
-      _goldPrices = results[0];
-      _currencyPrices = results[1];
-      _equityPrices = results[2];
-      _commodityPrices = results[3];
+    final fetchedGold = results[0];
+    final fetchedCurrency = results[1];
+    final fetchedEquity = results[2];
+    final fetchedCommodity = results[3];
 
-      // Perform complex calculations (like Silver Gram TL)
-      _processSpecialPrices();
+    final allFailed = fetchedGold.isEmpty &&
+        fetchedCurrency.isEmpty &&
+        fetchedEquity.isEmpty &&
+        fetchedCommodity.isEmpty;
 
-      // Combine and save to DB
-      final allPrices = [
-        ..._goldPrices,
-        ..._currencyPrices,
-        ..._equityPrices,
-        ..._commodityPrices,
-      ];
-      await _wealthPricesDao.insertPrices(allPrices);
-
-      _lastUpdatedAt = DateTime.now();
-      _isFromCache = false;
-    } catch (e) {
-      debugPrint('PriceRepository: Fetch failed, falling back to DB: $e');
+    if (allFailed) {
+      // Every single source failed — genuine offline situation, load from DB
+      debugPrint('PriceRepository: All sources failed, falling back to DB.');
       await _loadFromDatabase();
+      return;
     }
+
+    // At least one source succeeded — update memory cache only for successful fetches
+    if (fetchedGold.isNotEmpty) _goldPrices = fetchedGold;
+    if (fetchedCurrency.isNotEmpty) _currencyPrices = fetchedCurrency;
+    if (fetchedEquity.isNotEmpty) _equityPrices = fetchedEquity;
+    if (fetchedCommodity.isNotEmpty) _commodityPrices = fetchedCommodity;
+
+    // Perform complex calculations (like Silver Gram TL)
+    _processSpecialPrices();
+
+    // Combine and save successfully fetched data to DB
+    final allPrices = [
+      ..._goldPrices,
+      ..._currencyPrices,
+      ..._equityPrices,
+      ..._commodityPrices,
+    ];
+    await _wealthPricesDao.insertPrices(allPrices);
+
+    _lastUpdatedAt = DateTime.now();
+    _isFromCache = false;
   }
 
   Future<void> _loadFromDatabase() async {
@@ -114,9 +140,8 @@ class PriceRepository {
           type: PriceType.currency),
     );
 
-    double usdRate = double.tryParse(
-            usdPrice.sellingPrice.replaceAll('.', '').replaceAll(',', '.')) ??
-        1.0;
+    double usdRate = _parseNormalizedPrice(usdPrice.sellingPrice);
+    if (usdRate == 0) usdRate = 1.0;
 
     // 2. Convert Silver Ounce to Gram TL
     const double ounceToGram = 31.1034768;
@@ -125,14 +150,12 @@ class PriceRepository {
     if (silverIdx != -1) {
       final silver = _commodityPrices[silverIdx];
       // Note: currentPrice is used for commodities in this app's logic
-      double ouncePrice = double.tryParse(
-              silver.currentPrice?.replaceAll('.', '').replaceAll(',', '.') ??
-                  '') ??
-          0.0;
+      double ouncePrice = _parseNormalizedPrice(silver.currentPrice ?? '');
 
       if (ouncePrice > 0) {
         double gramTL = (ouncePrice * usdRate) / ounceToGram;
-        String gramTLStr = gramTL.toStringAsFixed(2).replaceAll('.', ',');
+        // Store as clean float string — consistent with the rest of normalized prices
+        String gramTLStr = gramTL.toStringAsFixed(2);
 
         _commodityPrices[silverIdx] = silver.copyWith(
           title: 'Gümüş (TL/GR)',
@@ -142,5 +165,18 @@ class PriceRepository {
         );
       }
     }
+  }
+
+  /// Safely parses a price string in either normalized float format ("38.50")
+  /// or old Turkish locale format ("38,50" / "1.234,56").
+  double _parseNormalizedPrice(String price) {
+    price = price.trim();
+    if (price.isEmpty) return 0.0;
+    // If it contains a comma it is still in Turkish locale format (from DB cache of old data)
+    if (price.contains(',')) {
+      return double.tryParse(price.replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
+    }
+    // Otherwise it is already a standard float string (new normalized format)
+    return double.tryParse(price) ?? 0.0;
   }
 }

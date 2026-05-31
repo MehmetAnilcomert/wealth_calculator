@@ -15,17 +15,27 @@ class InventoryUtils {
     'TL': Colors.red,
   };
 
+  // Güvenli fiyat ayrıştırma yardımcısı (hem Türkçe hem de standart float formatları için)
+  static double _parsePrice(String price) {
+    price = price.trim();
+    if (price.isEmpty) return 0.0;
+    if (price.contains(',')) {
+      return double.tryParse(price.replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
+    }
+    return double.tryParse(price) ?? 0.0;
+  }
+
   // Fiyat bulma fonksiyonu
   static double findPrice(String type, List<WealthPrice> goldPrices,
       List<WealthPrice> currencyPrices) {
     for (var gold in goldPrices) {
       if (gold.title == type) {
-        return double.parse(gold.buyingPrice.replaceAll(',', '.').trim());
+        return _parsePrice(gold.buyingPrice);
       }
     }
     for (var currency in currencyPrices) {
       if (currency.title == type) {
-        return double.parse(currency.buyingPrice.replaceAll(',', '.').trim());
+        return _parsePrice(currency.buyingPrice);
       }
     }
     return 0.0;

@@ -39,7 +39,7 @@ class _TopPriceCardState extends State<TopPriceCard>
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.general.colorScheme;
-    final isNegativeChange = widget.price.change.startsWith('-');
+    final isNegativeChange = widget.price.change.contains('-');
     final changeColor =
         isNegativeChange ? colorScheme.error : colorScheme.tertiary;
     final changeIcon =
@@ -125,22 +125,29 @@ class _TopPriceCardState extends State<TopPriceCard>
   Row _bottomRow(BuildContext context) {
     return Row(
       children: [
-        buildDetailItem(
-          context,
-          LocaleKeys.lowest.tr(),
-          widget.price.sellingPrice,
+        Flexible(
+          child: buildDetailItem(
+            context,
+            LocaleKeys.lowest.tr(),
+            widget.price.sellingPrice,
+          ),
         ),
         const SizedBox(width: ProductSizes.medium),
-        buildDetailItem(
-          context,
-          LocaleKeys.highest.tr(),
-          widget.price.buyingPrice,
+        Flexible(
+          child: buildDetailItem(
+            context,
+            LocaleKeys.highest.tr(),
+            widget.price.buyingPrice,
+          ),
         ),
         const SizedBox(width: ProductSizes.medium),
-        buildDetailItem(
-          context,
-          LocaleKeys.time.tr(),
-          widget.price.time,
+        Flexible(
+          flex: 2,
+          child: buildDetailItem(
+            context,
+            LocaleKeys.time.tr(),
+            widget.price.time,
+          ),
         ),
       ],
     );

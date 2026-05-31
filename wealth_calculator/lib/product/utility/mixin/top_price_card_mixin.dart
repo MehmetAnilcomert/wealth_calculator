@@ -83,7 +83,7 @@ mixin TopPriceCardMixin on State<TopPriceCard> {
                 child: AnimatedBuilder(
                   animation: _arrowSlide,
                   builder: (context, child) {
-                    final isNeg = widget.price.change.startsWith('-');
+                    final isNeg = widget.price.change.contains('-');
                     final slideOffset = isNeg
                         ? Offset(0, 0.15 * (1 - _arrowSlide.value))
                         : Offset(0, -0.15 * (1 - _arrowSlide.value));
@@ -179,6 +179,8 @@ mixin TopPriceCardMixin on State<TopPriceCard> {
             color: colorScheme.onSurfaceVariant,
             letterSpacing: 0.5,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 2),
         Text(
@@ -188,6 +190,8 @@ mixin TopPriceCardMixin on State<TopPriceCard> {
             fontWeight: FontWeight.w600,
             color: colorScheme.onSurface,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

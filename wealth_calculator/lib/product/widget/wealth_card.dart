@@ -45,7 +45,7 @@ class _WealthPriceCardState extends State<WealthPriceCard>
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.general.colorScheme;
-    final isNegativeChange = widget.equity.change.startsWith('-');
+    final isNegativeChange = widget.equity.change.contains('-');
     final changeColor =
         isNegativeChange ? colorScheme.error : colorScheme.tertiary;
     final icon = isNegativeChange ? Icons.trending_down : Icons.trending_up;
