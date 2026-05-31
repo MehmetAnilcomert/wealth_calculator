@@ -42,18 +42,52 @@ class PriceRepository {
   /// Updates memory cache and database on success.
   /// On failure, loads from database.
   Future<void> refresh() async {
+    // Pre-populate memory cache from DB if empty, to allow partial updates without losing cached data
+    if (_goldPrices.isEmpty &&
+        _currencyPrices.isEmpty &&
+        _equityPrices.isEmpty &&
+        _commodityPrices.isEmpty) {
+      await _loadFromDatabase();
+    }
+
     try {
       final results = await Future.wait([
-        _dataScrapingService.fetchGoldPrices(),
-        _dataScrapingService.fetchCurrencyPrices(),
-        _dataScrapingService.fetchEquityData(),
-        _dataScrapingService.fetchCommodityPrices(),
+        _dataScrapingService.fetchGoldPrices().catchError((e) {
+          debugPrint('PriceRepository: Gold prices fetch failed: $e');
+          return <WealthPrice>[];
+        }),
+        _dataScrapingService.fetchCurrencyPrices().catchError((e) {
+          debugPrint('PriceRepository: Currency prices fetch failed: $e');
+          return <WealthPrice>[];
+        }),
+        _dataScrapingService.fetchEquityData().catchError((e) {
+          debugPrint('PriceRepository: Equity data fetch failed: $e');
+          return <WealthPrice>[];
+        }),
+        _dataScrapingService.fetchCommodityPrices().catchError((e) {
+          debugPrint('PriceRepository: Commodity prices fetch failed: $e');
+          return <WealthPrice>[];
+        }),
       ]);
 
-      _goldPrices = results[0];
-      _currencyPrices = results[1];
-      _equityPrices = results[2];
-      _commodityPrices = results[3];
+      final fetchedGold = results[0];
+      final fetchedCurrency = results[1];
+      final fetchedEquity = results[2];
+      final fetchedCommodity = results[3];
+
+      // Update memory cache only with successfully fetched data
+      if (fetchedGold.isNotEmpty) _goldPrices = fetchedGold;
+      if (fetchedCurrency.isNotEmpty) _currencyPrices = fetchedCurrency;
+      if (fetchedEquity.isNotEmpty) _equityPrices = fetchedEquity;
+      if (fetchedCommodity.isNotEmpty) _commodityPrices = fetchedCommodity;
+
+      // If all scrapers failed and memory cache is still empty, throw to trigger fallback
+      if (_goldPrices.isEmpty &&
+          _currencyPrices.isEmpty &&
+          _equityPrices.isEmpty &&
+          _commodityPrices.isEmpty) {
+        throw Exception('All scrapers failed and no offline cached data is available.');
+      }
 
       // Perform complex calculations (like Silver Gram TL)
       _processSpecialPrices();

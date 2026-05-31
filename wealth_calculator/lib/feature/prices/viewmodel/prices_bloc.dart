@@ -38,17 +38,19 @@ class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
       List<WealthPrice> customLists = List<WealthPrice>.from(customPrices);
       
       // Check if silver is in custom lists and update it from the fresh repository data
-      final silverInRepo = _priceRepository.commodityPrices.firstWhere(
-        (p) => p.title.toLowerCase().contains('gümüş'),
-        orElse: () => _priceRepository.commodityPrices.first, // fallback
-      );
+      if (_priceRepository.commodityPrices.isNotEmpty) {
+        final silverInRepo = _priceRepository.commodityPrices.firstWhere(
+          (p) => p.title.toLowerCase().contains('gümüş'),
+          orElse: () => _priceRepository.commodityPrices.first, // fallback
+        );
 
-      if (silverInRepo.title.contains('Gümüş (TL/GR)')) {
+        if (silverInRepo.title.contains('Gümüş (TL/GR)')) {
           for (int i = 0; i < customLists.length; i++) {
             if (customLists[i].title.toLowerCase().contains('gümüş')) {
               customLists[i] = silverInRepo;
             }
           }
+        }
       }
 
       emit(PricesLoaded(
