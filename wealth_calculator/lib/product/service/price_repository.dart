@@ -32,13 +32,13 @@ class PriceRepository {
   DateTime? get lastUpdatedAt => _lastUpdatedAt;
   bool get isFromCache => _isFromCache;
 
-  /// Initialize the repository by loading data. 
+  /// Initialize the repository by loading data.
   /// Tries internet first, falls back to DB.
   Future<void> init() async {
     await refresh();
   }
 
-  /// Forces a fresh fetch from the internet. 
+  /// Forces a fresh fetch from the internet.
   /// Updates memory cache and database on success.
   /// On failure, loads from database.
   Future<void> refresh() async {
@@ -103,20 +103,24 @@ class PriceRepository {
 
   Future<void> _loadFromDatabase() async {
     final allPrices = await _wealthPricesDao.getAllPrices();
-    
+
     if (allPrices.isEmpty) return;
 
     _goldPrices = allPrices.where((p) => p.type == PriceType.gold).toList();
-    _currencyPrices = allPrices.where((p) => p.type == PriceType.currency).toList();
+    _currencyPrices =
+        allPrices.where((p) => p.type == PriceType.currency).toList();
     _equityPrices = allPrices.where((p) => p.type == PriceType.equity).toList();
-    _commodityPrices = allPrices.where((p) => p.type == PriceType.commodity).toList();
+    _commodityPrices =
+        allPrices.where((p) => p.type == PriceType.commodity).toList();
 
     // Extract the latest update time from all records to be accurate
     DateTime? latestTime;
     for (var p in allPrices) {
       if (p.lastUpdatedDate != null && p.lastUpdatedTime != null) {
-        final parsed = DateTime.tryParse('${p.lastUpdatedDate}T${p.lastUpdatedTime}');
-        if (parsed != null && (latestTime == null || parsed.isAfter(latestTime))) {
+        final parsed =
+            DateTime.tryParse('${p.lastUpdatedDate}T${p.lastUpdatedTime}');
+        if (parsed != null &&
+            (latestTime == null || parsed.isAfter(latestTime))) {
           latestTime = parsed;
         }
       }
@@ -145,7 +149,8 @@ class PriceRepository {
 
     // 2. Convert Silver Ounce to Gram TL
     const double ounceToGram = 31.1034768;
-    int silverIdx = _commodityPrices.indexWhere((p) => p.title.toLowerCase().contains('gümüş'));
+    int silverIdx = _commodityPrices
+        .indexWhere((p) => p.title.toLowerCase().contains('gümüş'));
 
     if (silverIdx != -1) {
       final silver = _commodityPrices[silverIdx];
@@ -174,7 +179,8 @@ class PriceRepository {
     if (price.isEmpty) return 0.0;
     // If it contains a comma it is still in Turkish locale format (from DB cache of old data)
     if (price.contains(',')) {
-      return double.tryParse(price.replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
+      return double.tryParse(price.replaceAll('.', '').replaceAll(',', '.')) ??
+          0.0;
     }
     // Otherwise it is already a standard float string (new normalized format)
     return double.tryParse(price) ?? 0.0;

@@ -191,7 +191,7 @@ Future<List<WealthPrice>> fetchCurrencyPrices({http.Client? client}) async {
   return [];
 }
 
-Future<List<WealthPrice>> fetchCommodityPrices() async {
+Future<List<WealthPrice>> fetchCommodityPrices({http.Client? client}) async {
   final Set<String> necessaryCommodities = {
     "Gümüş derived",
     "Bakır derived",
@@ -216,25 +216,30 @@ Future<List<WealthPrice>> fetchCommodityPrices() async {
   };
 
   const url = 'https://tr.investing.com/commodities/real-time-futures';
-  final response = await http.get(Uri.parse(url));
+  final httpClient = client ?? http.Client();
+  try {
+    final response = await httpClient.get(Uri.parse(url));
 
-  if (response.statusCode != 200) {
-    throw Exception('İstek başarısız oldu: ${response.statusCode}');
+    if (response.statusCode != 200) {
+      throw Exception('İstek başarısız oldu: ${response.statusCode}');
+    }
+
+    final document = parse(response.body);
+    final tbody = document.querySelector('.datatable-v2_body__8TXQk');
+
+    if (tbody == null) {
+      throw Exception('tbody element bulunamadı.');
+    }
+
+    return tbody
+        .querySelectorAll('tr')
+        .map((row) => _parseRow(row, necessaryCommodities))
+        .where((wealthPrice) => wealthPrice != null)
+        .cast<WealthPrice>()
+        .toList();
+  } finally {
+    if (client == null) httpClient.close();
   }
-
-  final document = parse(response.body);
-  final tbody = document.querySelector('.datatable-v2_body__8TXQk');
-
-  if (tbody == null) {
-    throw Exception('tbody element bulunamadı.');
-  }
-
-  return tbody
-      .querySelectorAll('tr')
-      .map((row) => _parseRow(row, necessaryCommodities))
-      .where((wealthPrice) => wealthPrice != null)
-      .cast<WealthPrice>()
-      .toList();
 }
 
 WealthPrice? _parseRow(element, Set<String> necessaryCommodities) {
@@ -256,46 +261,52 @@ WealthPrice? _parseRow(element, Set<String> necessaryCommodities) {
   );
 }
 
-Future<List<WealthPrice>> fetchEquityData() async {
+Future<List<WealthPrice>> fetchEquityData({http.Client? client}) async {
   const url = 'https://tr.investing.com/equities/turkey';
-  final response = await http.get(Uri.parse(url));
+  final httpClient = client ?? http.Client();
+  try {
+    final response = await httpClient.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    final document = parse(response.body);
-    final rows = document.querySelectorAll(
-        'tr.datatable-v2_row__hkEus.dynamic-table-v2_row__ILVMx');
+    if (response.statusCode == 200) {
+      final document = parse(response.body);
+      final rows = document.querySelectorAll(
+          'tr.datatable-v2_row__hkEus.dynamic-table-v2_row__ILVMx');
 
-    final data = <WealthPrice>[];
-    for (var row in rows) {
-      final name = row.querySelector('td:nth-child(1) a')?.text.trim() ?? '';
-      final price1 =
-          row.querySelector('td:nth-child(2) span')?.text.trim() ?? '';
-      final price2 = row.querySelector('td:nth-child(3)')?.text.trim() ?? '';
-      final price3 = row.querySelector('td:nth-child(4)')?.text.trim() ?? '';
-      final change = row.querySelector('td:nth-child(5)')?.text.trim() ?? '';
-      final changePercent =
-          row.querySelector('td:nth-child(6)')?.text.trim() ?? '';
-      final volume = row.querySelector('td:nth-child(7)')?.text.trim() ?? '';
-      final date = row.querySelector('td:nth-child(8) time')?.text.trim() ?? '';
+      final data = <WealthPrice>[];
+      for (var row in rows) {
+        final name = row.querySelector('td:nth-child(1) a')?.text.trim() ?? '';
+        final price1 =
+            row.querySelector('td:nth-child(2) span')?.text.trim() ?? '';
+        final price2 = row.querySelector('td:nth-child(3)')?.text.trim() ?? '';
+        final price3 = row.querySelector('td:nth-child(4)')?.text.trim() ?? '';
+        final change = row.querySelector('td:nth-child(5)')?.text.trim() ?? '';
+        final changePercent =
+            row.querySelector('td:nth-child(6)')?.text.trim() ?? '';
+        final volume = row.querySelector('td:nth-child(7)')?.text.trim() ?? '';
+        final date =
+            row.querySelector('td:nth-child(8) time')?.text.trim() ?? '';
 
-      // Create Equity instance
-      final equity = WealthPrice(
-        title: name,
-        buyingPrice: _cleanPrice(price2),
-        sellingPrice: _cleanPrice(price3),
-        change: changePercent,
-        changeAmount: change,
-        time: date,
-        type: PriceType.equity,
-        currentPrice: _cleanPrice(price1),
-        volume: volume,
-      );
+        // Create Equity instance
+        final equity = WealthPrice(
+          title: name,
+          buyingPrice: _cleanPrice(price2),
+          sellingPrice: _cleanPrice(price3),
+          change: changePercent,
+          changeAmount: change,
+          time: date,
+          type: PriceType.equity,
+          currentPrice: _cleanPrice(price1),
+          volume: volume,
+        );
 
-      data.add(equity);
+        data.add(equity);
+      }
+
+      return data;
+    } else {
+      throw Exception('Failed to load data');
     }
-
-    return data;
-  } else {
-    throw Exception('Failed to load data');
+  } finally {
+    if (client == null) httpClient.close();
   }
 }

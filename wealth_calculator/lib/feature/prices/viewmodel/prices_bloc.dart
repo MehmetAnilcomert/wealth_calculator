@@ -33,10 +33,10 @@ class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
       await _priceRepository.refresh();
 
       final customPrices = await _customListDao.getSelectedWealthPrices();
-      
+
       // Update custom prices if we have any processed derived prices (like silver)
       List<WealthPrice> customLists = List<WealthPrice>.from(customPrices);
-      
+
       // Check if silver is in custom lists and update it from the fresh repository data
       if (_priceRepository.commodityPrices.isNotEmpty) {
         final silverInRepo = _priceRepository.commodityPrices.firstWhere(
@@ -63,7 +63,8 @@ class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
         isFromCache: _priceRepository.isFromCache,
       ));
     } catch (e) {
-      emit(PricesError(LocaleKeys.failedToLoadPrices.tr(namedArgs: {'error': e.toString()})));
+      emit(PricesError(LocaleKeys.failedToLoadPrices
+          .tr(namedArgs: {'error': e.toString()})));
     }
   }
 
@@ -85,7 +86,8 @@ class PricesBloc extends BaseBloc<PricesEvent, PricesState> {
       }
 
       if (duplicates.isNotEmpty) {
-        emit(CustomPriceDuplicateError(LocaleKeys.itemsAlreadyExist.tr(namedArgs: {'items': duplicates.join(', ')})));
+        emit(CustomPriceDuplicateError(LocaleKeys.itemsAlreadyExist
+            .tr(namedArgs: {'items': duplicates.join(', ')})));
       }
       emit(currentState.copyWith(customPrices: updatedCustomPrices));
     }
