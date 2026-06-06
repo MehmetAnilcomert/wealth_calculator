@@ -1,11 +1,17 @@
 default_platform(:android)
 
 platform :android do
+
+  desc "Sadece Build Test — Play Store'a yüklemeden AAB üretir"
+  lane :build_only do
+    sh("flutter", "build", "appbundle", "--release")
+    UI.success("✅ AAB başarıyla üretildi! Dosya: build/app/outputs/bundle/release/app-release.aab")
+  end
+
   desc "Play Store Beta'ya AAB Deploy"
   lane :deploy_to_playstore do
 
     # 1. Flutter ile release AAB üret
-    # Flutter SDK'nın PATH'te olduğundan emin olun
     sh("flutter", "build", "appbundle", "--release")
 
     # 2. Play Store beta track'ine yükle
