@@ -21,6 +21,7 @@ build_android:
   except:
     - branches
   script:
+    - '$env:PATH = $env:PATH + ";C:\flutter\bin;C:\tools\ruby34\bin"'
     - cd wealth_calculator
     # 1. Base64 keystore → fiziksel dosya
     - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
@@ -56,6 +57,7 @@ deploy_to_android:
   needs:
     - build_android  # Build başarılı olmalı
   script:
+    - '$env:PATH = $env:PATH + ";C:\flutter\bin;C:\tools\ruby34\bin"'
     - cd wealth_calculator
     # 1. Base64 keystore → fiziksel dosya
     - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
