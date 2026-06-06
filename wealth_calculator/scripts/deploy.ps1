@@ -15,6 +15,8 @@ param(
 )
 
 $ErrorActionPreference = "Continue" # Git stderr (bilgi mesajlari) hata sayilmasin diye Continue yapildi
+$env:GIT_ASKPASS = ""
+$env:SSH_ASKPASS = ""
 
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host "🚀 GitLab Otomatik Deploy Baslatiliyor..." -ForegroundColor Cyan
