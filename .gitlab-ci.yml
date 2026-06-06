@@ -23,11 +23,15 @@ build_android:
   script:
     - '$env:PATH = $env:PATH + ";C:\flutter\bin;C:\tools\ruby34\bin"'
     - cd wealth_calculator
+    - 'Write-Host "KEYSTORE_BASE64 Length: $($env:ANDROID_KEYSTORE_BASE64.Length)"'
+    - 'Write-Host "KEY_PROPERTIES Length: $($env:ANDROID_KEY_PROPERTIES.Length)"'
     # 1. Base64 keystore → fiziksel dosya
+    - 'if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_BASE64)) { Write-Host "HATA: KEYSTORE_BASE64 BOS!" -ForegroundColor Red }'
     - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
 
     # 2. key.properties oluştur
-    - '$env:ANDROID_KEY_PROPERTIES | Set-Content -Path android/key.properties'
+    - 'if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_PROPERTIES)) { Write-Host "HATA: KEY_PROPERTIES BOS!" -ForegroundColor Red }'
+    - '$env:ANDROID_KEY_PROPERTIES | Out-File -FilePath android/key.properties -Encoding utf8'
 
     # 3. Flutter bağımlılıkları
     - flutter pub get
@@ -59,11 +63,15 @@ deploy_to_android:
   script:
     - '$env:PATH = $env:PATH + ";C:\flutter\bin;C:\tools\ruby34\bin"'
     - cd wealth_calculator
+    - 'Write-Host "KEYSTORE_BASE64 Length: $($env:ANDROID_KEYSTORE_BASE64.Length)"'
+    - 'Write-Host "KEY_PROPERTIES Length: $($env:ANDROID_KEY_PROPERTIES.Length)"'
     # 1. Base64 keystore → fiziksel dosya
+    - 'if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_BASE64)) { Write-Host "HATA: KEYSTORE_BASE64 BOS!" -ForegroundColor Red }'
     - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
 
     # 2. key.properties oluştur
-    - '$env:ANDROID_KEY_PROPERTIES | Set-Content -Path android/key.properties'
+    - 'if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_PROPERTIES)) { Write-Host "HATA: KEY_PROPERTIES BOS!" -ForegroundColor Red }'
+    - '$env:ANDROID_KEY_PROPERTIES | Out-File -FilePath android/key.properties -Encoding utf8'
 
     # 3. Flutter bağımlılıkları
     - flutter pub get
