@@ -62,3 +62,7 @@ android/*.keystore
 **/fastlane/screenshots
 **/fastlane/test_result
 **/fastlane/README.md
+
+# GitLab Runner configuration (contains secrets)
+config.toml
+.runner_system_id
