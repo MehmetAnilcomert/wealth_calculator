@@ -2,3 +2,4 @@
 config.toml
 wealth_calculator/scripts/deploy.ps1
 builds/
+test.properties
