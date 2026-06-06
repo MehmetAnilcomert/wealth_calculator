@@ -31,13 +31,6 @@ migrate_working_dir/
 .pub/
 /build/
 
-# Flutter auto-generated plugin files
-**/generated_plugin_registrant.cc
-**/generated_plugin_registrant.h
-**/generated_plugins.cmake
-**/GeneratedPluginRegistrant.swift
-**/GeneratedPluginRegistrant.m
-
 # Symbolication related
 app.*.symbols
 
@@ -51,6 +44,13 @@ app.*.map.json
 
 *.env
 
+# Flutter auto-generated plugin files
+**/generated_plugin_registrant.cc
+**/generated_plugin_registrant.h
+**/generated_plugins.cmake
+**/GeneratedPluginRegistrant.swift
+**/GeneratedPluginRegistrant.m
+
 # Signing keys & secrets (CI/CD will generate these from GitLab Variables)
 android/key.properties
 android/*.jks
@@ -62,7 +62,3 @@ android/*.keystore
 **/fastlane/screenshots
 **/fastlane/test_result
 **/fastlane/README.md
-
-# GitLab Runner configuration (contains secrets)
-config.toml
-.runner_system_id
