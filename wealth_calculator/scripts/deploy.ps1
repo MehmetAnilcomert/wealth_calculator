@@ -45,7 +45,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "git checkout gitlab-deploy" }
 
     Write-Host "[2/5] main branch'indeki kodlar merge ediliyor..." -ForegroundColor Gray
-    cmd /c "git merge main"
+    cmd /c "git merge main --no-edit"
     if ($LASTEXITCODE -ne 0) { throw "git merge main" }
 
     Write-Host "[3/5] Tag ($Tag) olusturuluyor..." -ForegroundColor Gray
