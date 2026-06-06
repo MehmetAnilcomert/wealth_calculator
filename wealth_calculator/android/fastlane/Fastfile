@@ -1,0 +1,21 @@
+default_platform(:android)
+
+platform :android do
+  desc "Play Store Beta'ya AAB Deploy"
+  lane :deploy_to_playstore do
+
+    # 1. Flutter ile release AAB üret
+    # Flutter SDK'nın PATH'te olduğundan emin olun
+    sh("flutter", "build", "appbundle", "--release")
+
+    # 2. Play Store beta track'ine yükle
+    upload_to_play_store(
+      track: "beta",
+      json_key_data: ENV["PLAY_STORE_JSON_KEY"],
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end

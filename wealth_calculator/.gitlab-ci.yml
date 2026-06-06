@@ -1,0 +1,32 @@
+stages:
+  - deploy
+
+variables:
+  # Gradle derleme parametreleri
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  # Fastlane için UTF-8 locale
+  LC_ALL: "en_US.UTF-8"
+  LANG: "en_US.UTF-8"
+
+deploy_to_android:
+  stage: deploy
+  tags:
+    - prod  # Windows Runner'ınıza atadığınız etiket
+  only:
+    - tags  # Sadece git tag oluşturulduğunda tetiklenir
+  except:
+    - branches  # Normal push'larda çalışmaz
+  script:
+    # 1. Base64 formatındaki Keystore dosyasını fiziksel dosyaya dönüştür (PowerShell)
+    - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
+
+    # 2. key.properties dosyasını oluştur (Gradle imzalama için gerekli)
+    - '$env:ANDROID_KEY_PROPERTIES | Set-Content -Path android/key.properties'
+
+    # 3. Flutter bağımlılıklarını kur
+    - flutter pub get
+
+    # 4. Android dizinine geç, Fastlane bağımlılıklarını kur ve deploy et
+    - cd android
+    - bundle install
+    - bundle exec fastlane deploy_to_playstore

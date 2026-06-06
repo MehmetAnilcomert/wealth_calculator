@@ -1,0 +1,4 @@
+source "https://rubygems.org"
+
+gem "fastlane"
+gem "multi_json"  # Fastlane'in Google API bağımlılığı için gerekli (Ruby 3.4+)
