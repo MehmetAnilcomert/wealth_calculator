@@ -1,0 +1,72 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  # Gradle derleme parametreleri
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  # Fastlane için UTF-8 locale
+  LC_ALL: "en_US.UTF-8"
+  LANG: "en_US.UTF-8"
+
+# ─── AŞAMA 1: Build Test ───
+# Tag oluşturulduğunda otomatik çalışır.
+# Play Store hesabı gerekmez — sadece AAB üretir.
+build_android:
+  stage: build
+  tags:
+    - prod  # Windows Runner etiketiniz
+  only:
+    - tags
+  except:
+    - branches
+  script:
+    - cd wealth_calculator
+    # 1. Base64 keystore → fiziksel dosya
+    - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
+
+    # 2. key.properties oluştur
+    - '$env:ANDROID_KEY_PROPERTIES | Set-Content -Path android/key.properties'
+
+    # 3. Flutter bağımlılıkları
+    - flutter pub get
+
+    # 4. Sadece build (Play Store'a yükleme yok)
+    - cd android
+    - bundle install
+    - bundle exec fastlane build_only
+
+  artifacts:
+    paths:
+      - wealth_calculator/build/app/outputs/bundle/release/app-release.aab
+    expire_in: 7 days
+
+# ─── AŞAMA 2: Play Store Deploy ───
+# Build başarılı olduktan sonra MANUEL tetiklenir.
+# Play Store developer hesabı hazır olduğunda kullanılır.
+deploy_to_android:
+  stage: deploy
+  tags:
+    - prod
+  only:
+    - tags
+  except:
+    - branches
+  when: manual  # Otomatik çalışmaz, GitLab'dan butonla tetiklenir
+  needs:
+    - build_android  # Build başarılı olmalı
+  script:
+    - cd wealth_calculator
+    # 1. Base64 keystore → fiziksel dosya
+    - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
+
+    # 2. key.properties oluştur
+    - '$env:ANDROID_KEY_PROPERTIES | Set-Content -Path android/key.properties'
+
+    # 3. Flutter bağımlılıkları
+    - flutter pub get
+
+    # 4. Fastlane ile Play Store'a deploy
+    - cd android
+    - bundle install
+    - bundle exec fastlane deploy_to_playstore
