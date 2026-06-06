@@ -1,2 +1,3 @@
 .runner_system_id
 config.toml
+wealth_calculator/scripts/deploy.ps1
