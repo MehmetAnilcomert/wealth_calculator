@@ -27,11 +27,11 @@ build_android:
     - 'Write-Host "KEY_PROPERTIES Length: $($env:ANDROID_KEY_PROPERTIES.Length)"'
     # 1. Base64 keystore → fiziksel dosya
     - 'if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_BASE64)) { Write-Host "HATA: KEYSTORE_BASE64 BOS!" -ForegroundColor Red }'
-    - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
+    - '[IO.File]::WriteAllBytes("$PWD/android/wealth-calculator-key.jks", [System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))'
 
     # 2. key.properties oluştur
     - 'if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_PROPERTIES)) { Write-Host "HATA: KEY_PROPERTIES BOS!" -ForegroundColor Red }'
-    - '$env:ANDROID_KEY_PROPERTIES | Out-File -FilePath android/key.properties -Encoding utf8'
+    - '[IO.File]::WriteAllText("$PWD/android/key.properties", $env:ANDROID_KEY_PROPERTIES)'
 
     # 3. Flutter bağımlılıkları
     - flutter pub get
@@ -67,11 +67,11 @@ deploy_to_android:
     - 'Write-Host "KEY_PROPERTIES Length: $($env:ANDROID_KEY_PROPERTIES.Length)"'
     # 1. Base64 keystore → fiziksel dosya
     - 'if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_BASE64)) { Write-Host "HATA: KEYSTORE_BASE64 BOS!" -ForegroundColor Red }'
-    - '[System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64) | Set-Content -Path android/wealth-calculator-key.jks -Encoding Byte'
+    - '[IO.File]::WriteAllBytes("$PWD/android/wealth-calculator-key.jks", [System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))'
 
     # 2. key.properties oluştur
     - 'if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_PROPERTIES)) { Write-Host "HATA: KEY_PROPERTIES BOS!" -ForegroundColor Red }'
-    - '$env:ANDROID_KEY_PROPERTIES | Out-File -FilePath android/key.properties -Encoding utf8'
+    - '[IO.File]::WriteAllText("$PWD/android/key.properties", $env:ANDROID_KEY_PROPERTIES)'
 
     # 3. Flutter bağımlılıkları
     - flutter pub get
